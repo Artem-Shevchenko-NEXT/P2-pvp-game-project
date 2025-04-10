@@ -87,5 +87,6 @@ io.on('connection', (socket) => {
 app.use('/assets', express.static(__dirname + '/assets'));
 
 http.listen(port, () => {
-  console.log(`Socket.IO server running at http://localhost:${port}/`);
+    console.log(`Socket.IO server running on port ${port}`);
+    console.log(`Access at http://130.225.37.31:${port}/`);
 });
