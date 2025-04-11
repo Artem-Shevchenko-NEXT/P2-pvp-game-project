@@ -1,5 +1,6 @@
 var express = require('express');
 const app = express();
+/*
 // Serve files from the root directory (for phaser.js)
 app.use(express.static(__dirname));
 
@@ -8,6 +9,7 @@ app.use('/src', express.static(__dirname + '/src'));
 
 // Keep your existing assets route
 app.use('/assets', express.static(__dirname + '/assets'));
+*/
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const port = process.env.PORT || 3001;
