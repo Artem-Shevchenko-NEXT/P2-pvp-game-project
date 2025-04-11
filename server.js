@@ -50,6 +50,7 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
+/* all of the following is currently unused / uneeded and is there for reference  
   //Reply to their connection by fetching their socket.id
   socket.emit('joined');
 
@@ -89,10 +90,8 @@ io.on('connection', (socket) => {
     console.log('user disconnected');
     io.emit('disconnected', socket.id);
   });
-
+*/
 });
-
-app.use('/assets', express.static(__dirname + '/assets'));
 
 http.listen(port, () => {
     console.log(`Socket.IO server running on port ${port}`);
