@@ -1,6 +1,7 @@
 var express = require('express');
 const app = express();
 // Serve  argh files from the root directory (for phaser.js)
+/*
 app.use(express.static(__dirname));
 
 // Serve files from the src directory (for main.js and other modules)
@@ -8,6 +9,7 @@ app.use('/src', express.static(__dirname + '/src'));
 
 // Keep the existing assets route
 app.use('/assets', express.static(__dirname + '/assets'));
+*/
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const port = process.env.PORT || 3001;
