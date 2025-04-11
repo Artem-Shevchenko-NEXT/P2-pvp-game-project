@@ -1,6 +1,6 @@
 var express = require('express');
 const app = express();
-// Serve files from the root directory (for phaser.js)
+// Serve  argh files from the root directory (for phaser.js)
 app.use(express.static(__dirname));
 
 // Serve files from the src directory (for main.js and other modules)
