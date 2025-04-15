@@ -29,10 +29,22 @@ export class Preloader extends Phaser.Scene {
         this.load.image('ground', 'platform.png');
         this.load.image('star', 'star.png');
         this.load.image('bomb', 'bomb.png');
-        this.load.spritesheet(
-            'dude',
-            'dude.png',
-            { frameWidth: 32, frameHeight: 48 }
+        //Tank character assets loads here
+        this.load.atlas(
+            'tank_idle',
+            'tank/tank_idle.png', 'tank/tank_idle.json'    
+        );
+        this.load.atlas(
+            'tank_run',
+            'tank/tank_run.png', 'tank/tank_run.json'    
+        );
+        this.load.atlas(
+            'tank_jump',
+            'tank/tank_jump.png', 'tank/tank_jump.json'    
+        );
+        this.load.atlas(
+            'tank_attack',
+            'tank/tank_attack.png', 'tank/tank_attack.json'    
         );
 
     }

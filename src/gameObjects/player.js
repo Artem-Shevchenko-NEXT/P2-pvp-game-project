@@ -2,7 +2,7 @@ export class  Player extends Phaser.Physics.Arcade.Sprite
 {
     constructor(scene, x, y)
     {
-        super(scene, x, y, 'dude');
+        super(scene, x, y, 'tank_idle');
 
         scene.add.existing(this);
         scene.physics.add.existing(this);
@@ -16,45 +16,65 @@ export class  Player extends Phaser.Physics.Arcade.Sprite
     {
         this.anims.create({
             key: 'left',
-            frames: this.anims.generateFrameNumbers('dude', {start: 0, end: 3}),
+            frames: this.anims.generateFrameNames('tank_run', {prefix: 'running', end: 8, zeroPad:4}),
             frameRate: 10,
             repeat: -1
         });
 
         this.anims.create({
             key: 'turn',
-            frames: [ { key: 'dude', frame: 4 } ],
-            frameRate: 1
+            frames: this.anims.generateFrameNames('tank_idle', {prefix: 'idle', end: 8, zeroPad:4}),
+            frameRate: 10,
+            repeat: -1
         })
 
         this.anims.create({
             key: 'right',
-            frames: this.anims.generateFrameNumbers('dude', {start: 5, end: 8}),
+            frames: this.anims.generateFrameNames('tank_run', {prefix: 'running', end: 8, zeroPad:4}),
             frameRate: 10,
             repeat: -1
 
         }); 
-    }
+        this.anims.create({
+            key: 'jump',
+            frames: this.anims.generateFrameNames('tank_jump', {prefix: 'jumping', end: 8, zeroPad: 4}),
+            frameRate: 5,
+            repeat: 0
 
+        }); 
+        this.anims.create({
+            key: 'attack',
+            frames: this.anims.generateFrameNames('tank_attack',{prefix: 'attackRight', end: 4, zeroPad: 4}),
+            frameRate: 15,
+            repeat: 0
+        }); 
+    }
+    
     moveLeft ()
     {   
         this.setVelocityX(-200);
-
-        this.anims.play('left', true);    
+        this.flipX = true;
+        if (this.body.blocked.down)
+        {
+        this.anims.play('left', true);
+        }    
     }
 
     moveRight ()
     {
         this.setVelocityX(200);
-
+        this.flipX = false;
+        if (this.body.blocked.down)
+        {
         this.anims.play('right', true);
+        }
     }
 
     idle ()
     {
         this.setVelocityX(0);
-
-        this.anims.play('turn');
+        this.anims.play('turn', true);
+        
     }
 
     jump ()
@@ -63,5 +83,14 @@ export class  Player extends Phaser.Physics.Arcade.Sprite
         {
             this.setVelocityY(-440);
         }
+        this.anims.play('jump', true);
+
+    }
+    attack()
+    {
+    
+        this.anims.play('attack', true);
+        this.anims.play('idle', true)
+        
     }
 }

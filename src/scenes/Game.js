@@ -21,6 +21,7 @@ export class Game extends Phaser.Scene {
         this.physics.add.collider(this.player, this.platforms);
         
         this.cursors = this.input.keyboard.createCursorKeys();
+    
        
         //stars Group:
         this.stars = this.physics.add.group({
@@ -48,13 +49,18 @@ export class Game extends Phaser.Scene {
         this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
     }
 
-    update() 
+    update() //player movement
     {
         if(this.cursors.left.isDown) {
             this.player.moveLeft();
+        
         }
         else if (this.cursors.right.isDown) {
             this.player.moveRight();
+
+        }
+        else if (this.cursors.space.isDown) {
+            this.player.attack();
         }
         else {
             this.player.idle();
@@ -63,6 +69,7 @@ export class Game extends Phaser.Scene {
         if(this.cursors.up.isDown) {
             this.player.jump();
         }
+        
     }
     collectStar (player, star)
         {
