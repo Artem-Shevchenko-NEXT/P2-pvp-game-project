@@ -1,4 +1,4 @@
-import {Player} from '../gameObjects/player.js';
+import { Player } from '../gameObjects/player.js';
 
 export class Game extends Phaser.Scene {
     constructor() {
@@ -6,111 +6,42 @@ export class Game extends Phaser.Scene {
     }
 
     create() {
-        this.add.image(400, 300, 'sky');
+        // Create the tilemap in our preloader we name and load tilesheet and json from Tiled
+        const map = this.make.tilemap({ key: 'tilemap' });
+        const tileset = map.addTilesetImage('oakwood', 'tiles'); 
         
-        this.platforms = this.physics.add.staticGroup();
-
-        this.platforms.create(400, 568, 'ground').setScale(2).refreshBody();
-
-        this.platforms.create(600, 400, 'ground');
-        this.platforms.create(50, 250, 'ground');
-        this.platforms.create(750, 220, 'ground');
-
+        //attaching arcade physics to the tiles. in Tiled we have set at boolean property on our tiles 
+        //called collides we want to transfer this property to phaser
+        const ground = map.createLayer('ground', tileset); 
+        ground.setCollisionByProperty({collides: true});
+        
+        // Create player
         this.player = new Player(this, 100, 450);
+        // Set up collision between player and ground
+        this.physics.add.collider(this.player, ground);
 
-        this.physics.add.collider(this.player, this.platforms);
-        
+
+        // Set camera to follow player
+       // this.cameras.main.startFollow(this.player);
+        this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+
+        // Set up keyboard input
         this.cursors = this.input.keyboard.createCursorKeys();
-    
-       
-        //stars Group:
-        this.stars = this.physics.add.group({
-            key: 'star',
-            repeat: 11,
-            setXY: { x: 12, y: 0, stepX: 70 }
-        });
-
-        this.stars.children.iterate(child =>
-        {
-            child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-        });
-
-        this.physics.add.collider(this.stars, this.platforms);
-        this.physics.add.overlap(this.player, this.stars, this.collectStar, null, this);
-
-        //scoreboard/future HP bar
-        this.score = 0;
-        this.scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000'});
-
-        //Bombs
-        this.bombs = this.physics.add.group();
-
-        this.physics.add.collider(this.bombs, this.platforms);
-        this.physics.add.collider(this.player, this.bombs, this.hitBomb, null, this);
     }
 
-    update() //player movement
-    {
-        if(this.cursors.left.isDown) {
+    update() {
+        if (this.cursors.left.isDown) {
             this.player.moveLeft();
-        
-        }
-        else if (this.cursors.right.isDown) {
+        } else if (this.cursors.right.isDown) {
             this.player.moveRight();
-
-        }
-        else if (this.cursors.space.isDown) {
+        } else if (Phaser.Input.Keyboard.JustDown(this.cursors.space)) {
             this.player.attack();
-        }
-        else {
+        } else {
             this.player.idle();
         }
 
-        if(this.cursors.up.isDown) {
+        if (this.cursors.up.isDown) {
             this.player.jump();
         }
-        
-    }
-    collectStar (player, star)
-        {
-            star.disableBody(true, true);
-            
-            this.score += 10;
-            this.scoreText.setText('Score: ' + this.score);
-
-            if (this.stars.countActive(true) === 0)
-            {
-                this.stars.children.iterate(function (child)
-                {
-                    child.enableBody(true, child.x, 0, true, true);
-                });
-
-                this.releaseBomb();
-            }
-        }
-    hitBomb (player, bomb)
-    {
-        this.physics.pause();
-
-        player.setTint(0xff0000);
-        
-        player.anims.play('turn');
-        
-        this.time.delayedCall(2000, () =>
-        {
-            this.scene.start('GameOver');
-        });
-    }
-    
-    releaseBomb ()
-    {
-        var x = (this.player.x < 400) ? Phaser.Math.Between(400, 800) : Phaser.Math.Between(0, 400);
-
-        var bomb = this.bombs.create(x, 16, 'bomb');
-        bomb.setBounce(1);
-        bomb.setCollideWorldBounds(true);
-        bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
-
     }
 }
-

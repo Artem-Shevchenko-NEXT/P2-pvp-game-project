@@ -23,12 +23,19 @@ export class Preloader extends Phaser.Scene {
     }
 
     preload() {
-        //  Load the assets for the game - Replace with your own assets
+        //Load the assets for the game first we set path for the map assets 
         this.load.setPath('assets');
-        this.load.image('sky', 'sky.png');
-        this.load.image('ground', 'platform.png');
-        this.load.image('star', 'star.png');
-        this.load.image('bomb', 'bomb.png');
+        
+        //loading our tileset png file so that our json files from the proggram Tiled can use the json and use and arrange our tileset.
+        this.load.image('tiles', 'oak_woods/oak_woods_tileset.png');
+        //loading background images
+        this.load.image('background', 'oak_woods/background/background_layer_1.png');
+        this.load.image('background', 'oak_woods/background/background_layer_2.png');
+        this.load.image('background', 'oak_woods/background/background_layer_3.png');
+        
+        //loading our game map Json file from the program Tiled
+        this.load.tilemapTiledJSON('tilemap', 'game_map_oakwood.json');
+       
         //Tank character assets loads here
         this.load.atlas(
             'tank_idle',
@@ -55,5 +62,6 @@ export class Preloader extends Phaser.Scene {
 
         //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
         this.scene.start('Game');
+         
     }
 }
