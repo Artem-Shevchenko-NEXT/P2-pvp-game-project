@@ -6,23 +6,75 @@ export class Game extends Phaser.Scene {
     }
 
     create() {
-        // Create the tilemap in our preloader we name and load tilesheet and json from Tiled
+        // Create the tilemap
         const map = this.make.tilemap({ key: 'tilemap' });
-        const tileset = map.addTilesetImage('oakwood', 'tiles'); 
-        
-        //attaching arcade physics to the tiles. in Tiled we have set at boolean property on our tiles 
-        //called collides we want to transfer this property to phaser
-        const ground = map.createLayer('ground', tileset); 
-        ground.setCollisionByProperty({collides: true});
-        
+        const tileset = map.addTilesetImage('oakwood', 'tiles');
+
+        // Create background from object layer note: this turned out to be way to complicated and we should have just used one background image.
+        //we did this in hope of being able to make parralaxing but this is not important for MVP. and so far parralaxing has not been implemented.
+        //so a little was of time.
+        const backgroundLayer = map.getObjectLayer('Background');
+        if (backgroundLayer) {
+            backgroundLayer.objects.forEach((object, index) => {
+                // Get the image key from properties
+                let imageKey = null;
+                if (object.properties) {
+                    const imageProp = object.properties.find(prop => prop.name === 'image');
+                    if (imageProp) {
+                        imageKey = imageProp.value;
+                    }
+                }
+
+                // Fallback to GID if no image property.
+                if (!imageKey && object.gid) {
+                    const gid = object.gid;
+                    if (gid === 316) imageKey = 'background1';
+                    else if (gid === 317) imageKey = 'background2';
+                    else if (gid === 318) imageKey = 'background3';
+                }
+
+                if (imageKey) {
+                    // Create the image with scaling to match Tiled dimensions
+                    const image = this.add.image(object.x, object.y, imageKey)
+                        .setOrigin(0, 0) // Align with Tiled's top-left origin
+                        //setting background layers with different depths in order to stack them
+                        .setDepth(-3 + index); // Unique depth: -3, -2, -1
+
+                    // Override y-position with slight offset from Tiled
+                    image.y = 0;
+
+                    // Apply scaling if Tiled object dimensions differ from image
+                    const imageData = this.textures.get(imageKey);
+                    const sourceWidth = imageData.source[0].width;
+                    const sourceHeight = imageData.source[0].height;
+                    if (object.width && object.height) {
+                        image.setScale(object.width / sourceWidth, object.height / sourceHeight);
+                    }
+
+                    // Optional: Add parallax effect not sure if this really works
+                    //image.setScrollFactor(0.3 + index * 0.2); // 0.3, 0.5, 0.7
+
+                    // Debug: Log image details there was trouble rendering the object layer Background for from Tiled hense Debug
+                    console.log(`Background image: ${imageKey}, name: ${object.name}, gid: ${object.gid}, x: ${image.x}, y: ${image.y}, scaleX: ${image.scaleX}, scaleY: ${image.scaleY}, depth: ${image.depth}`);
+                } else {
+                    console.warn(`No valid image key for background object: ${object.name}, gid: ${object.gid}`);
+                }
+            });
+        } else {
+            console.warn('Background layer not found in tilemap');
+        }
+
+        // Create ground layer and set collisions
+        const ground = map.createLayer('ground', tileset);
+        ground.setCollisionByProperty({ collides: true });
+
         // Create player
         this.player = new Player(this, 100, 450);
         // Set up collision between player and ground
         this.physics.add.collider(this.player, ground);
 
-
-        // Set camera to follow player
-       // this.cameras.main.startFollow(this.player);
+        // Set camera to follow player if we would like this feature
+        //this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
         // Set up keyboard input

@@ -29,9 +29,9 @@ export class Preloader extends Phaser.Scene {
         //loading our tileset png file so that our json files from the proggram Tiled can use the json and use and arrange our tileset.
         this.load.image('tiles', 'oak_woods/oak_woods_tileset.png');
         //loading background images
-        this.load.image('background', 'oak_woods/background/background_layer_1.png');
-        this.load.image('background', 'oak_woods/background/background_layer_2.png');
-        this.load.image('background', 'oak_woods/background/background_layer_3.png');
+        this.load.image('background1', 'oak_woods/background/background_layer_1.png');
+        this.load.image('background2', 'oak_woods/background/background_layer_2.png');
+        this.load.image('background3', 'oak_woods/background/background_layer_3.png');
         
         //loading our game map Json file from the program Tiled
         this.load.tilemapTiledJSON('tilemap', 'game_map_oakwood.json');
