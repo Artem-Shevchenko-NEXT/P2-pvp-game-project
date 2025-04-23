@@ -1,23 +1,32 @@
 var express = require('express');
 const app = express();
-// Serve  argh files from the root directory (for phaser.js)
-
-app.use(express.static(__dirname));
-
-// Serve files from the src directory (for main.js and other modules)
-app.use('/src', express.static(__dirname + '/src'));
-
-// Keep the existing assets route
-app.use('/assets', express.static(__dirname + '/assets'));
-
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const port = process.env.PORT || 3001;
+
+// giving directionory forfiles that the server can utilize
+app.use(express.static(__dirname));
+app.use('/src', express.static(__dirname + '/src'));
+app.use('/assets', express.static(__dirname + '/assets'));
 
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
+// Socket.IO connection handling
+io.on('connection', (socket) => {
+  console.log('User connected:', socket.id);
+  
+  // Send player their ID
+  socket.emit('connected', { id: socket.id });
+  
+  // Handle disconnection
+  socket.on('disconnect', () => {
+    console.log('User disconnected:', socket.id);
+  });
+});
+
+// Server initiation
 http.listen(port, () => {
     console.log(`Socket.IO server running on port ${port}`);
     console.log(`Access at http://130.225.37.31:${port}/`);
