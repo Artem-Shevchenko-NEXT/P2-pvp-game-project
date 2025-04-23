@@ -1,8 +1,9 @@
 import { Player } from '../gameObjects/player.js';
-
+import NetworkManager from '../multiplayer/NetworkManager.js';
 export class Game extends Phaser.Scene {
     constructor() {
         super('Game');
+        this.networkManager = null;
     }
 
     create() {
@@ -27,6 +28,16 @@ export class Game extends Phaser.Scene {
 
         // Set up keyboard input
         this.cursors = this.input.keyboard.createCursorKeys();
+        
+        // Connect to server
+        this.networkManager = new NetworkManager();
+        this.networkManager.connect()
+            .then(data => {
+                console.log('Connected to server with ID:', data.id);
+            })
+            .catch(err => {
+                console.error('Failed to connect:', err);
+            });
     }
 
     update() {
