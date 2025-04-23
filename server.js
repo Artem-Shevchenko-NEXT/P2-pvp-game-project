@@ -14,6 +14,15 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const port = process.env.PORT || 3001;
 
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/index.html');
+});
+
+http.listen(port, () => {
+    console.log(`Socket.IO server running on port ${port}`);
+    console.log(`Access at http://130.225.37.31:${port}/`);
+});
+
 /* Socket.IO docs
 
 socket.emit('message', "this is a test"); //sending to sender-client only
@@ -45,57 +54,3 @@ io.sockets.emit(); //send to all connected clients (same as socket.emit)
 io.sockets.on() ; //initial connection from a client.
 
 */
-var roundCall = Boolean(0);
-
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
-});
-
-io.on('connection', (socket) => {
-/* all of the following is currently unused / uneeded and is there for reference  
-  //Reply to their connection by fetching their socket.id
-  socket.emit('joined');
-
-  socket.on('chat message', msg => {
-    console.log("received chat");
-    io.emit('chat message', msg);
-  });
-
-  socket.on('movement', msg => {
-    io.emit('movement', msg);
-  });
-  
-  socket.on('playerjoin', msg => {
-    // Broadcast new player to all current players
-    socket.broadcast.emit('playerjoinedReply',msg);
-  });
-
-  socket.on('sendPlayer', msg => {
-    io.to(msg[0]).emit('playerjoined',[msg[1],msg[2],msg[3]]);
-  });
-
-  socket.on('bomb', async msg => {
-    // Authority- determine bomb status, stars status for this round.
-    // The first socket who calls this gets their numbers in.
-    if(!roundCall) {
-      roundCall = Boolean(1);
-      io.emit('bomb',msg);
-      
-      console.log("Called round!");
-      
-      await new Promise(r => setTimeout(() => roundCall = Boolean(0), 2000));
-    }
-
-  });
-
-  socket.on('disconnect', function () {
-    console.log('user disconnected');
-    io.emit('disconnected', socket.id);
-  });
-*/
-});
-
-http.listen(port, () => {
-    console.log(`Socket.IO server running on port ${port}`);
-    console.log(`Access at http://130.225.37.31:${port}/`);
-});
