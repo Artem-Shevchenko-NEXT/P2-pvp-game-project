@@ -5,6 +5,7 @@ export default class NetworkManager {
       this.playerId = null;
       this.connected = false;
       this.eventListeners = {};
+      this.roomId = null;
     }
     
     //Connect to the server
@@ -36,6 +37,12 @@ export default class NetworkManager {
             this.connected = false;
             console.log('Disconnected from server');
           });
+          // creates game joint event withe the gelp og triggerEvent
+          this.socket.on('game_joined', (data) => {
+            this.roomId = data.roomId;
+            console.log(`Joined room: ${this.roomId}`);
+            this.triggerEvent('gameJoined', data);
+          });  
           // responsible for catching any errors such as connect_error in the try block
         } catch (error) {
           console.error('Failed to connect:', error);
@@ -65,5 +72,10 @@ export default class NetworkManager {
       if (this.socket) {
         this.socket.disconnect();
       }
+    }
+    //Initial player data
+    joinGame(playerData) {
+      if (!this.connected) return;
+      this.socket.emit('join_game', playerData);
     }
 }

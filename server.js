@@ -3,6 +3,8 @@ const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const port = process.env.PORT || 3001;
+const RoomManager = require('./server/LobbyManager');
+const LobbyManager = require('./server/LobbyManager');
 
 // giving directionory forfiles that the server can utilize a
 app.use(express.static(__dirname));
@@ -13,16 +15,47 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
+// Initialize room manager
+const roomManager = new LobbyManager();
+// Track players in rooms
+const players = new Map();
+
 // Socket.IO connection handling
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
   
   // Send player their ID
   socket.emit('connected', { id: socket.id });
-  
+    // Handle player joining game
+  socket.on('join_game', (playerData) => {
+    // all players join the default room as defined in the lobbyManager
+    const roomId = roomManager.getDefaultRoom();
+    socket.join(roomId);
+    
+    // Add player to tracking
+    const player = {
+      id: socket.id,
+      x: playerData.x || 100,
+      y: playerData.y || 100,
+      roomId: roomId
+    };
+    
+    players.set(socket.id, player);
+    console.log(`Player ${socket.id} joined room ${roomId}`);
+    
+    // succefull join notification
+    socket.emit('game_joined', {
+      roomId: roomId,
+      players: Array.from(players.values())
+        .filter(p => p.roomId === roomId)
+    });
+  });
   // Handle disconnection
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
+
+    // Remove player from tracking
+    players.delete(socket.id);
   });
 });
 
