@@ -46,6 +46,8 @@ io.on('connection', (socket) => {
     socket.on('player_update', (data) => {
       const player = players.get(socket.id);
       if (player) {
+        //for console logging putposes
+        console.log(`Player ${socket.id} update: x=${data.x}, y=${data.y}, animation=${data.animation || 'none'}`);
         // Update the  position
         if (data.x !== undefined) player.x = data.x;
         if (data.y !== undefined) player.y = data.y;
