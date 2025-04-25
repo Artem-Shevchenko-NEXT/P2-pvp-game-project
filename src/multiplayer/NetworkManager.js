@@ -52,6 +52,8 @@ export default class NetworkManager {
           this.socket.on('player_updated', (data) => {
             this.triggerEvent('playerUpdated', data);
           });
+          // TODO: Add event handlers for player_joined and player_left
+          // These events wil ptobably be needed by GameSync to add/remove remote player instances
 
           // responsible for catching any errors such as connect_error in the try block
         } catch (error) {
@@ -62,6 +64,8 @@ export default class NetworkManager {
     }
     
     //Register event listener, so that other game parts can lsiten to network events 
+    //This allows other game components to listen to network events
+    //without directly interacting with Socket.IO
     on(event, callback) {
       if (!this.eventListeners[event]) {
         this.eventListeners[event] = [];
@@ -83,7 +87,8 @@ export default class NetworkManager {
         this.socket.disconnect();
       }
     }
-    //Initial player data
+    //send Initial player data
+    //called once after conection to set up player in gamelobby
     joinGame(playerData) {
       if (!this.connected) return;
       this.socket.emit('join_game', playerData);

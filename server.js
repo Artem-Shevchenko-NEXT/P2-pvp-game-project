@@ -20,19 +20,20 @@ const roomManager = new LobbyManager();
 // Track players in rooms
 const players = new Map();
 
-// Socket.IO connection handling
+// Socket.IO conecttion handling - this runs when a client connects
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
   
   // Send player their ID
   socket.emit('connected', { id: socket.id });
-    // Handle player joining game
+
+  // Handle player joining game
   socket.on('join_game', (playerData) => {
     // all players join the default room as defined in the lobbyManager
     const roomId = roomManager.getDefaultRoom();
     socket.join(roomId);
     
-    // Add player to tracking
+    // Store player data in the players map
     const player = {
       id: socket.id,
       x: playerData.x || 100,
@@ -42,19 +43,23 @@ io.on('connection', (socket) => {
     
     players.set(socket.id, player);
     console.log(`Player ${socket.id} joined room ${roomId}`);
-    // player update handling logic
+
+    // TODO: Notify other players in the same room that a new player has joined
+    // This is probably neede to allow GameSync to create player instances
+
+    // Handle player movement/states updates
     socket.on('player_update', (data) => {
       const player = players.get(socket.id);
       if (player) {
         //for console logging putposes
         console.log(`Player ${socket.id} update: x=${data.x}, y=${data.y}, animation=${data.animation || 'none'}`);
-        // Update the  position
+        // Updates player states with the received data from networkmanager
         if (data.x !== undefined) player.x = data.x;
         if (data.y !== undefined) player.y = data.y;
         if (data.animation !== undefined) player.animation = data.animation;
         if (data.facing !== undefined) player.facing = data.facing;
         
-        // Broadcast to other players in the same room
+        // Broadcast to other players in the same lobby
         socket.to(player.roomId).emit('player_updated', {
           id: socket.id,
           x: player.x,
@@ -74,7 +79,7 @@ io.on('connection', (socket) => {
   // Handle disconnection
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
-
+    // TODO: Notify other players that this player has left, also wil probably be needed for gamesync 
     // Remove player from tracking
     players.delete(socket.id);
   });
