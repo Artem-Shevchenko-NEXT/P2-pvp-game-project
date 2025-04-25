@@ -42,7 +42,26 @@ io.on('connection', (socket) => {
     
     players.set(socket.id, player);
     console.log(`Player ${socket.id} joined room ${roomId}`);
-    
+    // player update handling logic
+    socket.on('player_update', (data) => {
+      const player = players.get(socket.id);
+      if (player) {
+        // Update the  position
+        if (data.x !== undefined) player.x = data.x;
+        if (data.y !== undefined) player.y = data.y;
+        if (data.animation !== undefined) player.animation = data.animation;
+        if (data.facing !== undefined) player.facing = data.facing;
+        
+        // Broadcast to other players in the same room
+        socket.to(player.roomId).emit('player_updated', {
+          id: socket.id,
+          x: player.x,
+          y: player.y,
+          animation: player.animation,
+          facing: player.facing
+        });
+      }
+    });
     // succefull join notification
     socket.emit('game_joined', {
       roomId: roomId,

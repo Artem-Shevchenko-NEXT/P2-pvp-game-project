@@ -21,28 +21,38 @@ export default class NetworkManager {
             this.connected = true;
             console.log('Connected to server');
           });
+
           //listener for a custom 'connected' event given by server.js
           this.socket.on('connected', (data) => {
             this.playerId = data.id;
             console.log('Assigned player ID:', this.playerId);
             resolve(data); // finnally oficcialy confirms a seccesfull connection 
           });
+
           // error logging 
           this.socket.on('connect_error', (error) => {
             console.error('Connection error:', error);
             reject(error);
           });
+
           // clean dissconation
           this.socket.on('disconnect', () => {
             this.connected = false;
             console.log('Disconnected from server');
           });
+
           // creates game joint event withe the gelp og triggerEvent
           this.socket.on('game_joined', (data) => {
             this.roomId = data.roomId;
             console.log(`Joined room: ${this.roomId}`);
             this.triggerEvent('gameJoined', data);
           });  
+
+          // event listener for player_updated
+          this.socket.on('player_updated', (data) => {
+            this.triggerEvent('playerUpdated', data);
+          });
+
           // responsible for catching any errors such as connect_error in the try block
         } catch (error) {
           console.error('Failed to connect:', error);
@@ -77,5 +87,18 @@ export default class NetworkManager {
     joinGame(playerData) {
       if (!this.connected) return;
       this.socket.emit('join_game', playerData);
+    }
+
+    //Send player position update where x and y is the player position adn the extras is for animation and direction facing
+    sendPlayerUpdate(x, y, extras = {}) {
+      if (!this.connected) return;
+      
+      const data = {
+        x,
+        y,
+        ...extras
+      };
+      
+      this.socket.emit('player_update', data);
     }
 }

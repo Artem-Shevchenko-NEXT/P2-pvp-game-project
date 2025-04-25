@@ -107,16 +107,70 @@ export class Game extends Phaser.Scene {
     update() {
         if (this.cursors.left.isDown) {
             this.player.moveLeft();
+            /*explanation for why the if statement is needed
+             this.networkManager prevents the error that would happen if the game had loaded quiker 
+             than the the network manager
+             this.networkManager.connected makes sure no data is sent before your fully connected 
+            */
+            if (this.networkManager && this.networkManager.connected) {
+                //sends the player data as defined in server.js through the networkManager
+                this.networkManager.sendPlayerUpdate(
+                    this.player.x,  
+                    this.player.y,
+                    { 
+                        animation: 'left',
+                        facing: 'left'
+                    }
+                );
+            }
         } else if (this.cursors.right.isDown) {
             this.player.moveRight();
+            if (this.networkManager && this.networkManager.connected) {
+                this.networkManager.sendPlayerUpdate(
+                    this.player.x, 
+                    this.player.y,
+                    { 
+                        animation: 'right',
+                        facing: 'right'
+                    }
+                );
+            }
         } else if (Phaser.Input.Keyboard.JustDown(this.cursors.space)) {
             this.player.attack();
+            this.player.attack();
+            if (this.networkManager && this.networkManager.connected) {
+                this.networkManager.sendPlayerUpdate(
+                    this.player.x, 
+                    this.player.y,
+                    { 
+                        animation: 'attack'
+                    }
+                );
+            }
         } else {
             this.player.idle();
+            if (this.networkManager && this.networkManager.connected) {
+                this.networkManager.sendPlayerUpdate(
+                    this.player.x, 
+                    this.player.y,
+                    { 
+                        animation: 'turn'
+                    }
+                );
+            }
         }
 
         if (this.cursors.up.isDown) {
             this.player.jump();
+            if (this.networkManager && this.networkManager.connected) {
+                this.networkManager.sendPlayerUpdate(
+                    this.player.x, 
+                    this.player.y,
+                    { 
+                        animation: 'jump'
+                    }
+                );
+            }
         }
     }
 }
