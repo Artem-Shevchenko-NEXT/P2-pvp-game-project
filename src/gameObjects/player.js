@@ -1,4 +1,4 @@
-import { StateMachine } from './stateMachine.js';
+import { StateMachine } from './state-machine/stateMachine.js';
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y) {
