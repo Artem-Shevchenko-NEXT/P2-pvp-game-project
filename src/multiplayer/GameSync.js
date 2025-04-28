@@ -31,3 +31,10 @@ but if you want you can move that logic into this clas for consistency.
 (extra info: the browser console will only show the updates that the local player is sending, 
 but the serve itself recives all updates from all players together at the same time)
  */
+
+// managing remote player instances(by witch i mean rendering players from different windows) in the game
+    // player rendering
+// handling network events related to playr joinning/leaving
+    //Forsøg at bruge 'gamejoined' 
+// updating remote player positions and animations based on received data
+// providing methods to easily synchronize local player state
