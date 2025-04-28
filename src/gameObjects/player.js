@@ -1,3 +1,5 @@
+import { StateMachine } from './stateMachine.js';
+
 export class Player extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y) {
         super(scene, x, y, 'tank_idle');
@@ -5,11 +7,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         scene.physics.add.existing(this);
         this.setBounce(0.2);
         this.setCollideWorldBounds(true);
-        this.isAttacking = false; // attack state
+
         this.initAnimations();
+        this.initStateMachine(scene);
     }
 
     initAnimations() {
+        // Same as your existing initAnimations method
         this.anims.create({
             key: 'left',
             frames: this.anims.generateFrameNames('tank_run', { prefix: 'running', end: 8, zeroPad: 4 }),
@@ -42,50 +46,100 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         });
     }
 
-    moveLeft() {
-        if (!this.isAttacking) { // Only move if not attacking
-            this.setVelocityX(-200);
-            this.flipX = true;
-            if (this.body.blocked.down) {
-                this.anims.play('left', true);
+    initStateMachine(scene) {
+        this.stateMachine = new StateMachine('IDLE', {
+            IDLE: {
+                enter: () => {
+                    this.setVelocityX(0);
+                    this.anims.play('turn', true);
+                },
+                execute: () => {
+                    const cursors = scene.input.keyboard.createCursorKeys();
+                    if (cursors.left.isDown) {
+                        this.stateMachine.transition('MOVE_LEFT');
+                    } else if (cursors.right.isDown) {
+                        this.stateMachine.transition('MOVE_RIGHT');
+                    } else if (cursors.up.isDown && this.body.blocked.down) {
+                        this.stateMachine.transition('JUMP');
+                    } else if (Phaser.Input.Keyboard.JustDown(cursors.space)) {
+                        this.stateMachine.transition('ATTACK');
+                    }
+                }
+            },
+            MOVE_LEFT: {
+                enter: () => {
+                    this.setVelocityX(-200);
+                    this.flipX = true;
+                    if (this.body.blocked.down) {
+                        this.anims.play('left', true);
+                    }
+                },
+                execute: () => {
+                    const cursors = scene.input.keyboard.createCursorKeys();
+                    if (!cursors.left.isDown) {
+                        if (cursors.right.isDown) {
+                            this.stateMachine.transition('MOVE_RIGHT');
+                        } else {
+                            this.stateMachine.transition('IDLE');
+                        }
+                    } else if (cursors.up.isDown && this.body.blocked.down) {
+                        this.stateMachine.transition('JUMP');
+                    } else if (Phaser.Input.Keyboard.JustDown(cursors.space)) {
+                        this.stateMachine.transition('ATTACK');
+                    }
+                }
+            },
+            MOVE_RIGHT: {
+                enter: () => {
+                    this.setVelocityX(200);
+                    this.flipX = false;
+                    if (this.body.blocked.down) {
+                        this.anims.play('right', true);
+                    }
+                },
+                execute: () => {
+                    const cursors = scene.input.keyboard.createCursorKeys();
+                    if (!cursors.right.isDown) {
+                        if (cursors.left.isDown) {
+                            this.stateMachine.transition('MOVE_LEFT');
+                        } else {
+                            this.stateMachine.transition('IDLE');
+                        }
+                    } else if (cursors.up.isDown && this.body.blocked.down) {
+                        this.stateMachine.transition('JUMP');
+                    } else if (Phaser.Input.Keyboard.JustDown(cursors.space)) {
+                        this.stateMachine.transition('ATTACK');
+                    }
+                }
+            },
+            JUMP: {
+                enter: () => {
+                    this.setVelocityY(-440);
+                    this.anims.play('jump', true);
+                },
+                execute: () => {
+                    if (this.body.blocked.down) {
+                        this.stateMachine.transition('IDLE');
+                    }
+                }
+            },
+            ATTACK: {
+                enter: () => {
+                    this.setVelocityX(0);
+                    this.anims.play('attack', true);
+                    // Transition to IDLE when attack animation completes
+                    this.once('animationcomplete-attack', () => {
+                        this.stateMachine.transition('IDLE');
+                    });
+                },
+                execute: () => {
+                    // No input during attack; wait for animation to complete
+                }
             }
-        }
+        }, this);
     }
 
-    moveRight() {
-        if (!this.isAttacking) { // Only move if not attacking
-            this.setVelocityX(200);
-            this.flipX = false;
-            if (this.body.blocked.down) {
-                this.anims.play('right', true);
-            }
-        }
-    }
-
-    idle() {
-        if (!this.isAttacking) { // Only idle if not attacking
-            this.setVelocityX(0);
-            this.anims.play('turn', true);
-        }
-    }
-
-    jump() {
-        if (this.body.blocked.down && !this.isAttacking) { // Only jump if on ground and not attacking
-            this.setVelocityY(-440);
-            this.anims.play('jump', true);
-        }
-    }
-
-    attack() {
-        if (!this.isAttacking) { // Only attack if not already attacking
-            this.isAttacking = true;
-            this.setVelocityX(0); // Stop movement during attack
-            this.anims.play('attack', true);
-            // Reset to idle after animation completes
-            this.once('animationcomplete-attack', () => {
-                this.isAttacking = false;
-                this.anims.play('turn', true);
-            });
-        }
+    update() {
+        this.stateMachine.update();
     }
 }

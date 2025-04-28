@@ -93,18 +93,7 @@ export class Game extends Phaser.Scene {
     }
 
     update() {
-        if (this.cursors.left.isDown) {
-            this.player.moveLeft();
-        } else if (this.cursors.right.isDown) {
-            this.player.moveRight();
-        } else if (Phaser.Input.Keyboard.JustDown(this.cursors.space)) {
-            this.player.attack();
-        } else {
-            this.player.idle();
-        }
-
-        if (this.cursors.up.isDown) {
-            this.player.jump();
-        }
+        //update player state machine
+        this.player.update();
     }
 }
