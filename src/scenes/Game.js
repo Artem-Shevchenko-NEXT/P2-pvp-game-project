@@ -147,8 +147,7 @@ export class Game extends Phaser.Scene {
     update() {
         // Update players
         this.player1.update();
-        this.player1HealthText.setText(`Player 1 Health: ${this.player1.health}`)
-
+ 
 
         
         this.player2.update();
