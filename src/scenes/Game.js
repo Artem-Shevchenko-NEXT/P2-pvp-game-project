@@ -72,10 +72,10 @@ export class Game extends Phaser.Scene {
 
         // Create player
         this.player1 = new Player(this, 100, 450);
-        this.player2 = new Player(this, 900, 450);
+        //this.player2 = new Player(this, 900, 450);
         // Set up collision between player and ground
         this.physics.add.collider(this.player1, ground);
-        this.physics.add.collider(this.player2, ground);
+        //this.physics.add.collider(this.player2, ground);
         // set up collison between player1 and player2 to prevent overlap(note somethings a little off here)
         this.physics.add.collider(this.player1, this.player2);
 
@@ -142,7 +142,8 @@ export class Game extends Phaser.Scene {
             right: Phaser.Input.Keyboard.KeyCodes.D,
             attack: Phaser.Input.Keyboard.KeyCodes.S
         });
-    }   */
+        */
+    }   
 
     handleHitboxCollision(attacker, target) {
         if (attacker.hitbox && attacker !== target && !target.isInvincible) {
