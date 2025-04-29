@@ -134,7 +134,7 @@ export class Game extends Phaser.Scene {
             .catch(err => {
                 console.error('Failed to connect:', err);
             });
-
+        /*
         // Set up input for player2 (temporary for testing)
         this.player2Keys = this.input.keyboard.addKeys({
             up: Phaser.Input.Keyboard.KeyCodes.W,
@@ -142,7 +142,7 @@ export class Game extends Phaser.Scene {
             right: Phaser.Input.Keyboard.KeyCodes.D,
             attack: Phaser.Input.Keyboard.KeyCodes.S
         });
-    }
+    }   */
 
     handleHitboxCollision(attacker, target) {
         if (attacker.hitbox && attacker !== target && !target.isInvincible) {
