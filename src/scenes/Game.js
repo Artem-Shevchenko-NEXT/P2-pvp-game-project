@@ -80,9 +80,10 @@ export class Game extends Phaser.Scene {
         this.physics.add.collider(this.player1, this.player2);
 
         //Set up hitbox collisions
+        /*
         this.physics.add.overlap(
             this.player1,
-            this.player2,
+            //this.player2,
             this.handleHitboxCollision,
             (player1, player2) => {
                 return player1.hitbox && player2.hitbox && player1.hitbox.active && player2.active;
@@ -90,7 +91,7 @@ export class Game extends Phaser.Scene {
             this
         );
         this.physics.add.overlap(
-            this.player2,
+            //this.player2,
             this.player1,
             this.handleHitboxCollision,
             (player2, player1) => {
@@ -98,7 +99,7 @@ export class Game extends Phaser.Scene {
             },
             this
         );
-
+        */
         //display health note. we can customise this font see description over text method
         this.player1HealthText = this.add.text(20, 20, `Player 1 Health: ${this.player1.health}`, {
             fontFamily: 'Arial',
@@ -107,6 +108,7 @@ export class Game extends Phaser.Scene {
             stroke: '#000000',
             strokeThickness: 4
         }).setDepth(10);
+        /*
         this.player2HealthText = this.add.text(560, 20, `Player 2 Health: ${this.player2.health}`, {
             fontFamily: 'Arial',
             fontSize: 24,
@@ -114,7 +116,7 @@ export class Game extends Phaser.Scene {
             stroke: '#000000',
             strokeThickness: 4
         }).setDepth(10);
-
+        */
         // Set camera to follow player if we would like this feature
         //this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
@@ -218,6 +220,6 @@ export class Game extends Phaser.Scene {
         this.player1HealthText.setText(`Player 1 Health: ${this.player1.health}`);
         this.player2HealthText.setText(`Player 2 Health: ${this.player2.health}`);
         */
-        
+        this.player1HealthText.setText(`Player 1 Health: ${this.player1.health}`);
     }
 }
