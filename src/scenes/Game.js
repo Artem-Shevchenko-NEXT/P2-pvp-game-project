@@ -86,6 +86,10 @@ export class Game extends Phaser.Scene {
         this.networkManager.connect()
             .then(data => {
                 console.log('Connected to server with ID:', data.id);
+                this.networkManager.joinGame({
+                    x: this.player.x,
+                    y: this.player.y
+                });
             })
             .catch(err => {
                 console.error('Failed to connect:', err);
