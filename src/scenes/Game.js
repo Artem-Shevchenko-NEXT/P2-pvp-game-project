@@ -1,5 +1,6 @@
 import { Player } from '../gameObjects/player.js';
 import NetworkManager from '../multiplayer/NetworkManager.js';
+
 export class Game extends Phaser.Scene {
     constructor() {
         super('Game');
@@ -70,17 +71,54 @@ export class Game extends Phaser.Scene {
         ground.setCollisionByProperty({ collides: true });
 
         // Create player
-        this.player = new Player(this, 100, 450);
+        this.player1 = new Player(this, 100, 450);
+        this.player2 = new Player(this, 900, 450);
         // Set up collision between player and ground
-        this.physics.add.collider(this.player, ground);
+        this.physics.add.collider(this.player1, ground);
+        this.physics.add.collider(this.player2, ground);
+        // set up collison between player1 and player2 to prevent overlap(note somethings a little off here)
+        this.physics.add.collider(this.player1, this.player2);
+
+        //Set up hitbox collisions
+        this.physics.add.overlap(
+            this.player1,
+            this.player2,
+            this.handleHitboxCollision,
+            (player1, player2) => {
+                return player1.hitbox && player2.hitbox && player1.hitbox.active && player2.active;
+            },
+            this
+        );
+        this.physics.add.overlap(
+            this.player2,
+            this.player1,
+            this.handleHitboxCollision,
+            (player2, player1) => {
+                return player2.hitbox && player1.hitbox && player2.hitbox.active && player1.active;
+            },
+            this
+        );
+
+        //display health note. we can customise this font see description over text method
+        this.player1HealthText = this.add.text(20, 20, `Player 1 Health: ${this.player1.health}`, {
+            fontFamily: 'Arial',
+            fontSize: 24,
+            color: '#ffffff',
+            stroke: '#000000',
+            strokeThickness: 4
+        }).setDepth(10);
+        this.player2HealthText = this.add.text(560, 20, `Player 2 Health: ${this.player2.health}`, {
+            fontFamily: 'Arial',
+            fontSize: 24,
+            color: '#ffffff',
+            stroke: '#000000',
+            strokeThickness: 4
+        }).setDepth(10);
 
         // Set camera to follow player if we would like this feature
         //this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
-        // Set up keyboard input
-        this.cursors = this.input.keyboard.createCursorKeys();
-        
         // Connect to server
         this.networkManager = new NetworkManager();
         this.networkManager.connect()
@@ -90,10 +128,48 @@ export class Game extends Phaser.Scene {
             .catch(err => {
                 console.error('Failed to connect:', err);
             });
+
+        // Set up input for player2 (temporary for testing)
+        this.player2Keys = this.input.keyboard.addKeys({
+            up: Phaser.Input.Keyboard.KeyCodes.W,
+            left: Phaser.Input.Keyboard.KeyCodes.A,
+            right: Phaser.Input.Keyboard.KeyCodes.D,
+            attack: Phaser.Input.Keyboard.KeyCodes.S
+        });
+    }
+
+    handleHitboxCollision(attacker, target) {
+        if (attacker.hitbox && attacker !== target && !target.isInvincible) {
+            target.takeDamage(attacker.attackDamage);
+        }
     }
 
     update() {
-        //update player state machine
-        this.player.update();
+        // Update players
+        this.player1.update();
+        this.player2.update();
+
+        // Temporary input handling for player2 (replace with network input for multiplayer)
+        if (this.player2Keys.left.isDown) {
+            this.player2.stateMachine.transition('MOVE_LEFT');
+        } else if (this.player2Keys.right.isDown) {
+            this.player2.stateMachine.transition('MOVE_RIGHT');
+        } else if (Phaser.Input.Keyboard.JustDown(this.player2Keys.attack)) {
+            this.player2.stateMachine.transition('ATTACK');
+        } else if (this.player2Keys.up.isDown && this.player2.body.blocked.down) {
+            this.player2.stateMachine.transition('JUMP');
+        } else if (
+            !this.player2Keys.left.isDown &&
+            !this.player2Keys.right.isDown &&
+            this.player2.stateMachine.currentState !== 'ATTACK' &&
+            this.player2.stateMachine.currentState !== 'HURT' &&
+            this.player2.stateMachine.currentState !== 'JUMP'
+        ) {
+            this.player2.stateMachine.transition('IDLE');
+        }
+
+        // Update health text
+        this.player1HealthText.setText(`Player 1 Health: ${this.player1.health}`);
+        this.player2HealthText.setText(`Player 2 Health: ${this.player2.health}`);
     }
 }
