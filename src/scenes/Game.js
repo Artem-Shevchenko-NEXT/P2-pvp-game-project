@@ -124,6 +124,12 @@ export class Game extends Phaser.Scene {
         this.networkManager.connect()
             .then(data => {
                 console.log('Connected to server with ID:', data.id);
+                
+                // Join the game after successful connection - This was missing
+                this.networkManager.joinGame({
+                    x: this.player1.x,
+                    y: this.player1.y
+                });
             })
             .catch(err => {
                 console.error('Failed to connect:', err);
@@ -147,9 +153,45 @@ export class Game extends Phaser.Scene {
     update() {
         // Update players
         this.player1.update();
- 
-
         
+        // Send player position updates to server if connected
+        if (this.networkManager && this.networkManager.connected) {
+            // Get current animation and direction from player's state
+            const currentState = this.player1.stateMachine.currentState;
+            let animation = 'turn';  // Default animation
+            let facing = this.player1.flipX ? 'left' : 'right';
+            
+            // Map state to animation
+            switch (currentState) {
+                case 'IDLE':
+                    animation = 'turn';
+                    break;
+                case 'MOVE_LEFT':
+                    animation = 'left';
+                    break;
+                case 'MOVE_RIGHT':
+                    animation = 'right';
+                    break;
+                case 'JUMP':
+                    animation = 'jump';
+                    break;
+                case 'ATTACK':
+                    animation = 'attack';
+                    break;
+            }
+            
+            // Send update to server
+            this.networkManager.sendPlayerUpdate(
+                this.player1.x,
+                this.player1.y,
+                {
+                    animation,
+                    facing
+                }
+            );
+        }
+
+        /* can add this back
         this.player2.update();
 
         // Temporary input handling for player2 (replace with network input for multiplayer)
@@ -174,7 +216,7 @@ export class Game extends Phaser.Scene {
         // Update health text
         this.player1HealthText.setText(`Player 1 Health: ${this.player1.health}`);
         this.player2HealthText.setText(`Player 2 Health: ${this.player2.health}`);
-        
+        */
         
     }
 }
