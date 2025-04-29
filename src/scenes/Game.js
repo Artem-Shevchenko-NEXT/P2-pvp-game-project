@@ -147,7 +147,7 @@ export class Game extends Phaser.Scene {
     update() {
         // Update players
         this.player1.update();
-        
+        this.player1HealthText.setText(`Player 1 Health: ${this.player1.health}`)
         // Send player position updates to server if connected
         if (this.networkManager && this.networkManager.connected) {
             // Get current animation and direction from player's state
