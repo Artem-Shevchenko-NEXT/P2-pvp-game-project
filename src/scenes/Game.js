@@ -147,6 +147,45 @@ export class Game extends Phaser.Scene {
     update() {
         // Update players
         this.player1.update();
+        
+        // Send player position updates to server if connected
+        if (this.networkManager && this.networkManager.connected) {
+            // Get current animation and direction from player's state
+            const currentState = this.player.stateMachine.currentState;
+            let animation = 'turn';  // Default animation
+            let facing = this.player.flipX ? 'left' : 'right';
+            
+            // Map state to animation 
+            switch (currentState) {
+                case 'IDLE':
+                    animation = 'turn';
+                    break;
+                case 'MOVE_LEFT':
+                    animation = 'left';
+                    break;
+                case 'MOVE_RIGHT':
+                    animation = 'right';
+                    break;
+                case 'JUMP':
+                    animation = 'jump';
+                    break;
+                case 'ATTACK':
+                    animation = 'attack';
+                    break;
+            }
+            
+            // Send update to server
+            this.networkManager.sendPlayerUpdate(
+                this.player.x,
+                this.player.y,
+                {
+                    animation,
+                    facing
+                }
+            );
+        }
+
+        /* add this back id needed
         this.player2.update();
 
         // Temporary input handling for player2 (replace with network input for multiplayer)
@@ -171,7 +210,7 @@ export class Game extends Phaser.Scene {
         // Update health text
         this.player1HealthText.setText(`Player 1 Health: ${this.player1.health}`);
         this.player2HealthText.setText(`Player 2 Health: ${this.player2.health}`);
-
+        */
         
     }
 }
