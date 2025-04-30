@@ -43,8 +43,40 @@ but the serve itself recives all updates from all players together at the same t
 
 //sammenkoble statemachine, og lav clients opdatere, med dataen serveren får
 
+
+
+import NetworkManager from '.NetworkManager.js';
+
+/*funktionen fungerer ikke endnu, fordi jeg ikke har givet de ordentlige variabler,
+ og der er også nogle ting som går igen i NetworkManager.js og server.js
+ Men det ligger et frame for det jeg skal bygge
+*/
+//sikrer connection
+io.on('connection', (socket) => {
+
+    //Sender gameState til en ny spiller som joiner(som er en anden variable jeg skal finde)
+    socket.emit('init',gameState);
+    //Sender playeren position
+    socket.broadcast.emit('playerJoined', {id: socket.id, x: 0, y: 0});
+
+    //Sender data når en player bevæger sig
+    socket.on('move',(data) => {
+        if (gameState.players[socket.id]) {
+            gameState.players[socket.id] = data;
+            socket.broadcast.emit('playerMoved', { id: socket.id, ...data });
+        }
+    });
+    //Sender data når en player disconnecter
+    socket.on('disconnect', () => {
+        delete gameState.players[socket.id];
+        socket.broadcast.emit('playerLeft', socket.id);
+    });
+});
+
+
 //interpolation calculates the characters expected position (clientside)
 //Skal kaldes med variablerne fra socket.on('playerUpdated')
+
 function interpolation(previous, velocity, acceleration, time){
     return previous + velocity*time + ((acceleration/2) * time*time);
 }
