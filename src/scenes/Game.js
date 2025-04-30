@@ -71,15 +71,28 @@ export class Game extends Phaser.Scene {
         const ground = map.createLayer('ground', tileset);
         ground.setCollisionByProperty({ collides: true });
 
-        // Create player
+        // Create player 1
         this.player1 = new TankCharacter(this, 100, 450);
-        this.player2 = new NinjaCharacter(this, 900, 450);
+                //display health note. we can customise this font see description over text method
+                this.player1HealthText = this.add.text(20, 20, `Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`, {
+                    fontFamily: 'Arial',
+                    fontSize: 24,
+                    color: '#ffffff',
+                    stroke: '#000000',
+                    strokeThickness: 4
+                }).setDepth(10);
         // Set up collision between player and ground
         this.physics.add.collider(this.player1, ground);
-        this.physics.add.collider(this.player2, ground);
-        // set up collison between player1 and player2 to prevent overlap(note somethings a little off here)
-        this.physics.add.collider(this.player1, this.player2);
+                //this.cameras.main.startFollow(this.player);
+                this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
+        // player 2 logic if need be add it back in
+        //this.player2 = new NinjaCharacter(this, 900, 450);
+        //this.physics.add.collider(this.player2, ground);
+        // set up collison between player1 and player2 to prevent overlap(note somethings a little off here)
+        //this.physics.add.collider(this.player1, this.player2);
+
+        /*
         //Set up hitbox collisions
         this.physics.add.overlap(
             this.player1,
@@ -99,15 +112,9 @@ export class Game extends Phaser.Scene {
             },
             this
         );
+        */
 
-        //display health note. we can customise this font see description over text method
-        this.player1HealthText = this.add.text(20, 20, `Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`, {
-            fontFamily: 'Arial',
-            fontSize: 24,
-            color: '#ffffff',
-            stroke: '#000000',
-            strokeThickness: 4
-        }).setDepth(10);
+        /*
         this.player2HealthText = this.add.text(560, 20, `Player 2 (${this.player2.characterType}) Health: ${this.player2.health}`, {
             fontFamily: 'Arial',
             fontSize: 24,
@@ -115,21 +122,8 @@ export class Game extends Phaser.Scene {
             stroke: '#000000',
             strokeThickness: 4
         }).setDepth(10);
-
-        // Set camera to follow player if we would like this feature
-        //this.cameras.main.startFollow(this.player);
-        this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-
-        // Connect to server
-        this.networkManager = new NetworkManager();
-        this.networkManager.connect()
-            .then(data => {
-                console.log('Connected to server with ID:', data.id);
-            })
-            .catch(err => {
-                console.error('Failed to connect:', err);
-            });
-
+        */
+        /*
         // Set up input for player2 (temporary for testing)
         this.player2Keys = this.input.keyboard.addKeys({
             up: Phaser.Input.Keyboard.KeyCodes.W,
@@ -137,7 +131,28 @@ export class Game extends Phaser.Scene {
             right: Phaser.Input.Keyboard.KeyCodes.D,
             attack: Phaser.Input.Keyboard.KeyCodes.S
         });
-    }
+        */
+        // Set camera to follow player if we would like this feature
+
+
+        // Connect to server
+        this.networkManager = new NetworkManager();
+        this.networkManager.connect()
+            .then(data => {
+                console.log('Connected to server with ID:', data.id);
+                
+                // Join the game after successful connection
+                this.networkManager.joinGame({
+                    x: this.player1.x,
+                    y: this.player1.y
+                });
+            })
+            .catch(err => {
+                console.error('Failed to connect:', err);
+            });
+        
+
+    }   
 
     handleHitboxCollision(attacker, target) {
         if (attacker.hitbox && attacker !== target && !target.isInvincible) {
@@ -148,8 +163,45 @@ export class Game extends Phaser.Scene {
     update() {
         // Update players
         this.player1.update();
-        this.player2.update();
 
+        // Send player position updates to server if connected
+        if (this.networkManager && this.networkManager.connected) {
+            const currentState = this.player1.stateMachine.currentState;
+            let animation = 'turn';
+            let facing = this.player1.flipX ? 'left' : 'right';
+
+            switch (currentState) {
+                case 'IDLE':
+                    animation = 'turn';
+                    break;
+                case 'MOVE_LEFT':
+                    animation = 'left';
+                    break;
+                case 'MOVE_RIGHT':
+                    animation = 'right';
+                    break;
+                case 'JUMP':
+                    animation = 'jump';
+                    break;
+                case 'ATTACK':
+                    animation = 'attack';
+                    break;
+            }
+
+            this.networkManager.sendPlayerUpdate(
+                this.player1.x,
+                this.player1.y,
+                {
+                    animation,
+                    facing
+                }
+            );
+        }
+
+        this.player1HealthText.setText(`Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`);
+
+        /* once again all below is player 2 logic
+        this.player2.update();
         // Temporary input handling for player2 (replace with network input for multiplayer)
         if (this.player2Keys.left.isDown) {
             this.player2.stateMachine.transition('MOVE_LEFT');
@@ -170,7 +222,8 @@ export class Game extends Phaser.Scene {
         }
 
         // Update health text
-        this.player1HealthText.setText(`Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`);
         this.player2HealthText.setText(`Player 2 (${this.player2.characterType}) Health: ${this.player2.health}`);
+        */
     }
+    
 }
