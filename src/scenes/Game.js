@@ -83,9 +83,17 @@ export class Game extends Phaser.Scene {
                 }).setDepth(10);
         // Set up collision between player and ground
         this.physics.add.collider(this.player1, ground);
-                //this.cameras.main.startFollow(this.player);
-                this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-
+        
+        //this.cameras.main.startFollow(this.player);
+        this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+        //display health note. we can customise this font see description over text method
+        this.player1HealthText = this.add.text(20, 20, `Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`, {
+            fontFamily: 'Arial',
+            fontSize: 24,
+            color: '#ffffff',
+            stroke: '#000000',
+            strokeThickness: 4
+        }).setDepth(10);
         // player 2 logic if need be add it back in
         //this.player2 = new NinjaCharacter(this, 900, 450);
         //this.physics.add.collider(this.player2, ground);
@@ -114,20 +122,9 @@ export class Game extends Phaser.Scene {
         );
         */
 
-<<<<<<< Updated upstream
+ 
         /*
         this.player2HealthText = this.add.text(560, 20, `Player 2 (${this.player2.characterType}) Health: ${this.player2.health}`, {
-=======
-        //display health note. we can customise this font see description over text method
-        this.player1HealthText = this.add.text(20, 20, `Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`, {
-            fontFamily: 'Arial',
-            fontSize: 24,
-            color: '#ffffff',
-            stroke: '#000000',
-            strokeThickness: 4
-        }).setDepth(10);
-        this.player2HealthText = this.add.text(500, 20, `Player 2 (${this.player2.characterType}) Health: ${this.player2.health}`, {
->>>>>>> Stashed changes
             fontFamily: 'Arial',
             fontSize: 24,
             color: '#ffffff',
