@@ -116,6 +116,17 @@ export class Game extends Phaser.Scene {
 
         /*
         this.player2HealthText = this.add.text(560, 20, `Player 2 (${this.player2.characterType}) Health: ${this.player2.health}`, {
+=======
+        //display health note. we can customise this font see description over text method
+        this.player1HealthText = this.add.text(20, 20, `Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`, {
+            fontFamily: 'Arial',
+            fontSize: 24,
+            color: '#ffffff',
+            stroke: '#000000',
+            strokeThickness: 4
+        }).setDepth(10);
+        this.player2HealthText = this.add.text(500, 20, `Player 2 (${this.player2.characterType}) Health: ${this.player2.health}`, {
+>>>>>>> Stashed changes
             fontFamily: 'Arial',
             fontSize: 24,
             color: '#ffffff',
