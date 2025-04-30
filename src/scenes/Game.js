@@ -114,6 +114,7 @@ export class Game extends Phaser.Scene {
         );
         */
 
+<<<<<<< Updated upstream
         /*
         this.player2HealthText = this.add.text(560, 20, `Player 2 (${this.player2.characterType}) Health: ${this.player2.health}`, {
 =======
