@@ -1,11 +1,4 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-
 import { PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y } from '../config.js';
-=======
->>>>>>> 03ed9327ac7c9fc42d765cf08174767bf0481a54
-=======
->>>>>>> 5310b69070a236fdb86c81cb3d5a5144a81a7df8
 import { TankCharacter } from '../gameObjects/TankCharacter.js';
 import { NinjaCharacter } from '../gameObjects/NinjaCharacter.js';
 import NetworkManager from '../multiplayer/NetworkManager.js';
@@ -86,8 +79,6 @@ export class Game extends Phaser.Scene {
         const ground = map.createLayer('ground', tileset);
         ground.setCollisionByProperty({ collides: true });
 
-<<<<<<< HEAD
-<<<<<<< HEAD
         // Create platforms layer and set collisions
         const platforms = map.createLayer('Platforms', tileset);
         platforms.setCollisionByProperty({ collides: true });
@@ -141,14 +132,6 @@ export class Game extends Phaser.Scene {
 
         // Create player 1
         this.player1 = new TankCharacter(this, PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y);
-=======
-        // Create player 1
-        this.player1 = new TankCharacter(this, 100, 450);
->>>>>>> 03ed9327ac7c9fc42d765cf08174767bf0481a54
-=======
-        // Create player 1
-        this.player1 = new TankCharacter(this, 100, 450);
->>>>>>> 5310b69070a236fdb86c81cb3d5a5144a81a7df8
                 //display health note. we can customise this font see description over text method
                 this.player1HealthText = this.add.text(20, 20, `Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`, {
                     fontFamily: 'Arial',
@@ -157,8 +140,7 @@ export class Game extends Phaser.Scene {
                     stroke: '#000000',
                     strokeThickness: 4
                 }).setDepth(10);
-<<<<<<< HEAD
-<<<<<<< HEAD
+
         // Set up collision between player and ground and platforms
         this.physics.add.collider(this.player1, ground);
         this.physics.add.collider(this.player1, platforms);
@@ -166,26 +148,7 @@ export class Game extends Phaser.Scene {
         //this.cameras.main.startFollow(this.player);
         this.physics.world.setBounds(0, 0, scaledWidth, scaledHeight);
         this.cameras.main.setBounds(0, 0, scaledWidth, scaledHeight);
-=======
-=======
->>>>>>> 5310b69070a236fdb86c81cb3d5a5144a81a7df8
-        // Set up collision between player and ground
-        this.physics.add.collider(this.player1, ground);
-        
-        //this.cameras.main.startFollow(this.player);
-        this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-<<<<<<< HEAD
->>>>>>> 03ed9327ac7c9fc42d765cf08174767bf0481a54
-=======
->>>>>>> 5310b69070a236fdb86c81cb3d5a5144a81a7df8
-        //display health note. we can customise this font see description over text method
-        this.player1HealthText = this.add.text(20, 20, `Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`, {
-            fontFamily: 'Arial',
-            fontSize: 24,
-            color: '#ffffff',
-            stroke: '#000000',
-            strokeThickness: 4
-        }).setDepth(10);
+
         // player 2 logic if need be add it back in
         //this.player2 = new NinjaCharacter(this, 900, 450);
         //this.physics.add.collider(this.player2, ground);
