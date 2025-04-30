@@ -32,9 +32,19 @@ but if you want you can move that logic into this clas for consistency.
 but the serve itself recives all updates from all players together at the same time)
  */
 
-// managing remote player instances(by witch i mean rendering players from different windows) in the game
+// managing remote player instances(by which i mean rendering players from different windows) in the game
     // player rendering
-// handling network events related to playr joinning/leaving
-    //Forsøg at bruge 'gamejoined' 
+// handling network events related to player joinning/leaving
+    //Forsøg at bruge socket.on('gameJoined') 
 // updating remote player positions and animations based on received data
+    //forsøg at bruge socket.on('playerUpdated')
+    //brug interpolation til at calculate playerens position
 // providing methods to easily synchronize local player state
+
+//sammenkoble statemachine, og lav clients opdatere, med dataen serveren får
+
+//interpolation calculates the characters expected position (clientside)
+//Skal kaldes med variablerne fra socket.on('playerUpdated')
+function interpolation(previous, velocity, acceleration, time){
+    return previous + velocity*time + ((acceleration/2) * time*time);
+}
