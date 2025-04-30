@@ -1,4 +1,13 @@
-import { Player } from '../gameObjects/player.js';
+<<<<<<< HEAD
+<<<<<<< HEAD
+
+import { PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y } from '../config.js';
+=======
+>>>>>>> 03ed9327ac7c9fc42d765cf08174767bf0481a54
+=======
+>>>>>>> 5310b69070a236fdb86c81cb3d5a5144a81a7df8
+import { TankCharacter } from '../gameObjects/TankCharacter.js';
+import { NinjaCharacter } from '../gameObjects/NinjaCharacter.js';
 import NetworkManager from '../multiplayer/NetworkManager.js';
 
 export class Game extends Phaser.Scene {
@@ -50,7 +59,14 @@ export class Game extends Phaser.Scene {
                     const sourceWidth = imageData.source[0].width;
                     const sourceHeight = imageData.source[0].height;
                     if (object.width && object.height) {
-                        image.setScale(object.width / sourceWidth, object.height / sourceHeight);
+                            // The original background-scaling below: outcommented for experimenting with "dynamic"-background scaling
+                        // image.setScale(object.width / sourceWidth, object.height / sourceHeight);
+
+                        const scaleX = this.scale.width / sourceWidth; // sourceWidth/Height: is the height/width from the actual image file.
+                        const scaleY = this.scale.height / sourceHeight;
+                        const scale = Math.max(scaleX, scaleY); // Use Math.min() instead to NOT crop the image. 
+                        
+                        image.setScale(scale);
                     }
 
                     // Optional: Add parallax effect not sure if this really works
@@ -70,46 +86,137 @@ export class Game extends Phaser.Scene {
         const ground = map.createLayer('ground', tileset);
         ground.setCollisionByProperty({ collides: true });
 
-        // Create player
-        this.player1 = new Player(this, 100, 450);
-        //this.player2 = new Player(this, 900, 450);
+<<<<<<< HEAD
+<<<<<<< HEAD
+        // Create platforms layer and set collisions
+        const platforms = map.createLayer('Platforms', tileset);
+        platforms.setCollisionByProperty({ collides: true });
+
+        const mapWidth    = map.widthInPixels;
+        const mapHeight   = map.heightInPixels;
+        const screenWidth = this.scale.width;
+        const screenHeight = this.scale.height;
+        // Calculating the scale for the map-file in relation to the resolution.
+        const scaleX = screenWidth / mapWidth;
+        const scaleY = screenHeight / mapHeight;
+        // And then seeting that scale ground- and platforms map-files.
+        ground.setScale(scaleX, scaleY);
+        platforms.setScale(scaleX, scaleY);
+
+        const scaledWidth = mapWidth * scaleX;
+        const scaledHeight = mapHeight * scaleY;
+
+        /*
+        // Old attempt: Scaling the offset instead of the scale.
+        let xOffset = 0;
+        if (screenWidth > mapWidth) {
+            xOffset = Math.floor((screenWidth - mapWidth) / 2);
+        }
+
+        let yOffset = 0;
+        if (screenHeight > mapHeight) {
+          yOffset = screenHeight - mapHeight;
+        }
+
+        ground.setPosition(xOffset, yOffset);
+        platforms.setPosition(xOffset, yOffset);
+
+        this.physics.world.setBounds(xOffset, yOffset, mapWidth, mapHeight);
+        this.cameras.main.setBounds(xOffset, yOffset, mapWidth, mapHeight);
+        */
+
+        // Experimental code for scaling the player with resolution-change.
+        /*
+        const spawnX = PLAYER1_SPAWN_X * scaleX;
+        const spawnY = PLAYER1_SPAWN_Y * scaleY;
+
+        this.player1 = new Player(this, spawnX, spawnY);
+        this.player1.setScale(scaleX, scaleY);
+
+        this.player1.body.setSize(
+            this.player1.displayWidth,
+            this.player1.displayHeight
+        );
+        */
+
+        // Create player 1
+        this.player1 = new TankCharacter(this, PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y);
+=======
+        // Create player 1
+        this.player1 = new TankCharacter(this, 100, 450);
+>>>>>>> 03ed9327ac7c9fc42d765cf08174767bf0481a54
+=======
+        // Create player 1
+        this.player1 = new TankCharacter(this, 100, 450);
+>>>>>>> 5310b69070a236fdb86c81cb3d5a5144a81a7df8
+                //display health note. we can customise this font see description over text method
+                this.player1HealthText = this.add.text(20, 20, `Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`, {
+                    fontFamily: 'Arial',
+                    fontSize: 24,
+                    color: '#ffffff',
+                    stroke: '#000000',
+                    strokeThickness: 4
+                }).setDepth(10);
+<<<<<<< HEAD
+<<<<<<< HEAD
+        // Set up collision between player and ground and platforms
+        this.physics.add.collider(this.player1, ground);
+        this.physics.add.collider(this.player1, platforms);
+        
+        //this.cameras.main.startFollow(this.player);
+        this.physics.world.setBounds(0, 0, scaledWidth, scaledHeight);
+        this.cameras.main.setBounds(0, 0, scaledWidth, scaledHeight);
+=======
+=======
+>>>>>>> 5310b69070a236fdb86c81cb3d5a5144a81a7df8
         // Set up collision between player and ground
         this.physics.add.collider(this.player1, ground);
+        
+        //this.cameras.main.startFollow(this.player);
+        this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+<<<<<<< HEAD
+>>>>>>> 03ed9327ac7c9fc42d765cf08174767bf0481a54
+=======
+>>>>>>> 5310b69070a236fdb86c81cb3d5a5144a81a7df8
+        //display health note. we can customise this font see description over text method
+        this.player1HealthText = this.add.text(20, 20, `Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`, {
+            fontFamily: 'Arial',
+            fontSize: 24,
+            color: '#ffffff',
+            stroke: '#000000',
+            strokeThickness: 4
+        }).setDepth(10);
+        // player 2 logic if need be add it back in
+        //this.player2 = new NinjaCharacter(this, 900, 450);
         //this.physics.add.collider(this.player2, ground);
         // set up collison between player1 and player2 to prevent overlap(note somethings a little off here)
-        this.physics.add.collider(this.player1, this.player2);
+        //this.physics.add.collider(this.player1, this.player2);
 
-        //Set up hitbox collisions
         /*
+        //Set up hitbox collisions
         this.physics.add.overlap(
             this.player1,
-            //this.player2,
+            this.player2,
             this.handleHitboxCollision,
             (player1, player2) => {
-                return player1.hitbox && player2.hitbox && player1.hitbox.active && player2.active;
+                return player1.hitbox && player2.active;
             },
             this
         );
         this.physics.add.overlap(
-            //this.player2,
+            this.player2,
             this.player1,
             this.handleHitboxCollision,
             (player2, player1) => {
-                return player2.hitbox && player1.hitbox && player2.hitbox.active && player1.active;
+                return player2.hitbox && player1.active;
             },
             this
         );
         */
-        //display health note. we can customise this font see description over text method
-        this.player1HealthText = this.add.text(20, 20, `Player 1 Health: ${this.player1.health}`, {
-            fontFamily: 'Arial',
-            fontSize: 24,
-            color: '#ffffff',
-            stroke: '#000000',
-            strokeThickness: 4
-        }).setDepth(10);
+
+ 
         /*
-        this.player2HealthText = this.add.text(560, 20, `Player 2 Health: ${this.player2.health}`, {
+        this.player2HealthText = this.add.text(560, 20, `Player 2 (${this.player2.characterType}) Health: ${this.player2.health}`, {
             fontFamily: 'Arial',
             fontSize: 24,
             color: '#ffffff',
@@ -117,25 +224,6 @@ export class Game extends Phaser.Scene {
             strokeThickness: 4
         }).setDepth(10);
         */
-        // Set camera to follow player if we would like this feature
-        //this.cameras.main.startFollow(this.player);
-        this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-
-        // Connect to server
-        this.networkManager = new NetworkManager();
-        this.networkManager.connect()
-            .then(data => {
-                console.log('Connected to server with ID:', data.id);
-                
-                // Join the game after successful connection - This was missing
-                this.networkManager.joinGame({
-                    x: this.player1.x,
-                    y: this.player1.y
-                });
-            })
-            .catch(err => {
-                console.error('Failed to connect:', err);
-            });
         /*
         // Set up input for player2 (temporary for testing)
         this.player2Keys = this.input.keyboard.addKeys({
@@ -145,6 +233,26 @@ export class Game extends Phaser.Scene {
             attack: Phaser.Input.Keyboard.KeyCodes.S
         });
         */
+        // Set camera to follow player if we would like this feature
+
+
+        // Connect to server
+        this.networkManager = new NetworkManager();
+        this.networkManager.connect()
+            .then(data => {
+                console.log('Connected to server with ID:', data.id);
+                
+                // Join the game after successful connection
+                this.networkManager.joinGame({
+                    x: this.player1.x,
+                    y: this.player1.y
+                });
+            })
+            .catch(err => {
+                console.error('Failed to connect:', err);
+            });
+        
+
     }   
 
     handleHitboxCollision(attacker, target) {
@@ -156,15 +264,13 @@ export class Game extends Phaser.Scene {
     update() {
         // Update players
         this.player1.update();
-        
+
         // Send player position updates to server if connected
         if (this.networkManager && this.networkManager.connected) {
-            // Get current animation and direction from player's state
             const currentState = this.player1.stateMachine.currentState;
-            let animation = 'turn';  // Default animation
+            let animation = 'turn';
             let facing = this.player1.flipX ? 'left' : 'right';
-            
-            // Map state to animation
+
             switch (currentState) {
                 case 'IDLE':
                     animation = 'turn';
@@ -182,8 +288,7 @@ export class Game extends Phaser.Scene {
                     animation = 'attack';
                     break;
             }
-            
-            // Send update to server
+
             this.networkManager.sendPlayerUpdate(
                 this.player1.x,
                 this.player1.y,
@@ -194,9 +299,10 @@ export class Game extends Phaser.Scene {
             );
         }
 
-        /* can add this back
-        this.player2.update();
+        this.player1HealthText.setText(`Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`);
 
+        /* once again all below is player 2 logic
+        this.player2.update();
         // Temporary input handling for player2 (replace with network input for multiplayer)
         if (this.player2Keys.left.isDown) {
             this.player2.stateMachine.transition('MOVE_LEFT');
@@ -217,9 +323,8 @@ export class Game extends Phaser.Scene {
         }
 
         // Update health text
-        this.player1HealthText.setText(`Player 1 Health: ${this.player1.health}`);
-        this.player2HealthText.setText(`Player 2 Health: ${this.player2.health}`);
+        this.player2HealthText.setText(`Player 2 (${this.player2.characterType}) Health: ${this.player2.health}`);
         */
-        this.player1HealthText.setText(`Player 1 Health: ${this.player1.health}`);
     }
+    
 }

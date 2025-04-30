@@ -32,9 +32,51 @@ but if you want you can move that logic into this clas for consistency.
 but the serve itself recives all updates from all players together at the same time)
  */
 
-// managing remote player instances(by witch i mean rendering players from different windows) in the game
+// managing remote player instances(by which i mean rendering players from different windows) in the game
     // player rendering
-// handling network events related to playr joinning/leaving
-    //Forsøg at bruge 'gamejoined' 
+// handling network events related to player joinning/leaving
+    //Forsøg at bruge socket.on('gameJoined') 
 // updating remote player positions and animations based on received data
+    //forsøg at bruge socket.on('playerUpdated')
+    //brug interpolation til at calculate playerens position
 // providing methods to easily synchronize local player state
+
+//sammenkoble statemachine, og lav clients opdatere, med dataen serveren får
+
+
+
+import NetworkManager from '.NetworkManager.js';
+
+/*funktionen fungerer ikke endnu, fordi jeg ikke har givet de ordentlige variabler,
+ og der er også nogle ting som går igen i NetworkManager.js og server.js
+ Men det ligger et frame for det jeg skal bygge
+*/
+//sikrer connection
+io.on('connection', (socket) => {
+
+    //Sender gameState til en ny spiller som joiner(som er en anden variable jeg skal finde)
+    socket.emit('init',gameState);
+    //Sender playeren position
+    socket.broadcast.emit('playerJoined', {id: socket.id, x: 0, y: 0});
+
+    //Sender data når en player bevæger sig
+    socket.on('move',(data) => {
+        if (gameState.players[socket.id]) {
+            gameState.players[socket.id] = data;
+            socket.broadcast.emit('playerMoved', { id: socket.id, ...data });
+        }
+    });
+    //Sender data når en player disconnecter
+    socket.on('disconnect', () => {
+        delete gameState.players[socket.id];
+        socket.broadcast.emit('playerLeft', socket.id);
+    });
+});
+
+
+//interpolation calculates the characters expected position (clientside)
+//Skal kaldes med variablerne fra socket.on('playerUpdated')
+
+function interpolation(previous, velocity, acceleration, time){
+    return previous + velocity*time + ((acceleration/2) * time*time);
+}
