@@ -4,7 +4,7 @@ export class StateMachine {
         this.states = states;
         this.context = context;
     }
-
+    // Exit and enter are only running/checking a single frame of the animation. Enter the first frame, and exit the last frame.
     transition(newState) {
         if (this.states[newState] && this.currentState !== newState) {
             //Exit current state
@@ -19,7 +19,7 @@ export class StateMachine {
             }
         }
     }
-
+    // Execute is updating the entire lifetime of the animation?
     update() {
         if (this.states[this.currentState].execute) {
             this.states[this.currentState].execute.call(this.context);

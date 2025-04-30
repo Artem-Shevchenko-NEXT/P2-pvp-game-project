@@ -34,7 +34,7 @@ export class Preloader extends Phaser.Scene {
         this.load.image('background3', 'oak_woods/background/background_layer_3.png');
         
         //loading our game map Json file from the program Tiled
-        this.load.tilemapTiledJSON('tilemap', 'game_map_oakwood_v2.json');
+        this.load.tilemapTiledJSON('tilemap', 'game_map_oakwood_v3.json');
        
         //Tank character assets loads here
         this.load.atlas(

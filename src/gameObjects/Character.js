@@ -5,7 +5,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         super(scene, x, y, config.idleSpriteKey || 'tank_idle');
         scene.add.existing(this);
         scene.physics.add.existing(this);
-        this.setBounce(0.2); //maybe set this to 0
+        this.setBounce(0.0); //maybe set this to 0
         this.setCollideWorldBounds(true);
 
         //combat properties
@@ -79,16 +79,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     this.anims.play(this.animationKeys.turn, true);
                 },
                 execute: () => {
-                    const cursors = scene.input.keyboard.createCursorKeys();
-                    if (cursors.left.isDown) {
-                        this.stateMachine.transition('MOVE_LEFT');
-                    } else if (cursors.right.isDown) {
-                        this.stateMachine.transition('MOVE_RIGHT');
-                    } else if (cursors.up.isDown && this.body.blocked.down) {
-                        this.stateMachine.transition('JUMP');
-                    } else if (Phaser.Input.Keyboard.JustDown(cursors.space)) {
-                        this.stateMachine.transition('ATTACK');
-                    }
+                    this.handleKeyInput();
                 }
             },
             MOVE_LEFT: {
@@ -139,18 +130,25 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             },
             JUMP: {
                 enter: () => {
-                    this.setVelocityY(-440);
+                    if (this.body.blocked.down){
+                        this.setVelocityY(-440);
+                    }
                     this.anims.play(this.animationKeys.jump, true);
                 },
                 execute: () => {
+                    const cursors = this.scene.input.keyboard.createCursorKeys();
                     if (this.body.blocked.down) {
-                        this.stateMachine.transition('IDLE');
+                        this.handleKeyInput();
+                    } else if (Phaser.Input.Keyboard.JustDown(cursors.space)) {
+                        this.stateMachine.transition('ATTACK');
                     }
                 }
             },
             ATTACK: {
                 enter: () => {
-                    this.setVelocityX(0);
+                    if (this.body.blocked.down){
+                        this.setVelocityX(0);
+                    }
                     this.anims.play(this.animationKeys.attack, true);
                     // create hitbox on attack animation (this can be adjusted to the individual sprite)
                     this.scene.time.delayedCall(100, () => { //to match hitbox on specific frame adjust this timer
@@ -158,10 +156,14 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                             this.createHitbox();
                         }
                     });
-                    // Transition to IDLE when attack anim. is complete.
+
                     this.once(`animationcomplete-${this.animationKeys.attack}`, () => {
                         this.destroyHitbox();
-                        this.stateMachine.transition('IDLE');
+                        if (!this.body.blocked.down) {
+                            this.stateMachine.transition('JUMP');
+                        } else {
+                        this.handleKeyInput();
+                        }
                     });
                 },
                 execute: () => {
@@ -195,6 +197,21 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 }
             }
         }, this);
+    }
+
+    handleKeyInput(){
+        const cursors = this.scene.input.keyboard.createCursorKeys();
+        if (cursors.left.isDown) {
+            this.stateMachine.transition('MOVE_LEFT');
+        } else if (cursors.right.isDown) {
+            this.stateMachine.transition('MOVE_RIGHT');
+        } else if (cursors.up.isDown && this.body.blocked.down) {
+            this.stateMachine.transition('JUMP');
+        } else if (Phaser.Input.Keyboard.JustDown(cursors.space)) {
+            this.stateMachine.transition('ATTACK');
+        } else {
+            this.stateMachine.transition('IDLE');
+        }
     }
 
     createHitbox() {

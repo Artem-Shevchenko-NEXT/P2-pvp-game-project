@@ -3,7 +3,7 @@
 // Variables for the resolution of the game window:
     // Original: 816x600
     // For now is 816x600 also the minimum size allowed in order to work with the dynamic re-scaling of tiles.
-export const SCREEN_WIDTH = 1024;
+export const SCREEN_WIDTH = 1032;
 export const SCREEN_HEIGHT = 768;
 
 // Variables for player 1 spawn point coordinates.

@@ -1,4 +1,4 @@
-import { PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y } from '../config.js';
+import { PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y, SCREEN_HEIGHT, SCREEN_WIDTH } from '../config.js';
 import { TankCharacter } from '../gameObjects/TankCharacter.js';
 import { NinjaCharacter } from '../gameObjects/NinjaCharacter.js';
 import NetworkManager from '../multiplayer/NetworkManager.js';
@@ -85,11 +85,9 @@ export class Game extends Phaser.Scene {
 
         const mapWidth    = map.widthInPixels;
         const mapHeight   = map.heightInPixels;
-        const screenWidth = this.scale.width;
-        const screenHeight = this.scale.height;
         // Calculating the scale for the map-file in relation to the resolution.
-        const scaleX = screenWidth / mapWidth;
-        const scaleY = screenHeight / mapHeight;
+        const scaleX = SCREEN_WIDTH / mapWidth;
+        const scaleY = SCREEN_HEIGHT / mapHeight;
         // And then seeting that scale ground- and platforms map-files.
         ground.setScale(scaleX, scaleY);
         platforms.setScale(scaleX, scaleY);
@@ -132,14 +130,14 @@ export class Game extends Phaser.Scene {
 
         // Create player 1
         this.player1 = new TankCharacter(this, PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y);
-                //display health note. we can customise this font see description over text method
-                this.player1HealthText = this.add.text(20, 20, `Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`, {
-                    fontFamily: 'Arial',
-                    fontSize: 24,
-                    color: '#ffffff',
-                    stroke: '#000000',
-                    strokeThickness: 4
-                }).setDepth(10);
+        //display health note. we can customise this font see description over text method
+        this.player1HealthText = this.add.text(20, 20, `Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`, {
+            fontFamily: 'Arial',
+            fontSize: 24,
+            color: '#ffffff',
+            stroke: '#000000',
+            strokeThickness: 4
+        }).setDepth(10);
 
         // Set up collision between player and ground and platforms
         this.physics.add.collider(this.player1, ground);
