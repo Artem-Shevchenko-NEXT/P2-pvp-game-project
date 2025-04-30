@@ -1,4 +1,5 @@
-import { Player } from '../gameObjects/player.js';
+import { TankCharacter } from '../gameObjects/TankCharacter.js';
+import { NinjaCharacter } from '../gameObjects/NinjaCharacter.js';
 import NetworkManager from '../multiplayer/NetworkManager.js';
 
 export class Game extends Phaser.Scene {
@@ -71,8 +72,8 @@ export class Game extends Phaser.Scene {
         ground.setCollisionByProperty({ collides: true });
 
         // Create player
-        this.player1 = new Player(this, 100, 450);
-        this.player2 = new Player(this, 900, 450);
+        this.player1 = new TankCharacter(this, 100, 450);
+        this.player2 = new NinjaCharacter(this, 900, 450);
         // Set up collision between player and ground
         this.physics.add.collider(this.player1, ground);
         this.physics.add.collider(this.player2, ground);
@@ -85,7 +86,7 @@ export class Game extends Phaser.Scene {
             this.player2,
             this.handleHitboxCollision,
             (player1, player2) => {
-                return player1.hitbox && player2.hitbox && player1.hitbox.active && player2.active;
+                return player1.hitbox && player2.active;
             },
             this
         );
@@ -94,20 +95,20 @@ export class Game extends Phaser.Scene {
             this.player1,
             this.handleHitboxCollision,
             (player2, player1) => {
-                return player2.hitbox && player1.hitbox && player2.hitbox.active && player1.active;
+                return player2.hitbox && player1.active;
             },
             this
         );
 
         //display health note. we can customise this font see description over text method
-        this.player1HealthText = this.add.text(20, 20, `Player 1 Health: ${this.player1.health}`, {
+        this.player1HealthText = this.add.text(20, 20, `Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`, {
             fontFamily: 'Arial',
             fontSize: 24,
             color: '#ffffff',
             stroke: '#000000',
             strokeThickness: 4
         }).setDepth(10);
-        this.player2HealthText = this.add.text(560, 20, `Player 2 Health: ${this.player2.health}`, {
+        this.player2HealthText = this.add.text(560, 20, `Player 2 (${this.player2.characterType}) Health: ${this.player2.health}`, {
             fontFamily: 'Arial',
             fontSize: 24,
             color: '#ffffff',
@@ -169,7 +170,7 @@ export class Game extends Phaser.Scene {
         }
 
         // Update health text
-        this.player1HealthText.setText(`Player 1 Health: ${this.player1.health}`);
-        this.player2HealthText.setText(`Player 2 Health: ${this.player2.health}`);
+        this.player1HealthText.setText(`Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`);
+        this.player2HealthText.setText(`Player 2 (${this.player2.characterType}) Health: ${this.player2.health}`);
     }
 }
