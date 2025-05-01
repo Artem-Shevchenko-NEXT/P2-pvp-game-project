@@ -54,23 +54,26 @@ import NetworkManager from '.NetworkManager.js';
 //sikrer connection
 io.on('connection', (socket) => {
 
+    /* jeg tror det her allerede er implementeret i NetworkManager
     //Sender gameState til en ny spiller som joiner(som er en anden variable jeg skal finde)
     socket.emit('init',gameState);
     //Sender playeren position
     socket.broadcast.emit('playerJoined', {id: socket.id, x: 0, y: 0});
+    */
+
+        //Sender data når en player disconnecter
+    socket.on('disconnect', () => {
+        delete player[socket.id];
+        socket.broadcast.emit('User disconnected:', socket.id);
+    });
 
     //Sender data når en player bevæger sig
     socket.on('move',(data) => {
-        if (gameState.players[socket.id]) {
-            gameState.players[socket.id] = data;
-            socket.broadcast.emit('playerMoved', { id: socket.id, ...data });
+        if (player[socket.id]) {
+            socket.broadcast.emit('playerMoved', { id: socket.id, player});
         }
     });
-    //Sender data når en player disconnecter
-    socket.on('disconnect', () => {
-        delete gameState.players[socket.id];
-        socket.broadcast.emit('playerLeft', socket.id);
-    });
+
 });
 
 

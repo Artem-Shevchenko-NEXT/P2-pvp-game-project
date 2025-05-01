@@ -51,6 +51,7 @@ export default class NetworkManager {
           // event listener for player_updated
           this.socket.on('player_updated', (data) => {
             this.triggerEvent('playerUpdated', data);
+            
           });
           // TODO: Add event handlers for player_joined and player_left
           // These events wil ptobably be needed by GameSync to add/remove remote player instances
