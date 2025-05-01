@@ -35,7 +35,44 @@ export class Preloader extends Phaser.Scene {
         
         //loading our game map Json file from the program Tiled
         this.load.tilemapTiledJSON('tilemap', 'game_map_oakwood.json');
-       
+
+         //Mage character assets loads here
+        this.load.atlas(
+            'mage_idle',
+            'mage/mage_idle.png', 'mage/mage_idle.json'    
+        );
+        this.load.atlas(
+            'mage_run',
+            'mage/mage_run.png', 'mage/mage_run.json'    
+        );
+        this.load.atlas(
+            'mage_jump',
+            'mage/mage_jump.png', 'mage/mage_jump.json'    
+        );
+        this.load.atlas(
+            'mage_attack',
+            'mage/mage_attack.png', 'mage/mage_attack.json'    
+        );      
+
+         //Ninja character assets loads here
+        this.load.atlas(
+            'ninja_idle',
+            'ninja/ninja_idle.png', 'ninja/ninja_idle.json'    
+        );
+        this.load.atlas(
+            'ninja_run',
+            'ninja/ninja_run.png', 'ninja/ninja_run.json'    
+        );
+        this.load.atlas(
+            'ninja_jump',
+            'ninja/ninja_jump.png', 'ninja/ninja_jump.json'    
+        );
+        this.load.atlas(
+            'ninja_attack',
+            'ninja/ninja_attack.png', 'ninja/ninja_attack.json'    
+        );  
+
+
         //Tank character assets loads here
         this.load.atlas(
             'tank_idle',

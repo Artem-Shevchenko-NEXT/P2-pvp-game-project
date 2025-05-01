@@ -1,3 +1,4 @@
+import { MageCharacter } from '../gameObjects/MageCharacter.js';
 import { TankCharacter } from '../gameObjects/TankCharacter.js';
 import { NinjaCharacter } from '../gameObjects/NinjaCharacter.js';
 import NetworkManager from '../multiplayer/NetworkManager.js';
@@ -72,7 +73,7 @@ export class Game extends Phaser.Scene {
         ground.setCollisionByProperty({ collides: true });
 
         // Create player 1
-        this.player1 = new TankCharacter(this, 100, 450);
+        this.player1 = new MageCharacter(this, 100, 450);
                 //display health note. we can customise this font see description over text method
                 this.player1HealthText = this.add.text(20, 20, `Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`, {
                     fontFamily: 'Arial',

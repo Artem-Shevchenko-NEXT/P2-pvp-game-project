@@ -4,7 +4,7 @@ export class NinjaCharacter extends Character {
     constructor(scene, x, y) {
         super(scene, x, y, {
             characterType: 'ninja',
-            idleSpriteKey: 'tank_idle', // Placeholder; replace with 'ninja_idle'
+            idleSpriteKey: 'ninja_idle', // Placeholder; replace with 'ninja_idle'
             health: 80, // Less health than tank
             maxHealth: 80,
             attackDamage: 15, // Higher damage
@@ -25,37 +25,37 @@ export class NinjaCharacter extends Character {
         // Placeholder: Using tank animations; replace with ninja assets
         this.anims.create({
             key: this.animationKeys.left,
-            frames: this.anims.generateFrameNames('tank_run', { prefix: 'running', end: 8, zeroPad: 4 }),
+            frames: this.anims.generateFrameNames('ninja_run', { prefix: 'running', end: 8, zeroPad: 4 }),
             frameRate: 12, // Faster for ninja
             repeat: -1
         });
         this.anims.create({
             key: this.animationKeys.turn,
-            frames: this.anims.generateFrameNames('tank_idle', { prefix: 'idle', end: 8, zeroPad: 4 }),
+            frames: this.anims.generateFrameNames('ninja_idle', { prefix: 'idle', end: 8, zeroPad: 4 }),
             frameRate: 12,
             repeat: -1
         });
         this.anims.create({
             key: this.animationKeys.right,
-            frames: this.anims.generateFrameNames('tank_run', { prefix: 'running', end: 8, zeroPad: 4 }),
+            frames: this.anims.generateFrameNames('ninja_run', { prefix: 'running', end: 8, zeroPad: 4 }),
             frameRate: 12,
             repeat: -1
         });
         this.anims.create({
             key: this.animationKeys.jump,
-            frames: this.anims.generateFrameNames('tank_jump', { prefix: 'jumping', end: 8, zeroPad: 4 }),
+            frames: this.anims.generateFrameNames('ninja_jump', { prefix: 'jumping', end: 8, zeroPad: 4 }),
             frameRate: 6,
             repeat: 0
         });
         this.anims.create({
             key: this.animationKeys.attack,
-            frames: this.anims.generateFrameNames('tank_attack', { prefix: 'attackRight', end: 4, zeroPad: 4 }),
+            frames: this.anims.generateFrameNames('ninja_attack', { prefix: 'attackRight', end: 4, zeroPad: 4 }),
             frameRate: 16, // Faster attack
             repeat: 0
         });
         this.anims.create({
             key: this.animationKeys.hurt,
-            frames: this.anims.generateFrameNames('tank_idle', { prefix: 'idle', end: 8, zeroPad: 4 }),
+            frames: this.anims.generateFrameNames('ninja_idle', { prefix: 'idle', end: 8, zeroPad: 4 }),
             frameRate: 12,
             repeat: 0
         });
