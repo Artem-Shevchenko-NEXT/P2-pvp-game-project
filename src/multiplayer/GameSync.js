@@ -44,7 +44,7 @@ but the serve itself recives all updates from all players together at the same t
 //sammenkoble statemachine, og lav clients opdatere, med dataen serveren får
 
 
-
+//Der er måske ikke brug for den
 import NetworkManager from '.NetworkManager.js';
 
 /*funktionen fungerer ikke endnu, fordi jeg ikke har givet de ordentlige variabler,
@@ -53,13 +53,6 @@ import NetworkManager from '.NetworkManager.js';
 */
 //sikrer connection
 io.on('connection', (socket) => {
-
-    /* jeg tror det her allerede er implementeret i NetworkManager
-    //Sender gameState til en ny spiller som joiner(som er en anden variable jeg skal finde)
-    socket.emit('init',gameState);
-    //Sender playeren position
-    socket.broadcast.emit('playerJoined', {id: socket.id, x: 0, y: 0});
-    */
 
         //Sender data når en player disconnecter
     socket.on('disconnect', () => {
@@ -70,7 +63,8 @@ io.on('connection', (socket) => {
     //Sender data når en player bevæger sig
     socket.on('move',(data) => {
         if (player[socket.id]) {
-            socket.broadcast.emit('playerMoved', { id: socket.id, player});
+            //player[socket.id] = data;
+            socket.broadcast.emit('playerMoved', { id: socket.id, player: data });
         }
     });
 
