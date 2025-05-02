@@ -167,7 +167,7 @@ export class Game extends Phaser.Scene {
 
 =======
         this.player1 = new TankCharacter(this, PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y);
-        socket.emit('newPlayer');
+        //socket.emit('newPlayer');
 >>>>>>> 38142d377ffecb6a9794866f65b6f81a635cbd5e
         //display health note. we can customise this font see description over text method
         this.player1HealthText = this.add.text(20, 20, `Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`, {

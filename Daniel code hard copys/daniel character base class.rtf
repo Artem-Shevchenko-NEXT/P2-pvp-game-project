@@ -1,0 +1,454 @@
+{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang1033{\fonttbl{\f0\fnil\fcharset0 Calibri;}}
+{\*\generator Riched20 10.0.19041}\viewkind4\uc1 
+\pard\sa200\sl276\slmult1\f0\fs22\lang9 import \{ StateMachine \} from './state-machine/stateMachine.js';\par
+\par
+export class Character extends Phaser.Physics.Arcade.Sprite \{\par
+    constructor(scene, x, y, config) \{\par
+        super(scene, x, y, config.idleSpriteKey || 'tank_idle');\par
+        scene.add.existing(this);\par
+        scene.physics.add.existing(this);\par
+        this.setBounce(0.0); //maybe set this to 0\par
+        this.setCollideWorldBounds(true);\par
+\par
+        //combat properties\par
+        this.health = config.health || 100;\par
+        this.maxHealth = config.maxHealth || 100;\par
+        this.isInvincible = false;\par
+        this.invincibilityDuration = config.invincibilityDuration || 1000; // cannot take damage 1 second after hit\par
+        this.attackDamage = config.attackDamage || 10;\par
+        this.hitboxConfig = config.hitboxConfig || \{ width: 40, height: 50 \};\par
+        this.hitbox = null;\par
+        this.shockwave = null; // Shockwave: Track shockwave sprite for tank's ATTACK2\par
+\par
+        // Character specific properties\par
+        this.characterType = config.characterType || 'unknown';\par
+        this.animationKeys = config.animationKeys || \{\par
+            left: 'left',\par
+            right: 'right',\par
+            turn: 'turn',\par
+            jump: 'jump',\par
+            attack: 'attack',\par
+            attack2: 'attack2',\par
+            hurt: 'hurt'\par
+        \};\par
+\par
+        // Input buffering\par
+        this.inputBuffer = \{\par
+            jump: false,\par
+            attack: false,\par
+            attack2: false,\par
+            moveLeft: false,\par
+            moveRight: false\par
+        \};\par
+\par
+        // Track landing frame to stabilize JUMP\par
+        this.lastGroundedFrame = 0;\par
+\par
+        // Initialize Shift key for ATTACK2\par
+        this.shiftKey = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);\par
+\par
+        console.log(`Creating $\{this.characterType\} character at x=$\{x\}, y=$\{y\}`);\par
+        this.initAnimations();\par
+        this.initStateMachine(scene);\par
+    \}\par
+\par
+    initAnimations() \{\par
+        try \{\par
+            this.anims.create(\{\par
+                key: this.animationKeys.left,\par
+                frames: this.anims.generateFrameNames('tank_run', \{ prefix: 'running', end: 8, zeroPad: 4 \}),\par
+                frameRate: 10,\par
+                repeat: -1\par
+            \});\par
+            this.anims.create(\{\par
+                key: this.animationKeys.turn,\par
+                frames: this.anims.generateFrameNames('tank_idle', \{ prefix: 'idle', end: 8, zeroPad: 4 \}),\par
+                frameRate: 10,\par
+                repeat: -1\par
+            \});\par
+            this.anims.create(\{\par
+                key: this.animationKeys.right,\par
+                frames: this.anims.generateFrameNames('tank_run', \{ prefix: 'running', end: 8, zeroPad: 4 \}),\par
+                frameRate: 10,\par
+                repeat: -1\par
+            \});\par
+            this.anims.create(\{\par
+                key: this.animationKeys.jump,\par
+                frames: this.anims.generateFrameNames('tank_jump', \{ prefix: 'jumping', end: 8, zeroPad: 4 \}),\par
+                frameRate: 5,\par
+                repeat: 0\par
+            \});\par
+            this.anims.create(\{ //standard attack\par
+                key: this.animationKeys.attack,\par
+                frames: this.anims.generateFrameNames('tank_attack', \{ prefix: 'attackRight', end: 5, zeroPad: 4 \}), // Extended to include attackRight0005\par
+                frameRate: 13,\par
+                repeat: 0\par
+            \});\par
+            this.anims.create(\{ //secondary attack i.e attack2\par
+                key: this.animationKeys.attack2,\par
+                frames: this.anims.generateFrameNames('tank_attack', \{ prefix: 'secondAttack', end: 5, zeroPad: 4 \}), // Corrected to end at 5\par
+                frameRate: 13,\par
+                repeat: 0\par
+            \});\par
+            this.anims.create(\{\par
+                key: this.animationKeys.hurt,\par
+                frames: this.anims.generateFrameNames('tank_idle', \{ prefix: 'idle', end: 8, zeroPad: 4 \}), // Placeholder replace with hurt animation\par
+                frameRate: 10,\par
+                repeat: 0\par
+            \});\par
+            console.log(`$\{this.characterType\} animations created successfully`);\par
+        \} catch (error) \{\par
+            console.error(`$\{this.characterType\} animation creation failed:`, error);\par
+        \}\par
+    \}\par
+\par
+    initStateMachine(scene) \{\par
+        this.stateMachine = new StateMachine('IDLE', \{\par
+            IDLE: \{\par
+                enter: () => \{\par
+                    this.setVelocityX(0);\par
+                    this.anims.play(this.animationKeys.turn, true);\par
+                    console.log(`$\{this.characterType\} entered IDLE state`);\par
+                \},\par
+                execute: () => \{\par
+                    const cursors = scene.input.keyboard.createCursorKeys();\par
+                    if (cursors.left.isDown) \{\par
+                        this.stateMachine.transition('MOVE_LEFT');\par
+                    \} else if (cursors.right.isDown) \{\par
+                        this.stateMachine.transition('MOVE_RIGHT');\par
+                    \} else if (cursors.up.isDown && this.body.blocked.down) \{\par
+                        this.stateMachine.transition('JUMP');\par
+                    \} else if (Phaser.Input.Keyboard.JustDown(cursors.space)) \{\par
+                        this.stateMachine.transition('ATTACK');\par
+                    \} else if (Phaser.Input.Keyboard.JustDown(this.shiftKey)) \{\par
+                        this.stateMachine.transition('ATTACK2');\par
+                    \}\par
+                \}\par
+            \},\par
+            MOVE_LEFT: \{\par
+                enter: () => \{\par
+                    this.setVelocityX(-200);\par
+                    this.flipX = true;\par
+                    this.anims.play(this.animationKeys.left, true);\par
+                    console.log(`$\{this.characterType\} entered MOVE_LEFT state`);\par
+                \},\par
+                execute: () => \{\par
+                    const cursors = scene.input.keyboard.createCursorKeys();\par
+                    if (!cursors.left.isDown) \{\par
+                        if (cursors.right.isDown) \{\par
+                            this.stateMachine.transition('MOVE_RIGHT');\par
+                        \} else \{\par
+                            this.stateMachine.transition('IDLE');\par
+                        \}\par
+                    \} else if (cursors.up.isDown && this.body.blocked.down) \{\par
+                        this.stateMachine.transition('JUMP');\par
+                    \} else if (Phaser.Input.Keyboard.JustDown(cursors.space)) \{\par
+                        this.stateMachine.transition('ATTACK');\par
+                    \} else if (Phaser.Input.Keyboard.JustDown(this.shiftKey)) \{\par
+                        this.stateMachine.transition('ATTACK2');\par
+                    \}\par
+                \}\par
+            \},\par
+            MOVE_RIGHT: \{\par
+                enter: () => \{\par
+                    this.setVelocityX(200);\par
+                    this.flipX = false;\par
+                    this.anims.play(this.animationKeys.right, true);\par
+                    console.log(`$\{this.characterType\} entered MOVE_RIGHT state`);\par
+                \},\par
+                execute: () => \{\par
+                    const cursors = scene.input.keyboard.createCursorKeys();\par
+                    if (!cursors.right.isDown) \{\par
+                        if (cursors.left.isDown) \{\par
+                            this.stateMachine.transition('MOVE_LEFT');\par
+                        \} else \{\par
+                            this.stateMachine.transition('IDLE');\par
+                        \}\par
+                    \} else if (cursors.up.isDown && this.body.blocked.down) \{\par
+                        this.stateMachine.transition('JUMP');\par
+                    \} else if (Phaser.Input.Keyboard.JustDown(cursors.space)) \{\par
+                        this.stateMachine.transition('ATTACK');\par
+                    \} else if (Phaser.Input.Keyboard.JustDown(this.shiftKey)) \{\par
+                        this.stateMachine.transition('ATTACK2');\par
+                    \}\par
+                \}\par
+            \},\par
+            JUMP: \{\par
+                enter: () => \{\par
+                    this.setVelocityY(-440);\par
+                    if (this.stateMachine.currentState !== 'ATTACK' && this.stateMachine.currentState !== 'ATTACK2') \{\par
+                        this.anims.play(this.animationKeys.jump, true);\par
+                        console.log(`$\{this.characterType\} entered JUMP state`);\par
+                    \}\par
+                \},\par
+                execute: () => \{\par
+                    const cursors = scene.input.keyboard.createCursorKeys();\par
+                    // Only transition to IDLE after a few frames on ground to stabilize\par
+                    if (this.body.blocked.down) \{\par
+                        this.lastGroundedFrame++; //increment 2 frames of being grounded\par
+                        if (this.lastGroundedFrame > 2) \{\par
+                            this.stateMachine.transition('IDLE');\par
+                        \}\par
+                    \} else \{\par
+                        this.lastGroundedFrame = 0; //reset last lastGroundedFrame\par
+                    \}\par
+                    // Buffer inputs during jump\par
+                    this.inputBuffer.jump = cursors.up.isDown && this.body.blocked.down && !this.inputBuffer.jump;\par
+                    this.inputBuffer.attack = Phaser.Input.Keyboard.JustDown(cursors.space);\par
+                    this.inputBuffer.attack2 = Phaser.Input.Keyboard.JustDown(this.shiftKey);\par
+                    this.inputBuffer.moveLeft = cursors.left.isDown;\par
+                    this.inputBuffer.moveRight = cursors.right.isDown;\par
+                \}\par
+            \},\par
+            ATTACK: \{\par
+                enter: () => \{\par
+                    this.setVelocityX(0);\par
+                    this.anims.play(this.animationKeys.attack, true);\par
+                    console.log(`$\{this.characterType\} entered ATTACK state`);\par
+                    // create hitbox on attack animation (this can be adjusted to the individual sprite)\par
+                    this.scene.time.delayedCall(50, () => \{\par
+                        if (this.stateMachine.currentState === 'ATTACK') \{\par
+                            this.createHitbox();\par
+                            console.log(`$\{this.characterType\} created hitbox at frame: $\{this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'\}`);\par
+                        \}\par
+                    \});\par
+                    // Transition to IDLE when attack anim. is complete\par
+                    this.off(`animationcomplete-$\{this.animationKeys.attack\}`);\par
+                    this.once(`animationcomplete-$\{this.animationKeys.attack\}`, () => \{\par
+                        this.destroyHitbox();\par
+                        this.stateMachine.transition('IDLE');\par
+                        console.log(`$\{this.characterType\} attack animation complete`);\par
+                    \});\par
+                \},\par
+                execute: () => \{\par
+                    // Buffer inputs during attack\par
+                    const cursors = scene.input.keyboard.createCursorKeys();\par
+                    this.inputBuffer.jump = cursors.up.isDown && this.body.blocked.down && !this.inputBuffer.jump;\par
+                    this.inputBuffer.attack = Phaser.Input.Keyboard.JustDown(cursors.space);\par
+                    this.inputBuffer.attack2 = Phaser.Input.Keyboard.JustDown(this.shiftKey);\par
+                    this.inputBuffer.moveLeft = cursors.left.isDown;\par
+                    this.inputBuffer.moveRight = cursors.right.isDown;\par
+                \},\par
+                exit: () => \{\par
+                    this.destroyHitbox();\par
+                    console.log(`$\{this.characterType\} exited ATTACK state`);\par
+                    // Delay buffered input processing to next update cycle\par
+                    this.scene.time.delayedCall(0, () => \{\par
+                        if (this.inputBuffer.attack) \{\par
+                            this.stateMachine.transition('ATTACK');\par
+                        \} else if (this.inputBuffer.attack2) \{\par
+                            this.stateMachine.transition('ATTACK2');\par
+                        \} else if (this.inputBuffer.jump) \{\par
+                            this.stateMachine.transition('JUMP');\par
+                        \} else if (this.inputBuffer.moveLeft) \{\par
+                            this.stateMachine.transition('MOVE_LEFT');\par
+                        \} else if (this.inputBuffer.moveRight) \{\par
+                            this.stateMachine.transition('MOVE_RIGHT');\par
+                        \}\par
+                        this.inputBuffer = \{ jump: false, attack: false, attack2: false, moveLeft: false, moveRight: false \};\par
+                    \});\par
+                \}\par
+            \},\par
+            ATTACK2: \{\par
+                enter: () => \{\par
+                    this.setVelocityX(0);\par
+                    this.anims.play(this.animationKeys.attack2, true);\par
+                    console.log(`$\{this.characterType\} entered ATTACK2 state`);\par
+                    // Shockwave: Create shockwave for tank, hitbox for others\par
+                    this.scene.time.delayedCall(50, () => \{\par
+                        if (this.stateMachine.currentState === 'ATTACK2') \{\par
+                            if (this.characterType === 'tank') \{\par
+                                this.createShockwave(); // maybe remove to add shockwave\par
+                                console.log(`$\{this.characterType\} created shockwave at frame: $\{this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'\}`);\par
+                            \} else \{\par
+                                this.createHitbox();\par
+                                console.log(`$\{this.characterType\} created hitbox at frame: $\{this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'\}`);\par
+                            \}\par
+                        \}\par
+                    \});\par
+                    // Transition to IDLE when attack anim. is complete\par
+                    this.off(`animationcomplete-$\{this.animationKeys.attack2\}`);\par
+                    this.once(`animationcomplete-$\{this.animationKeys.attack2\}`, () => \{\par
+                        if (this.characterType === 'tank') \{\par
+                            this.destroyShockwave();\par
+                        \} else \{\par
+                            this.destroyHitbox();\par
+                        \}\par
+                        this.stateMachine.transition('IDLE');\par
+                        console.log(`$\{this.characterType\} attack2 animation complete`);\par
+                    \});\par
+                \},\par
+                execute: () => \{\par
+                    // Buffer inputs during attack\par
+                    const cursors = scene.input.keyboard.createCursorKeys();\par
+                    this.inputBuffer.jump = cursors.up.isDown && this.body.blocked.down && !this.inputBuffer.jump;\par
+                    this.inputBuffer.attack = Phaser.Input.Keyboard.JustDown(cursors.space);\par
+                    this.inputBuffer.attack2 = Phaser.Input.Keyboard.JustDown(this.shiftKey);\par
+                    this.inputBuffer.moveLeft = cursors.left.isDown;\par
+                    this.inputBuffer.moveRight = cursors.right.isDown;\par
+                \},\par
+                exit: () => \{\par
+                    if (this.characterType === 'tank') \{\par
+                        this.destroyShockwave();\par
+                    \} else \{\par
+                        this.destroyHitbox();\par
+                    \}\par
+                    console.log(`$\{this.characterType\} exited ATTACK2 state`);\par
+                    // Delay buffered input processing to next update cycle\par
+                    this.scene.time.delayedCall(0, () => \{\par
+                        if (this.inputBuffer.attack) \{\par
+                            this.stateMachine.transition('ATTACK');\par
+                        \} else if (this.inputBuffer.attack2) \{\par
+                            this.stateMachine.transition('ATTACK2');\par
+                        \} else if (this.inputBuffer.jump) \{\par
+                            this.stateMachine.transition('JUMP');\par
+                        \} else if (this.inputBuffer.moveLeft) \{\par
+                            this.stateMachine.transition('MOVE_LEFT');\par
+                        \} else if (this.inputBuffer.moveRight) \{\par
+                            this.stateMachine.transition('MOVE_RIGHT');\par
+                        \}\par
+                        this.inputBuffer = \{ jump: false, attack: false, attack2: false, moveLeft: false, moveRight: false \};\par
+                    \});\par
+                \}\par
+            \},\par
+            HURT: \{\par
+                enter: () => \{\par
+                    this.setVelocityX(0);\par
+                    this.anims.play(this.animationKeys.hurt, true);\par
+                    this.isInvincible = true;\par
+                    console.log(`$\{this.characterType\} entered HURT state`);\par
+                    //Flash effect to show we have a hit using tweens\par
+                    this.scene.tweens.add(\{\par
+                        targets: this,\par
+                        alpha: 0.5,\par
+                        duration: 100,\par
+                        yoyo: true,\par
+                        repeat: 3\par
+                    \});\par
+                    //end invincibility after duration\par
+                    this.scene.time.delayedCall(this.invincibilityDuration, () => \{\par
+                        this.isInvincible = false;\par
+                        this.stateMachine.transition('IDLE');\par
+                        console.log(`$\{this.characterType\} exited HURT state`);\par
+                    \});\par
+                \},\par
+                execute: () => \{\par
+                    // Buffer inputs during hurt state\par
+                    const cursors = scene.input.keyboard.createCursorKeys();\par
+                    this.inputBuffer.jump = cursors.up.isDown && this.body.blocked.down && !this.inputBuffer.jump;\par
+                    this.inputBuffer.attack = Phaser.Input.Keyboard.JustDown(cursors.space);\par
+                    this.inputBuffer.attack2 = Phaser.Input.Keyboard.JustDown(this.shiftKey);\par
+                    this.inputBuffer.moveLeft = cursors.left.isDown;\par
+                    this.inputBuffer.moveRight = cursors.right.isDown;\par
+                \},\par
+                exit: () => \{\par
+                    // Delay buffered input processing to next update cycle\par
+                    this.scene.time.delayedCall(0, () => \{\par
+                        if (this.inputBuffer.attack) \{\par
+                            this.stateMachine.transition('ATTACK');\par
+                        \} else if (this.inputBuffer.attack2) \{\par
+                            this.stateMachine.transition('ATTACK2');\par
+                        \} else if (this.inputBuffer.jump) \{\par
+                            this.stateMachine.transition('JUMP');\par
+                        \} else if (this.inputBuffer.moveLeft) \{\par
+                            this.stateMachine.transition('MOVE_LEFT');\par
+                        \} else if (this.inputBuffer.moveRight) \{\par
+                            this.stateMachine.transition('MOVE_RIGHT');\par
+                        \}\par
+                        this.inputBuffer = \{ jump: false, attack: false, attack2: false, moveLeft: false, moveRight: false \};\par
+                    \});\par
+                \}\par
+            \}\par
+        \}, this);\par
+    \}\par
+\par
+    createHitbox() \{\par
+        if (!this.hitbox) \{\par
+            const \{ width, height \} = this.hitboxConfig;\par
+            const offsetX = this.flipX ? -width : this.width; //set hitbox in front of player\par
+            this.hitbox = this.scene.add.rectangle(\par
+                this.x + offsetX,\par
+                this.y - this.height / 2,\par
+                width,\par
+                height\par
+            );\par
+            this.scene.physics.add.existing(this.hitbox);\par
+            this.hitbox.body.setAllowGravity(false);\par
+            this.hitbox.owner = this; // this is referencing player for collision handling\par
+            //Debug: visual hitbox will/need to be removed later\par
+            this.hitbox.setStrokeStyle(2, 0xff0000); //debug\par
+            console.log(`$\{this.characterType\} hitbox position: x=$\{this.hitbox.x\}, y=$\{this.hitbox.y\}, width=$\{width\}, height=$\{height\}`);\par
+        \}\par
+    \}\par
+\par
+    destroyHitbox() \{\par
+        if (this.hitbox) \{\par
+            console.log(`$\{this.characterType\} destroyed hitbox at x=$\{this.hitbox.x\}, y=$\{this.hitbox.y\}`);\par
+            this.hitbox.destroy();\par
+            this.hitbox = null;\par
+        \}\par
+    \}\par
+\par
+    // Shockwave: Create shockwave sprite for tank's ATTACK2\par
+    createShockwave() \{\par
+        if (!this.shockwave) \{\par
+            const offsetX = this.flipX ? -50 : 50; // Position 50px in front of player\par
+            this.shockwave = this.scene.physics.add.sprite(\par
+                this.x + offsetX,\par
+                this.y - this.height / 2,\par
+                'tank_attack',\par
+                'secondAttackShockwave0000'\par
+            );\par
+            this.shockwave.owner = this; // Reference player for collision handling\par
+            this.shockwave.setVelocityX(this.flipX ? -200 : 200); // Move 200px/s in facing direction\par
+            this.shockwave.body.setAllowGravity(false);\par
+            // Shockwave: Set size to match sprite (25x40)\par
+            this.shockwave.body.setSize(25, 40);\par
+            // Shockwave: Destroy with end animation after 200ms if no collision\par
+            this.scene.time.delayedCall(200, () => \{\par
+                if (this.shockwave) \{\par
+                    this.shockwave.setVelocityX(0); // Stop movement\par
+                    this.shockwave.anims.play('shockwave_end', true);\par
+                    this.scene.time.delayedCall(100, () => \{\par
+                        this.destroyShockwave();\par
+                    \});\par
+                \}\par
+            \});\par
+            console.log(`$\{this.characterType\} shockwave created at x=$\{this.shockwave.x\}, y=$\{this.shockwave.y\}`);\par
+        \}\par
+    \}\par
+\par
+    // Shockwave: Destroy shockwave sprite\par
+    destroyShockwave() \{\par
+        if (this.shockwave) \{\par
+            console.log(`$\{this.characterType\} shockwave destroyed at x=$\{this.shockwave.x\}, y=$\{this.shockwave.y\}`);\par
+            this.shockwave.destroy();\par
+            this.shockwave = null;\par
+        \}\par
+    \}\par
+\par
+    takeDamage(damage) \{\par
+        if (!this.isInvincible) \{\par
+            this.health = Math.max(0, this.health - damage);\par
+            console.log(`$\{this.characterType\} took $\{damage\} damage, health now: $\{this.health\}`);\par
+            if (this.health > 0) \{\par
+                this.stateMachine.transition('HURT');\par
+            \} else \{\par
+                // player HP hits 0, set game over or respawm (does not work need fix)\par
+                this.scene.scene.start('GameOver');\par
+            \}\par
+        \}\par
+    \}\par
+\par
+    update() \{\par
+        this.stateMachine.update();\par
+        // Update hitbox position so it will follow player\par
+        if (this.hitbox) \{\par
+            const \{ width \} = this.hitboxConfig;\par
+            const offsetX = this.flipX ? -width : this.width;\par
+            this.hitbox.setPosition(this.x + offsetX, this.y - this.height / 2);\par
+        \}\par
+    \}\par
+\}\par
+}
+ 
