@@ -131,7 +131,7 @@ export class Game extends Phaser.Scene {
         // Create player 1
         
         this.player1 = new TankCharacter(this, 100, 450);
-        socket.emit('newPlayer');
+        //socket.emit('newPlayer');
 
         // Create a dummy target for hitbox testing
         this.dummyTarget = this.physics.add.sprite(200, 450, 'tank_idle');
@@ -165,15 +165,7 @@ export class Game extends Phaser.Scene {
             },
             this
         );
-
-<<<<<<< HEAD
-=======
-        this.player1 = new TankCharacter(this, PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y);
         //socket.emit('newPlayer');
->>>>>>> 38142d377ffecb6a9794866f65b6f81a635cbd5e
-=======
-
->>>>>>> 0854bd75eee38c22c5aa5dcb00640b5dbaf4e230
         //display health note. we can customise this font see description over text method
         this.player1HealthText = this.add.text(20, 20, `Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`, {
             fontFamily: 'Arial',

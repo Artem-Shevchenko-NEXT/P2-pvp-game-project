@@ -109,7 +109,6 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     console.log(`${this.characterType} entered IDLE state`);
                 },
                 execute: () => {
-<<<<<<< HEAD
                     const cursors = scene.input.keyboard.createCursorKeys();
                     if (cursors.left.isDown) {
                         this.stateMachine.transition('MOVE_LEFT');
@@ -122,9 +121,6 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     } else if (Phaser.Input.Keyboard.JustDown(this.shiftKey)) {
                         this.stateMachine.transition('ATTACK2');
                     }
-=======
-                    this.handleKeyInput();
->>>>>>> 38142d377ffecb6a9794866f65b6f81a635cbd5e
                 }
             },
             MOVE_LEFT: {
@@ -177,7 +173,6 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             },
             JUMP: {
                 enter: () => {
-<<<<<<< HEAD
                     this.setVelocityY(-440);
                     if (this.stateMachine.currentState !== 'ATTACK' && this.stateMachine.currentState !== 'ATTACK2') {
                         this.anims.play(this.animationKeys.jump, true);
@@ -194,19 +189,6 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                         }
                     } else {
                         this.lastGroundedFrame = 0; //reset last lastGroundedFrame
-=======
-                    if (this.body.blocked.down){
-                        this.setVelocityY(-440);
-                    }
-                    this.anims.play(this.animationKeys.jump, true);
-                },
-                execute: () => {
-                    const cursors = this.scene.input.keyboard.createCursorKeys();
-                    if (this.body.blocked.down) {
-                        this.handleKeyInput();
-                    } else if (Phaser.Input.Keyboard.JustDown(cursors.space)) {
-                        this.stateMachine.transition('ATTACK');
->>>>>>> 38142d377ffecb6a9794866f65b6f81a635cbd5e
                     }
                     // Buffer inputs during jump
                     this.inputBuffer.jump = cursors.up.isDown && this.body.blocked.down && !this.inputBuffer.jump;
@@ -230,23 +212,12 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                             console.log(`${this.characterType} created hitbox at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
                         }
                     });
-<<<<<<< HEAD
                     // Transition to IDLE when attack anim. is complete
                     this.off(`animationcomplete-${this.animationKeys.attack}`);
                     this.once(`animationcomplete-${this.animationKeys.attack}`, () => {
                         this.destroyHitbox();
                         this.stateMachine.transition('IDLE');
                         console.log(`${this.characterType} attack animation complete`);
-=======
-
-                    this.once(`animationcomplete-${this.animationKeys.attack}`, () => {
-                        this.destroyHitbox();
-                        if (!this.body.blocked.down) {
-                            this.stateMachine.transition('JUMP');
-                        } else {
-                        this.handleKeyInput();
-                        }
->>>>>>> 38142d377ffecb6a9794866f65b6f81a635cbd5e
                     });
                 },
                 execute: () => {
@@ -389,21 +360,6 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 }
             }
         }, this);
-    }
-
-    handleKeyInput(){
-        const cursors = this.scene.input.keyboard.createCursorKeys();
-        if (cursors.left.isDown) {
-            this.stateMachine.transition('MOVE_LEFT');
-        } else if (cursors.right.isDown) {
-            this.stateMachine.transition('MOVE_RIGHT');
-        } else if (cursors.up.isDown && this.body.blocked.down) {
-            this.stateMachine.transition('JUMP');
-        } else if (Phaser.Input.Keyboard.JustDown(cursors.space)) {
-            this.stateMachine.transition('ATTACK');
-        } else {
-            this.stateMachine.transition('IDLE');
-        }
     }
 
     createHitbox() {
