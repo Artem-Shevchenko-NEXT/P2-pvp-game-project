@@ -27,6 +27,7 @@ export default class NetworkManager {
             this.playerId = data.id;
             console.log('Assigned player ID:', this.playerId);
             resolve(data); // finnally oficcialy confirms a seccesfull connection 
+            
           });
 
           // error logging 

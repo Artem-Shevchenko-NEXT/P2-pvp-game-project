@@ -1,3 +1,4 @@
+import { PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y, SCREEN_HEIGHT, SCREEN_WIDTH } from '../config.js';
 import { TankCharacter } from '../gameObjects/TankCharacter.js';
 import { NinjaCharacter } from '../gameObjects/NinjaCharacter.js';
 import NetworkManager from '../multiplayer/NetworkManager.js';
@@ -51,7 +52,14 @@ export class Game extends Phaser.Scene {
                     const sourceWidth = imageData.source[0].width;
                     const sourceHeight = imageData.source[0].height;
                     if (object.width && object.height) {
-                        image.setScale(object.width / sourceWidth, object.height / sourceHeight);
+                            // The original background-scaling below: outcommented for experimenting with "dynamic"-background scaling
+                        // image.setScale(object.width / sourceWidth, object.height / sourceHeight);
+
+                        const scaleX = this.scale.width / sourceWidth; // sourceWidth/Height: is the height/width from the actual image file.
+                        const scaleY = this.scale.height / sourceHeight;
+                        const scale = Math.max(scaleX, scaleY); // Use Math.min() instead to NOT crop the image. 
+                        
+                        image.setScale(scale);
                     }
 
                     // Optional: Add parallax effect not sure if this really works
@@ -71,7 +79,57 @@ export class Game extends Phaser.Scene {
         const ground = map.createLayer('ground', tileset);
         ground.setCollisionByProperty({ collides: true });
 
+        // Create platforms layer and set collisions
+        const platforms = map.createLayer('Platforms', tileset);
+        platforms.setCollisionByProperty({ collides: true });
+
+        const mapWidth    = map.widthInPixels;
+        const mapHeight   = map.heightInPixels;
+        // Calculating the scale for the map-file in relation to the resolution.
+        const scaleX = SCREEN_WIDTH / mapWidth;
+        const scaleY = SCREEN_HEIGHT / mapHeight;
+        // And then seeting that scale ground- and platforms map-files.
+        ground.setScale(scaleX, scaleY);
+        platforms.setScale(scaleX, scaleY);
+
+        const scaledWidth = mapWidth * scaleX;
+        const scaledHeight = mapHeight * scaleY;
+
+        /*
+        // Old attempt: Scaling the offset instead of the scale.
+        let xOffset = 0;
+        if (screenWidth > mapWidth) {
+            xOffset = Math.floor((screenWidth - mapWidth) / 2);
+        }
+
+        let yOffset = 0;
+        if (screenHeight > mapHeight) {
+          yOffset = screenHeight - mapHeight;
+        }
+
+        ground.setPosition(xOffset, yOffset);
+        platforms.setPosition(xOffset, yOffset);
+
+        this.physics.world.setBounds(xOffset, yOffset, mapWidth, mapHeight);
+        this.cameras.main.setBounds(xOffset, yOffset, mapWidth, mapHeight);
+        */
+
+        // Experimental code for scaling the player with resolution-change.
+        /*
+        const spawnX = PLAYER1_SPAWN_X * scaleX;
+        const spawnY = PLAYER1_SPAWN_Y * scaleY;
+
+        this.player1 = new Player(this, spawnX, spawnY);
+        this.player1.setScale(scaleX, scaleY);
+
+        this.player1.body.setSize(
+            this.player1.displayWidth,
+            this.player1.displayHeight
+        );
+        */
+
         // Create player 1
+<<<<<<< HEAD
         this.player1 = new TankCharacter(this, 100, 450);
 
         // Create a dummy target for hitbox testing
@@ -107,6 +165,10 @@ export class Game extends Phaser.Scene {
             this
         );
 
+=======
+        this.player1 = new TankCharacter(this, PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y);
+        socket.emit('newPlayer');
+>>>>>>> 38142d377ffecb6a9794866f65b6f81a635cbd5e
         //display health note. we can customise this font see description over text method
         this.player1HealthText = this.add.text(20, 20, `Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`, {
             fontFamily: 'Arial',
@@ -115,8 +177,51 @@ export class Game extends Phaser.Scene {
             stroke: '#000000',
             strokeThickness: 4
         }).setDepth(10);
+<<<<<<< HEAD
         //dummy health
         this.dummyHealthText = this.add.text(500, 20, `Dummy Target Health: ${this.dummyTarget.health}`, {
+=======
+
+        // Set up collision between player and ground and platforms
+        this.physics.add.collider(this.player1, ground);
+        this.physics.add.collider(this.player1, platforms);
+        
+        //this.cameras.main.startFollow(this.player);
+        this.physics.world.setBounds(0, 0, scaledWidth, scaledHeight);
+        this.cameras.main.setBounds(0, 0, scaledWidth, scaledHeight);
+
+        // player 2 logic if need be add it back in
+        //this.player2 = new NinjaCharacter(this, 900, 450);
+        //this.physics.add.collider(this.player2, ground);
+        // set up collison between player1 and player2 to prevent overlap(note somethings a little off here)
+        //this.physics.add.collider(this.player1, this.player2);
+
+        /*
+        //Set up hitbox collisions
+        this.physics.add.overlap(
+            this.player1,
+            this.player2,
+            this.handleHitboxCollision,
+            (player1, player2) => {
+                return player1.hitbox && player2.active;
+            },
+            this
+        );
+        this.physics.add.overlap(
+            this.player2,
+            this.player1,
+            this.handleHitboxCollision,
+            (player2, player1) => {
+                return player2.hitbox && player1.active;
+            },
+            this
+        );
+        */
+
+ 
+        /*
+        this.player2HealthText = this.add.text(560, 20, `Player 2 (${this.player2.characterType}) Health: ${this.player2.health}`, {
+>>>>>>> 38142d377ffecb6a9794866f65b6f81a635cbd5e
             fontFamily: 'Arial',
             fontSize: 24,
             color: '#ffffff',

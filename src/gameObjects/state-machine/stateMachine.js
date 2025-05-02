@@ -6,7 +6,7 @@ export class StateMachine {
         this.isTransitioning = false;
         this.queuedTransition = null;
     }
-
+    // Exit and enter are only running/checking a single frame of the animation. Enter the first frame, and exit the last frame.
     transition(newState) {
         if (this.isTransitioning) {
             // Queue the transition if already transitioning
@@ -40,7 +40,7 @@ export class StateMachine {
             }
         }
     }
-
+    // Execute is updating the entire lifetime of the animation?
     update() {
         if (this.states[this.currentState].execute) {
             this.states[this.currentState].execute.call(this.context);
