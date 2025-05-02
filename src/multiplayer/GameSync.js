@@ -38,14 +38,11 @@ but the serve itself recives all updates from all players together at the same t
     //Forsøg at bruge socket.on('gameJoined') 
 // updating remote player positions and animations based on received data
     //forsøg at bruge socket.on('playerUpdated')
-    //brug interpolation til at calculate playerens position
-// providing methods to easily synchronize local player state
+
 
 //sammenkoble statemachine, og lav clients opdatere, med dataen serveren får
 
 
-//Der er måske ikke brug for den
-import NetworkManager from '.NetworkManager.js';
 
 /*funktionen fungerer ikke endnu, fordi jeg ikke har givet de ordentlige variabler,
  og der er også nogle ting som går igen i NetworkManager.js og server.js
@@ -56,6 +53,7 @@ io.on('connection', (socket) => {
 
         //Sender data når en player disconnecter
     socket.on('disconnect', () => {
+        //Jeg ved ikke om "player" er den rigtige ting at kalde her
         delete player[socket.id];
         socket.broadcast.emit('User disconnected:', socket.id);
     });
@@ -68,12 +66,42 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on('newPlayer', () => {
+        player[socket.id] = {
+        //player size/position (jeg ved ikke hvor de bliver initialiseret)
+          x: 1,
+          y: 1,
+          width: 1,
+          height: 1
+        }
+    })
+    //gamestate.players skal erstattes med den const som initialiserer playeren
+    socket.on('state', (gamestate) => {
+        //player skal være variablen som holder player dataen
+        for (let player in gamestate.players) {
+            //drawPlayer skal erstattes med den const, som giver playeren position  
+            drawPlayer(gamestate.players[player])
+        }
+    })
+
+    //ved ikke helt hvad der skal være her
+    socket.on('game_joined',(data) => {
+
+    })
+
+    socket.on('playerUpdated', (data) => {
+
+    })
+
 });
 
+//decides sync rate (currently set to 60 times per second)
+setInterval(() => {
+    io.sockets.emit('state', gameState);
+}, 1000 / 60);
 
 //interpolation calculates the characters expected position (clientside)
 //Skal kaldes med variablerne fra socket.on('playerUpdated')
-
 function interpolation(previous, velocity, acceleration, time){
     return previous + velocity*time + ((acceleration/2) * time*time);
 }
