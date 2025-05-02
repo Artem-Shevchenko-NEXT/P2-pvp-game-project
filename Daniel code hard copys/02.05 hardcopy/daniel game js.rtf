@@ -1,0 +1,227 @@
+{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang1033{\fonttbl{\f0\fnil\fcharset0 Calibri;}}
+{\*\generator Riched20 10.0.19041}\viewkind4\uc1 
+\pard\sa200\sl276\slmult1\f0\fs22\lang9 import \{ TankCharacter \} from '../gameObjects/TankCharacter.js';\par
+import \{ NinjaCharacter \} from '../gameObjects/NinjaCharacter.js';\par
+import NetworkManager from '../multiplayer/NetworkManager.js';\par
+\par
+export class Game extends Phaser.Scene \{\par
+    constructor() \{\par
+        super('Game');\par
+        this.networkManager = null;\par
+    \}\par
+\par
+    create() \{\par
+        // Create the tilemap\par
+        const map = this.make.tilemap(\{ key: 'tilemap' \});\par
+        const tileset = map.addTilesetImage('oakwood', 'tiles');\par
+\par
+        // Create background from object layer note: this turned out to be way to complicated and we should have just used one background image.\par
+        //we did this in hope of being able to make parralaxing but this is not important for MVP. and so far parralaxing has not been implemented.\par
+        //so a little was of time.\par
+        const backgroundLayer = map.getObjectLayer('Background');\par
+        if (backgroundLayer) \{\par
+            backgroundLayer.objects.forEach((object, index) => \{\par
+                // Get the image key from properties\par
+                let imageKey = null;\par
+                if (object.properties) \{\par
+                    const imageProp = object.properties.find(prop => prop.name === 'image');\par
+                    if (imageProp) \{\par
+                        imageKey = imageProp.value;\par
+                    \}\par
+                \}\par
+\par
+                // Fallback to GID if no image property.\par
+                if (!imageKey && object.gid) \{\par
+                    const gid = object.gid;\par
+                    if (gid === 316) imageKey = 'background1';\par
+                    else if (gid === 317) imageKey = 'background2';\par
+                    else if (gid === 318) imageKey = 'background3';\par
+                \}\par
+\par
+                if (imageKey) \{\par
+                    // Create the image with scaling to match Tiled dimensions\par
+                    const image = this.add.image(object.x, object.y, imageKey)\par
+                        .setOrigin(0, 0) // Align with Tiled's top-left origin\par
+                        //setting background layers with different depths in order to stack them\par
+                        .setDepth(-3 + index); // Unique depth: -3, -2, -1\par
+\par
+                    // Override y-position with slight offset from Tiled\par
+                    image.y = 0;\par
+\par
+                    // Apply scaling if Tiled object dimensions differ from image\par
+                    const imageData = this.textures.get(imageKey);\par
+                    const sourceWidth = imageData.source[0].width;\par
+                    const sourceHeight = imageData.source[0].height;\par
+                    if (object.width && object.height) \{\par
+                        image.setScale(object.width / sourceWidth, object.height / sourceHeight);\par
+                    \}\par
+\par
+                    // Optional: Add parallax effect not sure if this really works\par
+                    //image.setScrollFactor(0.3 + index * 0.2); // 0.3, 0.5, 0.7\par
+\par
+                    // Debug: Log image details there was trouble rendering the object layer Background for from Tiled hense Debug\par
+                    console.log(`Background image: $\{imageKey\}, name: $\{object.name\}, gid: $\{object.gid\}, x: $\{image.x\}, y: $\{image.y\}, scaleX: $\{image.scaleX\}, scaleY: $\{image.scaleY\}, depth: $\{image.depth\}`);\par
+                \} else \{\par
+                    console.warn(`No valid image key for background object: $\{object.name\}, gid: $\{object.gid\}`);\par
+                \}\par
+            \});\par
+        \} else \{\par
+            console.warn('Background layer not found in tilemap');\par
+        \}\par
+\par
+        // Create ground layer and set collisions\par
+        const ground = map.createLayer('ground', tileset);\par
+        ground.setCollisionByProperty(\{ collides: true \});\par
+\par
+        // Create player 1\par
+        this.player1 = new TankCharacter(this, 100, 450);\par
+\par
+        // Create a dummy target for hitbox testing\par
+        this.dummyTarget = this.physics.add.sprite(200, 450, 'tank_idle');\par
+        this.dummyTarget.setImmovable(true);\par
+        this.dummyTarget.health = 100; // For testing damage\par
+        this.physics.add.collider(this.dummyTarget, ground);\par
+        \par
+        //Debug: to check hurt state for player: in console everything works although health bar does not correctly update.\par
+        //this.input.keyboard.on('keydown-T', () => \{\par
+        //    this.player1.takeDamage(10);\par
+        //\});\par
+\par
+        // Set up hitbox collisions with dummy target\par
+        this.physics.add.overlap(\par
+            this.player1,\par
+            this.dummyTarget,\par
+            this.handleHitboxCollision,\par
+            (player, target) => \{\par
+                return player.hitbox && target.active;\par
+            \},\par
+            this\par
+        );\par
+\par
+        // Shockwave: Set up shockwave collisions with dummy target\par
+        this.physics.add.overlap(\par
+            this.player1,\par
+            this.dummyTarget,\par
+            this.handleShockwaveCollision,\par
+            (player, target) => \{\par
+                return player.shockwave && target.active;\par
+            \},\par
+            this\par
+        );\par
+\par
+        //display health note. we can customise this font see description over text method\par
+        this.player1HealthText = this.add.text(20, 20, `Player 1 ($\{this.player1.characterType\}) Health: $\{this.player1.health\}`, \{\par
+            fontFamily: 'Arial',\par
+            fontSize: 24,\par
+            color: '#ffffff',\par
+            stroke: '#000000',\par
+            strokeThickness: 4\par
+        \}).setDepth(10);\par
+        //dummy health\par
+        this.dummyHealthText = this.add.text(500, 20, `Dummy Target Health: $\{this.dummyTarget.health\}`, \{\par
+            fontFamily: 'Arial',\par
+            fontSize: 24,\par
+            color: '#ffffff',\par
+            stroke: '#000000',\par
+            strokeThickness: 4\par
+        \}).setDepth(10);\par
+\par
+        // Set up collision between player and ground\par
+        this.physics.add.collider(this.player1, ground);\par
+        \par
+        //this.cameras.main.startFollow(this.player);\par
+        this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);\par
+\par
+        // Connect to server\par
+        this.networkManager = new NetworkManager();\par
+        this.networkManager.connect()\par
+            .then(data => \{\par
+                console.log('Connected to server with ID:', data.id);\par
+                \par
+                // Join the game after successful connection\par
+                this.networkManager.joinGame(\{\par
+                    x: this.player1.x,\par
+                    y: this.player1.y\par
+                \});\par
+            \})\par
+            .catch(err => \{\par
+                console.error('Failed to connect:', err);\par
+            \});\par
+    \}   \par
+\par
+    handleHitboxCollision(attacker, target) \{\par
+        if (attacker.hitbox && attacker !== target && !target.isInvincible) \{\par
+            console.log(`Hitbox collision: $\{attacker.characterType\} hits target, dealing $\{attacker.attackDamage\} damage`);\par
+            target.health = Math.max(0, target.health - attacker.attackDamage);\par
+            if (target.health <= 0) \{\par
+                console.log('Dummy target destroyed');\par
+                target.destroy();\par
+            \}\par
+        \}\par
+    \}\par
+\par
+    // Shockwave: Handle collision between shockwave and target\par
+    handleShockwaveCollision(attacker, target) \{\par
+        if (attacker.shockwave && attacker !== target && !target.isInvincible) \{\par
+            console.log(`Shockwave collision: $\{attacker.characterType\} hits target, dealing $\{attacker.attackDamage\} damage`);\par
+            target.health = Math.max(0, target.health - attacker.attackDamage);\par
+            attacker.destroyShockwave(); // Destroy shockwave immediately on hit\par
+            if (target.health <= 0) \{\par
+                console.log('Dummy target destroyed');\par
+                target.destroy();\par
+            \}\par
+        \}\par
+    \}\par
+\par
+    update() \{\par
+        // Update players\par
+        this.player1.update();\par
+\par
+        // Send player position updates to server if connected\par
+        if (this.networkManager && this.networkManager.connected) \{\par
+            const currentState = this.player1.stateMachine.currentState;\par
+            let animation = 'turn';\par
+            let facing = this.player1.flipX ? 'left' : 'right';\par
+\par
+            switch (currentState) \{\par
+                case 'IDLE':\par
+                    animation = 'turn';\par
+                    break;\par
+                case 'MOVE_LEFT':\par
+                    animation = 'left';\par
+                    break;\par
+                case 'MOVE_RIGHT':\par
+                    animation = 'right';\par
+                    break;\par
+                case 'JUMP':\par
+                    animation = 'jump';\par
+                    break;\par
+                case 'ATTACK':\par
+                    animation = 'attack';\par
+                    break;\par
+                case 'ATTACK2':\par
+                    animation = 'attack2';\par
+                    break;    \par
+            \}\par
+\par
+            this.networkManager.sendPlayerUpdate(\par
+                this.player1.x,\par
+                this.player1.y,\par
+                \{\par
+                    animation,\par
+                    facing\par
+                \}\par
+            );\par
+        \}\par
+\par
+        // Update health text\par
+        this.player1HealthText.setText(`Player 1 ($\{this.player1.characterType\}) Health: $\{this.player1.health\}`);\par
+        if (this.dummyTarget && this.dummyTarget.active) \{\par
+            this.dummyHealthText.setText(`Dummy Target Health: $\{this.dummyTarget.health\}`);\par
+        \} else \{\par
+            this.dummyHealthText.setText('Dummy Target: Destroyed');\par
+        \}\par
+    \}\par
+\}\par
+}
+ 
