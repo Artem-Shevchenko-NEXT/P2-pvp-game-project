@@ -129,8 +129,9 @@ export class Game extends Phaser.Scene {
         */
 
         // Create player 1
-<<<<<<< HEAD
+        
         this.player1 = new TankCharacter(this, 100, 450);
+        socket.emit('newPlayer');
 
         // Create a dummy target for hitbox testing
         this.dummyTarget = this.physics.add.sprite(200, 450, 'tank_idle');
@@ -165,10 +166,7 @@ export class Game extends Phaser.Scene {
             this
         );
 
-=======
-        this.player1 = new TankCharacter(this, PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y);
-        socket.emit('newPlayer');
->>>>>>> 38142d377ffecb6a9794866f65b6f81a635cbd5e
+
         //display health note. we can customise this font see description over text method
         this.player1HealthText = this.add.text(20, 20, `Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`, {
             fontFamily: 'Arial',
@@ -177,10 +175,15 @@ export class Game extends Phaser.Scene {
             stroke: '#000000',
             strokeThickness: 4
         }).setDepth(10);
-<<<<<<< HEAD
+
         //dummy health
         this.dummyHealthText = this.add.text(500, 20, `Dummy Target Health: ${this.dummyTarget.health}`, {
-=======
+            fontFamily: 'Arial',
+            fontSize: 24,
+            color: '#ffffff',
+            stroke: '#000000',
+            strokeThickness: 4
+        }).setDepth(10);
 
         // Set up collision between player and ground and platforms
         this.physics.add.collider(this.player1, ground);
@@ -189,46 +192,6 @@ export class Game extends Phaser.Scene {
         //this.cameras.main.startFollow(this.player);
         this.physics.world.setBounds(0, 0, scaledWidth, scaledHeight);
         this.cameras.main.setBounds(0, 0, scaledWidth, scaledHeight);
-
-        // player 2 logic if need be add it back in
-        //this.player2 = new NinjaCharacter(this, 900, 450);
-        //this.physics.add.collider(this.player2, ground);
-        // set up collison between player1 and player2 to prevent overlap(note somethings a little off here)
-        //this.physics.add.collider(this.player1, this.player2);
-
-        /*
-        //Set up hitbox collisions
-        this.physics.add.overlap(
-            this.player1,
-            this.player2,
-            this.handleHitboxCollision,
-            (player1, player2) => {
-                return player1.hitbox && player2.active;
-            },
-            this
-        );
-        this.physics.add.overlap(
-            this.player2,
-            this.player1,
-            this.handleHitboxCollision,
-            (player2, player1) => {
-                return player2.hitbox && player1.active;
-            },
-            this
-        );
-        */
-
- 
-        /*
-        this.player2HealthText = this.add.text(560, 20, `Player 2 (${this.player2.characterType}) Health: ${this.player2.health}`, {
->>>>>>> 38142d377ffecb6a9794866f65b6f81a635cbd5e
-            fontFamily: 'Arial',
-            fontSize: 24,
-            color: '#ffffff',
-            stroke: '#000000',
-            strokeThickness: 4
-        }).setDepth(10);
-
         // Set up collision between player and ground
         this.physics.add.collider(this.player1, ground);
         
