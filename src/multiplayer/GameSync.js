@@ -77,13 +77,10 @@ io.on('connection', (socket) => {
         }
     })
     //gamestate.players skal erstattes med den const som initialiserer playeren
-    socket.on('state', (gamestate) => {
     socket.on('state', (players) => {
         //player skal være variablen som holder player dataen
-        for (let player in gamestate.players) {
         for (let player in players) {
             //drawPlayer skal erstattes med den const, som giver playeren position  
-            drawPlayer(gamestate.players[player])
             drawPlayer(players[player])
         }
     })
@@ -101,7 +98,6 @@ io.on('connection', (socket) => {
 
 //decides sync rate (currently set to 60 times per second)
 setInterval(() => {
-    io.sockets.emit('state', gameState);
     io.sockets.emit('state', players);
 }, 1000 / 60);
 
