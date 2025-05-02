@@ -130,7 +130,9 @@ export class Game extends Phaser.Scene {
 
         // Create player 1
 <<<<<<< HEAD
+        
         this.player1 = new TankCharacter(this, 100, 450);
+        socket.emit('newPlayer');
 
         // Create a dummy target for hitbox testing
         this.dummyTarget = this.physics.add.sprite(200, 450, 'tank_idle');
@@ -181,6 +183,12 @@ export class Game extends Phaser.Scene {
         //dummy health
         this.dummyHealthText = this.add.text(500, 20, `Dummy Target Health: ${this.dummyTarget.health}`, {
 =======
+            fontFamily: 'Arial',
+            fontSize: 24,
+            color: '#ffffff',
+            stroke: '#000000',
+            strokeThickness: 4
+        }).setDepth(10);
 
         // Set up collision between player and ground and platforms
         this.physics.add.collider(this.player1, ground);
