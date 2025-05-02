@@ -131,7 +131,7 @@ export class Game extends Phaser.Scene {
         // Create player 1
         
         this.player1 = new TankCharacter(this, 100, 450);
-        socket.emit('newPlayer');
+        //socket.emit('newPlayer');
 
         // Create a dummy target for hitbox testing
         this.dummyTarget = this.physics.add.sprite(200, 450, 'tank_idle');
