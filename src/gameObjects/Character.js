@@ -5,7 +5,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         super(scene, x, y, config.idleSpriteKey || 'tank_idle');
         scene.add.existing(this);
         scene.physics.add.existing(this);
-        this.setBounce(0.2); //maybe set this to 0
+        this.setBounce(0.0); //maybe set this to 0
         this.setCollideWorldBounds(true);
 
         //combat properties
@@ -16,6 +16,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         this.attackDamage = config.attackDamage || 10;
         this.hitboxConfig = config.hitboxConfig || { width: 40, height: 50 };
         this.hitbox = null;
+        this.shockwave = null; // Shockwave: Track shockwave sprite for tank's ATTACK2
 
         // Character specific properties
         this.characterType = config.characterType || 'unknown';
@@ -25,50 +26,78 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             turn: 'turn',
             jump: 'jump',
             attack: 'attack',
+            attack2: 'attack2',
             hurt: 'hurt'
         };
 
+        // Input buffering
+        this.inputBuffer = {
+            jump: false,
+            attack: false,
+            attack2: false,
+            moveLeft: false,
+            moveRight: false
+        };
+
+        // Track landing frame to stabilize JUMP
+        this.lastGroundedFrame = 0;
+
+        // Initialize Shift key for ATTACK2
+        this.shiftKey = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
+
+        console.log(`Creating ${this.characterType} character at x=${x}, y=${y}`);
         this.initAnimations();
         this.initStateMachine(scene);
     }
 
     initAnimations() {
-        this.anims.create({
-            key: this.animationKeys.left,
-            frames: this.anims.generateFrameNames('tank_run', { prefix: 'running', end: 8, zeroPad: 4 }),
-            frameRate: 10,
-            repeat: -1
-        });
-        this.anims.create({
-            key: this.animationKeys.turn,
-            frames: this.anims.generateFrameNames('tank_idle', { prefix: 'idle', end: 8, zeroPad: 4 }),
-            frameRate: 10,
-            repeat: -1
-        });
-        this.anims.create({
-            key: this.animationKeys.right,
-            frames: this.anims.generateFrameNames('tank_run', { prefix: 'running', end: 8, zeroPad: 4 }),
-            frameRate: 10,
-            repeat: -1
-        });
-        this.anims.create({
-            key: this.animationKeys.jump,
-            frames: this.anims.generateFrameNames('tank_jump', { prefix: 'jumping', end: 8, zeroPad: 4 }),
-            frameRate: 5,
-            repeat: 0
-        });
-        this.anims.create({
-            key: this.animationKeys.attack,
-            frames: this.anims.generateFrameNames('tank_attack', { prefix: 'attackRight', end: 4, zeroPad: 4 }),
-            frameRate: 13,
-            repeat: 0
-        });
-        this.anims.create({
-            key: this.animationKeys.hurt,
-            frames: this.anims.generateFrameNames('tank_idle', { prefix: 'idle', end: 8, zeroPad: 4 }), // Placeholder replace with hurt animation
-            frameRate: 10,
-            repeat: 0
-        });
+        try {
+            this.anims.create({
+                key: this.animationKeys.left,
+                frames: this.anims.generateFrameNames('tank_run', { prefix: 'running', end: 8, zeroPad: 4 }),
+                frameRate: 10,
+                repeat: -1
+            });
+            this.anims.create({
+                key: this.animationKeys.turn,
+                frames: this.anims.generateFrameNames('tank_idle', { prefix: 'idle', end: 8, zeroPad: 4 }),
+                frameRate: 10,
+                repeat: -1
+            });
+            this.anims.create({
+                key: this.animationKeys.right,
+                frames: this.anims.generateFrameNames('tank_run', { prefix: 'running', end: 8, zeroPad: 4 }),
+                frameRate: 10,
+                repeat: -1
+            });
+            this.anims.create({
+                key: this.animationKeys.jump,
+                frames: this.anims.generateFrameNames('tank_jump', { prefix: 'jumping', end: 8, zeroPad: 4 }),
+                frameRate: 5,
+                repeat: 0
+            });
+            this.anims.create({ //standard attack
+                key: this.animationKeys.attack,
+                frames: this.anims.generateFrameNames('tank_attack', { prefix: 'attackRight', end: 5, zeroPad: 4 }), // Extended to include attackRight0005
+                frameRate: 13,
+                repeat: 0
+            });
+            this.anims.create({ //secondary attack i.e attack2
+                key: this.animationKeys.attack2,
+                frames: this.anims.generateFrameNames('tank_attack', { prefix: 'secondAttack', end: 5, zeroPad: 4 }), // Corrected to end at 5
+                frameRate: 13,
+                repeat: 0
+            });
+            this.anims.create({
+                key: this.animationKeys.hurt,
+                frames: this.anims.generateFrameNames('tank_idle', { prefix: 'idle', end: 8, zeroPad: 4 }), // Placeholder replace with hurt animation
+                frameRate: 10,
+                repeat: 0
+            });
+            console.log(`${this.characterType} animations created successfully`);
+        } catch (error) {
+            console.error(`${this.characterType} animation creation failed:`, error);
+        }
     }
 
     initStateMachine(scene) {
@@ -77,6 +106,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 enter: () => {
                     this.setVelocityX(0);
                     this.anims.play(this.animationKeys.turn, true);
+                    console.log(`${this.characterType} entered IDLE state`);
                 },
                 execute: () => {
                     const cursors = scene.input.keyboard.createCursorKeys();
@@ -88,6 +118,8 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                         this.stateMachine.transition('JUMP');
                     } else if (Phaser.Input.Keyboard.JustDown(cursors.space)) {
                         this.stateMachine.transition('ATTACK');
+                    } else if (Phaser.Input.Keyboard.JustDown(this.shiftKey)) {
+                        this.stateMachine.transition('ATTACK2');
                     }
                 }
             },
@@ -95,9 +127,8 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 enter: () => {
                     this.setVelocityX(-200);
                     this.flipX = true;
-                    if (this.body.blocked.down) {
-                        this.anims.play(this.animationKeys.left, true);
-                    }
+                    this.anims.play(this.animationKeys.left, true);
+                    console.log(`${this.characterType} entered MOVE_LEFT state`);
                 },
                 execute: () => {
                     const cursors = scene.input.keyboard.createCursorKeys();
@@ -111,6 +142,8 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                         this.stateMachine.transition('JUMP');
                     } else if (Phaser.Input.Keyboard.JustDown(cursors.space)) {
                         this.stateMachine.transition('ATTACK');
+                    } else if (Phaser.Input.Keyboard.JustDown(this.shiftKey)) {
+                        this.stateMachine.transition('ATTACK2');
                     }
                 }
             },
@@ -118,9 +151,8 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 enter: () => {
                     this.setVelocityX(200);
                     this.flipX = false;
-                    if (this.body.blocked.down) {
-                        this.anims.play(this.animationKeys.right, true);
-                    }
+                    this.anims.play(this.animationKeys.right, true);
+                    console.log(`${this.characterType} entered MOVE_RIGHT state`);
                 },
                 execute: () => {
                     const cursors = scene.input.keyboard.createCursorKeys();
@@ -134,41 +166,147 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                         this.stateMachine.transition('JUMP');
                     } else if (Phaser.Input.Keyboard.JustDown(cursors.space)) {
                         this.stateMachine.transition('ATTACK');
+                    } else if (Phaser.Input.Keyboard.JustDown(this.shiftKey)) {
+                        this.stateMachine.transition('ATTACK2');
                     }
                 }
             },
             JUMP: {
                 enter: () => {
                     this.setVelocityY(-440);
-                    this.anims.play(this.animationKeys.jump, true);
+                    if (this.stateMachine.currentState !== 'ATTACK' && this.stateMachine.currentState !== 'ATTACK2') {
+                        this.anims.play(this.animationKeys.jump, true);
+                        console.log(`${this.characterType} entered JUMP state`);
+                    }
                 },
                 execute: () => {
+                    const cursors = scene.input.keyboard.createCursorKeys();
+                    // Only transition to IDLE after a few frames on ground to stabilize
                     if (this.body.blocked.down) {
-                        this.stateMachine.transition('IDLE');
+                        this.lastGroundedFrame++; //increment 2 frames of being grounded
+                        if (this.lastGroundedFrame > 2) {
+                            this.stateMachine.transition('IDLE');
+                        }
+                    } else {
+                        this.lastGroundedFrame = 0; //reset last lastGroundedFrame
                     }
+                    // Buffer inputs during jump
+                    this.inputBuffer.jump = cursors.up.isDown && this.body.blocked.down && !this.inputBuffer.jump;
+                    this.inputBuffer.attack = Phaser.Input.Keyboard.JustDown(cursors.space);
+                    this.inputBuffer.attack2 = Phaser.Input.Keyboard.JustDown(this.shiftKey);
+                    this.inputBuffer.moveLeft = cursors.left.isDown;
+                    this.inputBuffer.moveRight = cursors.right.isDown;
                 }
             },
             ATTACK: {
                 enter: () => {
                     this.setVelocityX(0);
                     this.anims.play(this.animationKeys.attack, true);
+                    console.log(`${this.characterType} entered ATTACK state`);
                     // create hitbox on attack animation (this can be adjusted to the individual sprite)
-                    this.scene.time.delayedCall(100, () => { //to match hitbox on specific frame adjust this timer
+                    this.scene.time.delayedCall(50, () => {
                         if (this.stateMachine.currentState === 'ATTACK') {
                             this.createHitbox();
+                            console.log(`${this.characterType} created hitbox at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
                         }
                     });
-                    // Transition to IDLE when attack anim. is complete.
+                    // Transition to IDLE when attack anim. is complete
+                    this.off(`animationcomplete-${this.animationKeys.attack}`);
                     this.once(`animationcomplete-${this.animationKeys.attack}`, () => {
                         this.destroyHitbox();
                         this.stateMachine.transition('IDLE');
+                        console.log(`${this.characterType} attack animation complete`);
                     });
                 },
                 execute: () => {
-                    // No input during attack
+                    // Buffer inputs during attack
+                    const cursors = scene.input.keyboard.createCursorKeys();
+                    this.inputBuffer.jump = cursors.up.isDown && this.body.blocked.down && !this.inputBuffer.jump;
+                    this.inputBuffer.attack = Phaser.Input.Keyboard.JustDown(cursors.space);
+                    this.inputBuffer.attack2 = Phaser.Input.Keyboard.JustDown(this.shiftKey);
+                    this.inputBuffer.moveLeft = cursors.left.isDown;
+                    this.inputBuffer.moveRight = cursors.right.isDown;
                 },
                 exit: () => {
                     this.destroyHitbox();
+                    console.log(`${this.characterType} exited ATTACK state`);
+                    // Delay buffered input processing to next update cycle
+                    this.scene.time.delayedCall(0, () => {
+                        if (this.inputBuffer.attack) {
+                            this.stateMachine.transition('ATTACK');
+                        } else if (this.inputBuffer.attack2) {
+                            this.stateMachine.transition('ATTACK2');
+                        } else if (this.inputBuffer.jump) {
+                            this.stateMachine.transition('JUMP');
+                        } else if (this.inputBuffer.moveLeft) {
+                            this.stateMachine.transition('MOVE_LEFT');
+                        } else if (this.inputBuffer.moveRight) {
+                            this.stateMachine.transition('MOVE_RIGHT');
+                        }
+                        this.inputBuffer = { jump: false, attack: false, attack2: false, moveLeft: false, moveRight: false };
+                    });
+                }
+            },
+            ATTACK2: {
+                enter: () => {
+                    this.setVelocityX(0);
+                    this.anims.play(this.animationKeys.attack2, true);
+                    console.log(`${this.characterType} entered ATTACK2 state`);
+                    // Shockwave: Create shockwave for tank, hitbox for others
+                    this.scene.time.delayedCall(50, () => {
+                        if (this.stateMachine.currentState === 'ATTACK2') {
+                            if (this.characterType === 'tank') {
+                                this.createShockwave(); // SHOCKWAVE!
+                                console.log(`${this.characterType} created shockwave at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
+                            } else {
+                                this.createHitbox();
+                                console.log(`${this.characterType} created hitbox at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
+                            }
+                        }
+                    });
+                    // Transition to IDLE when attack anim. is complete
+                    this.off(`animationcomplete-${this.animationKeys.attack2}`);
+                    this.once(`animationcomplete-${this.animationKeys.attack2}`, () => {
+                        if (this.characterType === 'tank') {
+                            this.destroyShockwave();
+                        } else {
+                            this.destroyHitbox();
+                        }
+                        this.stateMachine.transition('IDLE');
+                        console.log(`${this.characterType} attack2 animation complete`);
+                    });
+                },
+                execute: () => {
+                    // Buffer inputs during attack
+                    const cursors = scene.input.keyboard.createCursorKeys();
+                    this.inputBuffer.jump = cursors.up.isDown && this.body.blocked.down && !this.inputBuffer.jump;
+                    this.inputBuffer.attack = Phaser.Input.Keyboard.JustDown(cursors.space);
+                    this.inputBuffer.attack2 = Phaser.Input.Keyboard.JustDown(this.shiftKey);
+                    this.inputBuffer.moveLeft = cursors.left.isDown;
+                    this.inputBuffer.moveRight = cursors.right.isDown;
+                },
+                exit: () => {
+                    if (this.characterType === 'tank') {
+                        this.destroyShockwave();
+                    } else {
+                        this.destroyHitbox();
+                    }
+                    console.log(`${this.characterType} exited ATTACK2 state`);
+                    // Delay buffered input processing to next update cycle
+                    this.scene.time.delayedCall(0, () => {
+                        if (this.inputBuffer.attack) {
+                            this.stateMachine.transition('ATTACK');
+                        } else if (this.inputBuffer.attack2) {
+                            this.stateMachine.transition('ATTACK2');
+                        } else if (this.inputBuffer.jump) {
+                            this.stateMachine.transition('JUMP');
+                        } else if (this.inputBuffer.moveLeft) {
+                            this.stateMachine.transition('MOVE_LEFT');
+                        } else if (this.inputBuffer.moveRight) {
+                            this.stateMachine.transition('MOVE_RIGHT');
+                        }
+                        this.inputBuffer = { jump: false, attack: false, attack2: false, moveLeft: false, moveRight: false };
+                    });
                 }
             },
             HURT: {
@@ -176,6 +314,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     this.setVelocityX(0);
                     this.anims.play(this.animationKeys.hurt, true);
                     this.isInvincible = true;
+                    console.log(`${this.characterType} entered HURT state`);
                     //Flash effect to show we have a hit using tweens
                     this.scene.tweens.add({
                         targets: this,
@@ -188,10 +327,34 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     this.scene.time.delayedCall(this.invincibilityDuration, () => {
                         this.isInvincible = false;
                         this.stateMachine.transition('IDLE');
+                        console.log(`${this.characterType} exited HURT state`);
                     });
                 },
                 execute: () => {
-                    //no input during hurt state
+                    // Buffer inputs during hurt state
+                    const cursors = scene.input.keyboard.createCursorKeys();
+                    this.inputBuffer.jump = cursors.up.isDown && this.body.blocked.down && !this.inputBuffer.jump;
+                    this.inputBuffer.attack = Phaser.Input.Keyboard.JustDown(cursors.space);
+                    this.inputBuffer.attack2 = Phaser.Input.Keyboard.JustDown(this.shiftKey);
+                    this.inputBuffer.moveLeft = cursors.left.isDown;
+                    this.inputBuffer.moveRight = cursors.right.isDown;
+                },
+                exit: () => {
+                    // Delay buffered input processing to next update cycle
+                    this.scene.time.delayedCall(0, () => {
+                        if (this.inputBuffer.attack) {
+                            this.stateMachine.transition('ATTACK');
+                        } else if (this.inputBuffer.attack2) {
+                            this.stateMachine.transition('ATTACK2');
+                        } else if (this.inputBuffer.jump) {
+                            this.stateMachine.transition('JUMP');
+                        } else if (this.inputBuffer.moveLeft) {
+                            this.stateMachine.transition('MOVE_LEFT');
+                        } else if (this.inputBuffer.moveRight) {
+                            this.stateMachine.transition('MOVE_RIGHT');
+                        }
+                        this.inputBuffer = { jump: false, attack: false, attack2: false, moveLeft: false, moveRight: false };
+                    });
                 }
             }
         }, this);
@@ -212,19 +375,60 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             this.hitbox.owner = this; // this is referencing player for collision handling
             //Debug: visual hitbox will/need to be removed later
             this.hitbox.setStrokeStyle(2, 0xff0000); //debug
+            console.log(`${this.characterType} hitbox position: x=${this.hitbox.x}, y=${this.hitbox.y}, width=${width}, height=${height}`);
         }
     }
 
     destroyHitbox() {
         if (this.hitbox) {
+            console.log(`${this.characterType} destroyed hitbox at x=${this.hitbox.x}, y=${this.hitbox.y}`);
             this.hitbox.destroy();
             this.hitbox = null;
+        }
+    }
+
+    // Shockwave: Create shockwave sprite for tank's ATTACK2
+    createShockwave() {
+        if (!this.shockwave) {
+            const offsetX = this.flipX ? -10 : 10; // Position 50px in front of player
+            this.shockwave = this.scene.physics.add.sprite(
+                this.x + offsetX,
+                this.y,
+                'tank_attack',
+                'secondAttackShockwave0000'
+            );
+            this.shockwave.owner = this; // Reference player for collision handling
+            this.shockwave.setVelocityX(this.flipX ? -300 : 300); // Move 200px/s in facing direction
+            this.shockwave.body.setAllowGravity(false);
+            // Shockwave: Set size to match sprite (25x40)
+            this.shockwave.body.setSize(35, 50);
+            // Shockwave: Destroy with end animation after 200ms if no collision
+            this.scene.time.delayedCall(200, () => {
+                if (this.shockwave) {
+                    this.shockwave.setVelocityX(0); // Stop movement
+                    this.shockwave.anims.play('shockwave_end', true);
+                    this.scene.time.delayedCall(100, () => {
+                        this.destroyShockwave();
+                    });
+                }
+            });
+            console.log(`${this.characterType} shockwave created at x=${this.shockwave.x}, y=${this.shockwave.y}`);
+        }
+    }
+
+    // Shockwave: Destroy shockwave sprite
+    destroyShockwave() {
+        if (this.shockwave) {
+            console.log(`${this.characterType} shockwave destroyed at x=${this.shockwave.x}, y=${this.shockwave.y}`);
+            this.shockwave.destroy();
+            this.shockwave = null;
         }
     }
 
     takeDamage(damage) {
         if (!this.isInvincible) {
             this.health = Math.max(0, this.health - damage);
+            console.log(`${this.characterType} took ${damage} damage, health now: ${this.health}`);
             if (this.health > 0) {
                 this.stateMachine.transition('HURT');
             } else {

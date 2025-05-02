@@ -73,19 +73,40 @@ export class Game extends Phaser.Scene {
 
         // Create player 1
         this.player1 = new TankCharacter(this, 100, 450);
-                //display health note. we can customise this font see description over text method
-                this.player1HealthText = this.add.text(20, 20, `Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`, {
-                    fontFamily: 'Arial',
-                    fontSize: 24,
-                    color: '#ffffff',
-                    stroke: '#000000',
-                    strokeThickness: 4
-                }).setDepth(10);
-        // Set up collision between player and ground
-        this.physics.add.collider(this.player1, ground);
+
+        // Create a dummy target for hitbox testing
+        this.dummyTarget = this.physics.add.sprite(200, 450, 'tank_idle');
+        this.dummyTarget.setImmovable(true);
+        this.dummyTarget.health = 100; // For testing damage
+        this.physics.add.collider(this.dummyTarget, ground);
         
-        //this.cameras.main.startFollow(this.player);
-        this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+        //Debug: to check hurt state for player: in console everything works although health bar does not correctly update.
+        //this.input.keyboard.on('keydown-T', () => {
+        //    this.player1.takeDamage(10);
+        //});
+
+        // Set up hitbox collisions with dummy target
+        this.physics.add.overlap(
+            this.player1,
+            this.dummyTarget,
+            this.handleHitboxCollision,
+            (player, target) => {
+                return player.hitbox && target.active;
+            },
+            this
+        );
+
+        // Shockwave: Set up shockwave collisions with dummy target
+        this.physics.add.overlap(
+            this.player1,
+            this.dummyTarget,
+            this.handleShockwaveCollision,
+            (player, target) => {
+                return player.shockwave && target.active;
+            },
+            this
+        );
+
         //display health note. we can customise this font see description over text method
         this.player1HealthText = this.add.text(20, 20, `Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`, {
             fontFamily: 'Arial',
@@ -94,55 +115,20 @@ export class Game extends Phaser.Scene {
             stroke: '#000000',
             strokeThickness: 4
         }).setDepth(10);
-        // player 2 logic if need be add it back in
-        //this.player2 = new NinjaCharacter(this, 900, 450);
-        //this.physics.add.collider(this.player2, ground);
-        // set up collison between player1 and player2 to prevent overlap(note somethings a little off here)
-        //this.physics.add.collider(this.player1, this.player2);
-
-        /*
-        //Set up hitbox collisions
-        this.physics.add.overlap(
-            this.player1,
-            this.player2,
-            this.handleHitboxCollision,
-            (player1, player2) => {
-                return player1.hitbox && player2.active;
-            },
-            this
-        );
-        this.physics.add.overlap(
-            this.player2,
-            this.player1,
-            this.handleHitboxCollision,
-            (player2, player1) => {
-                return player2.hitbox && player1.active;
-            },
-            this
-        );
-        */
-
- 
-        /*
-        this.player2HealthText = this.add.text(560, 20, `Player 2 (${this.player2.characterType}) Health: ${this.player2.health}`, {
+        //dummy health
+        this.dummyHealthText = this.add.text(500, 20, `Dummy Target Health: ${this.dummyTarget.health}`, {
             fontFamily: 'Arial',
             fontSize: 24,
             color: '#ffffff',
             stroke: '#000000',
             strokeThickness: 4
         }).setDepth(10);
-        */
-        /*
-        // Set up input for player2 (temporary for testing)
-        this.player2Keys = this.input.keyboard.addKeys({
-            up: Phaser.Input.Keyboard.KeyCodes.W,
-            left: Phaser.Input.Keyboard.KeyCodes.A,
-            right: Phaser.Input.Keyboard.KeyCodes.D,
-            attack: Phaser.Input.Keyboard.KeyCodes.S
-        });
-        */
-        // Set camera to follow player if we would like this feature
 
+        // Set up collision between player and ground
+        this.physics.add.collider(this.player1, ground);
+        
+        //this.cameras.main.startFollow(this.player);
+        this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
         // Connect to server
         this.networkManager = new NetworkManager();
@@ -159,13 +145,29 @@ export class Game extends Phaser.Scene {
             .catch(err => {
                 console.error('Failed to connect:', err);
             });
-        
-
     }   
 
     handleHitboxCollision(attacker, target) {
         if (attacker.hitbox && attacker !== target && !target.isInvincible) {
-            target.takeDamage(attacker.attackDamage);
+            console.log(`Hitbox collision: ${attacker.characterType} hits target, dealing ${attacker.attackDamage} damage`);
+            target.health = Math.max(0, target.health - attacker.attackDamage);
+            if (target.health <= 0) {
+                console.log('Dummy target destroyed');
+                target.destroy();
+            }
+        }
+    }
+
+    // Shockwave: Handle collision between shockwave and target
+    handleShockwaveCollision(attacker, target) {
+        if (attacker.shockwave && attacker !== target && !target.isInvincible) {
+            console.log(`Shockwave collision: ${attacker.characterType} hits target, dealing ${attacker.attackDamage} damage`);
+            target.health = Math.max(0, target.health - attacker.attackDamage);
+            attacker.destroyShockwave(); // Destroy shockwave immediately on hit
+            if (target.health <= 0) {
+                console.log('Dummy target destroyed');
+                target.destroy();
+            }
         }
     }
 
@@ -195,6 +197,9 @@ export class Game extends Phaser.Scene {
                 case 'ATTACK':
                     animation = 'attack';
                     break;
+                case 'ATTACK2':
+                    animation = 'attack2';
+                    break;    
             }
 
             this.networkManager.sendPlayerUpdate(
@@ -207,32 +212,12 @@ export class Game extends Phaser.Scene {
             );
         }
 
-        this.player1HealthText.setText(`Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`);
-
-        /* once again all below is player 2 logic
-        this.player2.update();
-        // Temporary input handling for player2 (replace with network input for multiplayer)
-        if (this.player2Keys.left.isDown) {
-            this.player2.stateMachine.transition('MOVE_LEFT');
-        } else if (this.player2Keys.right.isDown) {
-            this.player2.stateMachine.transition('MOVE_RIGHT');
-        } else if (Phaser.Input.Keyboard.JustDown(this.player2Keys.attack)) {
-            this.player2.stateMachine.transition('ATTACK');
-        } else if (this.player2Keys.up.isDown && this.player2.body.blocked.down) {
-            this.player2.stateMachine.transition('JUMP');
-        } else if (
-            !this.player2Keys.left.isDown &&
-            !this.player2Keys.right.isDown &&
-            this.player2.stateMachine.currentState !== 'ATTACK' &&
-            this.player2.stateMachine.currentState !== 'HURT' &&
-            this.player2.stateMachine.currentState !== 'JUMP'
-        ) {
-            this.player2.stateMachine.transition('IDLE');
-        }
-
         // Update health text
-        this.player2HealthText.setText(`Player 2 (${this.player2.characterType}) Health: ${this.player2.health}`);
-        */
+        this.player1HealthText.setText(`Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`);
+        if (this.dummyTarget && this.dummyTarget.active) {
+            this.dummyHealthText.setText(`Dummy Target Health: ${this.dummyTarget.health}`);
+        } else {
+            this.dummyHealthText.setText('Dummy Target: Destroyed');
+        }
     }
-    
 }

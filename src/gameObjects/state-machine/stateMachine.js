@@ -3,19 +3,40 @@ export class StateMachine {
         this.currentState = initialState;
         this.states = states;
         this.context = context;
+        this.isTransitioning = false;
+        this.queuedTransition = null;
     }
 
     transition(newState) {
+        if (this.isTransitioning) {
+            // Queue the transition if already transitioning
+            this.queuedTransition = newState;
+            console.log(`Queuing transition to ${newState}`);
+            return;
+        }
+
         if (this.states[newState] && this.currentState !== newState) {
-            //Exit current state
+            this.isTransitioning = true;
+            console.log(`Transitioning from ${this.currentState} to ${newState}`);
+
+            // Exit current state
             if (this.states[this.currentState].exit) {
                 this.states[this.currentState].exit.call(this.context);
             }
-            //Update state
+            // Update state
             this.currentState = newState;
-            //Enter new state
+            // Enter new state
             if (this.states[newState].enter) {
                 this.states[newState].enter.call(this.context);
+            }
+
+            this.isTransitioning = false;
+
+            // Process queued transition
+            if (this.queuedTransition) {
+                const nextState = this.queuedTransition;
+                this.queuedTransition = null;
+                this.transition(nextState);
             }
         }
     }
