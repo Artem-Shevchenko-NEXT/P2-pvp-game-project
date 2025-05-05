@@ -25,7 +25,7 @@ export class ArcherCharacter extends Character {
         this.anims.create({
             key: this.animationKeys.left,
             frames: this.anims.generateFrameNames('archer_run', { prefix: 'running', end: 7, zeroPad: 4 }),
-            frameRate: 12, //ninjavaerdier hele vejen ned
+            frameRate: 12, // aendrede vaerdier
             repeat: -1
         });
         this.anims.create({
