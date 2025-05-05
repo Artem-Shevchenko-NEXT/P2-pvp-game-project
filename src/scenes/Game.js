@@ -132,7 +132,7 @@ export class Game extends Phaser.Scene {
 
         // Create player 1
         
-        this.player1 = new HeroCharacter(this, 100, 450);
+        this.player1 = new ArcherCharacter(this, 100, 450);
         //socket.emit('newPlayer');
 
         // Create a dummy target for hitbox testing

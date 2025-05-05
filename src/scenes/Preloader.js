@@ -69,7 +69,11 @@ export class Preloader extends Phaser.Scene {
         );
         this.load.atlas(
             'archer_attack',
-            'archer/archer_attack.png', 'archer/archer_attack.json'    
+            'archer/archer_attack.png', 'archer/archer_attack.json'   
+        );
+         this.load.atlas(
+            'archer_hurt',
+            'archer/archer_hurt.png', 'archer/archer_hurt.json'   
         );
         
         //Hero character assets loads here
@@ -88,6 +92,10 @@ export class Preloader extends Phaser.Scene {
         this.load.atlas(
             'hero_attack',
             'hero/hero_attack.png', 'hero/hero_attack.json'    
+        );
+         this.load.atlas(
+            'hero_hurt',
+            'hero/hero_hurt.png', 'hoer/hero_hurt.json'   
         );
     }
 

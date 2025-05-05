@@ -25,7 +25,7 @@ export class ArcherCharacter extends Character {
         this.anims.create({
             key: this.animationKeys.left,
             frames: this.anims.generateFrameNames('archer_run', { prefix: 'running', end: 7, zeroPad: 4 }),
-            frameRate: 12, // aendrede vaerdier
+            frameRate: 8, // aendrede vaerdier
             repeat: -1
         });
         this.anims.create({
@@ -37,24 +37,24 @@ export class ArcherCharacter extends Character {
         this.anims.create({
             key: this.animationKeys.right,
             frames: this.anims.generateFrameNames('archer_run', { prefix: 'running', end: 7, zeroPad: 4 }),
-            frameRate: 12,
+            frameRate: 8,
             repeat: -1
         });
         this.anims.create({
             key: this.animationKeys.jump,
             frames: this.anims.generateFrameNames('archer_jump', { prefix: 'jumping', end: 7, zeroPad: 4 }),
-            frameRate: 6,
+            frameRate: 4,
             repeat: 0
         });
         this.anims.create({
             key: this.animationKeys.attack,
             frames: this.anims.generateFrameNames('archer_attack', { prefix: 'attackRight', end: 4, zeroPad: 4 }),
-            frameRate: 16, // Faster attack
+            frameRate: 10, // slow
             repeat: 0
         });
         this.anims.create({
             key: this.animationKeys.hurt,
-            frames: this.anims.generateFrameNames('archer_idle', { prefix: 'idle', end: 8, zeroPad: 4 }),
+            frames: this.anims.generateFrameNames('archer_hurt', { prefix: 'hurt', end: 4, zeroPad: 4 }),
             frameRate: 12,
             repeat: 0
         });

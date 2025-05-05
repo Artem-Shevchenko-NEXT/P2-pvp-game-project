@@ -54,7 +54,7 @@ export class HeroCharacter extends Character {
         });
         this.anims.create({
             key: this.animationKeys.hurt,
-            frames: this.anims.generateFrameNames('hero_idle', { prefix: 'idle', end: 8, zeroPad: 4 }),
+            frames: this.anims.generateFrameNames('hero_hurt', { prefix: 'hurt', end: 4, zeroPad: 4 }),
             frameRate: 12,
             repeat: 0
         });
