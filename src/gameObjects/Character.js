@@ -48,6 +48,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         console.log(`Creating ${this.characterType} character at x=${x}, y=${y}`);
         this.initAnimations();
         this.initStateMachine(scene);
+        this.anims.play(this.animationKeys.turn, true); // Added this line so animations start to play the very first frame,
     }
 
     initAnimations() {

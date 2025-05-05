@@ -103,45 +103,19 @@ export class Game extends Phaser.Scene {
         const scaledWidth = mapWidth * scaleX;
         const scaledHeight = mapHeight * scaleY;
 
-        /*
-        // Old attempt: Scaling the offset instead of the scale.
-        let xOffset = 0;
-        if (screenWidth > mapWidth) {
-            xOffset = Math.floor((screenWidth - mapWidth) / 2);
-        }
-
-        let yOffset = 0;
-        if (screenHeight > mapHeight) {
-          yOffset = screenHeight - mapHeight;
-        }
-
-        ground.setPosition(xOffset, yOffset);
-        platforms.setPosition(xOffset, yOffset);
-
-        this.physics.world.setBounds(xOffset, yOffset, mapWidth, mapHeight);
-        this.cameras.main.setBounds(xOffset, yOffset, mapWidth, mapHeight);
-        */
-
-        // Experimental code for scaling the player with resolution-change.
-        /*
-        const spawnX = PLAYER1_SPAWN_X * scaleX;
-        const spawnY = PLAYER1_SPAWN_Y * scaleY;
-
-        this.player1 = new Player(this, spawnX, spawnY);
-        this.player1.setScale(scaleX, scaleY);
-
-        this.player1.body.setSize(
-            this.player1.displayWidth,
-            this.player1.displayHeight
-        );
-        */
-
         // Create player 1
-        
+        // Selecting character based on the key passed from CharacterSelector.js
         if (this.selectedCharacter === 'tank') {
             this.player1 = new TankCharacter(this, PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y);
-        } else {
+        } else if (this.selectedCharacter === 'ninja') {
             this.player1 = new NinjaCharacter(this, PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y);
+        } else if (this.selectedCharacter === 'hero') {
+            this.player1 = new HeroCharacter(this, PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y);
+        } else if (this.selectedCharacter === 'archer') {
+            this.player1 = new ArcherCharacter(this, PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y);
+        } else {
+            // Fall back to tank as default
+            this.player1 = new TankCharacter(this, PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y);
         }
         //socket.emit('newPlayer');
 

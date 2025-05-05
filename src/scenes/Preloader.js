@@ -42,7 +42,11 @@ export class Preloader extends Phaser.Scene {
         this.load.image('background1', 'oak_woods/background/background_layer_1.png');
         this.load.image('background2', 'oak_woods/background/background_layer_2.png');
         this.load.image('background3', 'oak_woods/background/background_layer_3.png');
-        
+
+        this.load.image('torch_1', 'torch/smalltorch1.png');
+        this.load.image('torch_2', 'torch/smalltorch2.png');
+        this.load.image('torch_3', 'torch/smalltorch3.png');
+
         //loading our game map Json file from the program Tiled
         this.load.tilemapTiledJSON('tilemap', 'game_map_oakwood_v3.json');
        
@@ -102,11 +106,49 @@ export class Preloader extends Phaser.Scene {
     }
 
     create() {
+        // Need to create all the idle animations in the preloader, in order for them to be used in the character selector
+        this.anims.create({
+            key: 'tank_turn',
+            frames: this.anims.generateFrameNames('tank_idle', { prefix: 'idle', end: 8, zeroPad: 4 }),
+            frameRate: 10,
+            repeat: -1
+        });
+        
+        this.anims.create({
+            key: 'ninja_turn',
+            frames: this.anims.generateFrameNames('ninja_idle', { prefix: 'idle', end: 8, zeroPad: 4 }),
+            frameRate: 10,
+            repeat: -1
+        });
+        
+        this.anims.create({
+            key: 'hero_turn',
+            frames: this.anims.generateFrameNames('hero_idle', { prefix: 'idle', end: 8, zeroPad: 4 }),
+            frameRate: 10,
+            repeat: -1
+        });
+        
+        this.anims.create({
+            key: 'archer_turn',
+            frames: this.anims.generateFrameNames('archer_idle', { prefix: 'idle', end: 8, zeroPad: 4 }),
+            frameRate: 10,
+            repeat: -1
+        });
+
+        this.anims.create({
+            key: 'torch_burn',
+            frames: [
+                { key: 'torch_1' },
+                { key: 'torch_2' },
+                { key: 'torch_3' },
+            ],
+            frameRate: 8,
+            repeat: -1
+        });
+
         //  When all the assets have loaded, it's often worth creating global objects here that the rest of the game can use.
         //  For example, you can define global animations here, so we can use them in other scenes.
 
-        new TankCharacter(this, 0, 0).destroy();
-        new NinjaCharacter(this, 0, 0).destroy();
         //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
         this.scene.start('CharacterSelector');
          

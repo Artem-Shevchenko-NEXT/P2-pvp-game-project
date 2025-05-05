@@ -9,6 +9,7 @@ const config = {
     type: Phaser.AUTO,
     width: SCREEN_WIDTH,
     height: SCREEN_HEIGHT,
+    pixelArt: true, // Turns of anti-aliasing for better pixel effect.
     parent: 'game-container',
     backgroundColor: '#4488aa',
     physics: {
