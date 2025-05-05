@@ -24,7 +24,7 @@ export class HeroCharacter extends Character {
     initAnimations() {
         this.anims.create({
             key: this.animationKeys.left,
-            frames: this.anims.generateFrameNames('hero_run', { prefix: 'running', end: 8, zeroPad: 4 }),
+            frames: this.anims.generateFrameNames('hero_run', { prefix: 'running', end: 11, zeroPad: 4 }),
             frameRate: 12, //ninjavaerdier hele vejen ned
             repeat: -1
         });
@@ -36,7 +36,7 @@ export class HeroCharacter extends Character {
         });
         this.anims.create({
             key: this.animationKeys.right,
-            frames: this.anims.generateFrameNames('hero_run', { prefix: 'running', end: 8, zeroPad: 4 }),
+            frames: this.anims.generateFrameNames('hero_run', { prefix: 'running', end: 11, zeroPad: 4 }),
             frameRate: 12,
             repeat: -1
         });
