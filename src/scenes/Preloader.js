@@ -95,7 +95,29 @@ export class Preloader extends Phaser.Scene {
         );
          this.load.atlas(
             'hero_hurt',
-            'hero/hero_hurt.png', 'hoer/hero_hurt.json'   
+            'hero/hero_hurt.png', 'hero/hero_hurt.json'   
+        );
+        
+        //Ninja character assets loads here
+        this.load.atlas(
+            'ninja_idle',
+            'ninja/ninja_idle.png', 'ninja/ninja_idle.json'    
+        );
+        this.load.atlas(
+            'ninja_run',
+            'ninja/ninja_run.png', 'ninja/ninja_run.json'    
+        );
+        this.load.atlas(
+            'ninja_jump',
+            'ninja/ninja_jump.png', 'ninja/ninja_jump.json'    
+        );
+        this.load.atlas(
+            'ninja_attack',
+            'ninja/ninja_attack.png', 'ninja/ninja_attack.json'    
+        );
+         this.load.atlas(
+            'ninja_hurt',
+            'ninja/ninja_hurt.png', 'ninja/ninja_hurt.json'   
         );
     }
 
