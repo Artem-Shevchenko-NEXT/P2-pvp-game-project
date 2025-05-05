@@ -6,7 +6,7 @@ const port = process.env.PORT || 3001;
 const RoomManager = require('./server/LobbyManager');
 const LobbyManager = require('./server/LobbyManager');
 import GameSync from './src/multiplayer/GameSync';
-const gameSync = new GameSync(io);
+//const gameSync = new GameSync(io);
 
 // giving directionory forfiles that the server can utilize a
 app.use(express.static(__dirname));
