@@ -25,7 +25,7 @@ describe("NetworkManager", () => {
       io.on("connection", (socket) => {
         serverSocket = socket;
         
-        // Mock server responses similar to our game server implementation
+        // Mock server responses similar to our game server implemantation
         socket.on('join_game', (data) => {
           socket.emit('game_joined', { 
             roomId: 'test-room',
@@ -34,7 +34,7 @@ describe("NetworkManager", () => {
         });
         
         socket.on('player_update', (data) => {
-          // Broadcast to simulate other players receiving updates
+          // Broadcast to simulat other players receiving updates
           socket.broadcast.emit('player_updated', {
             id: socket.id,
             ...data
@@ -53,7 +53,7 @@ describe("NetworkManager", () => {
   });
 
   afterAll(() => {
-    // Clean up all connections to prevent memory leaks
+    // Clean up all connections too prevent memory leaks
     if (networkManager && networkManager.socket) {
       networkManager.disconnect();
     }
@@ -62,7 +62,7 @@ describe("NetworkManager", () => {
   });
 
   test("should connect to server successfully", async () => {
-    // Testing our connection method works properly
+    // Testing our connection mehod works properly
     const connectResult = await networkManager.connect();
     
     expect(networkManager.connected).toBe(true);
@@ -77,23 +77,23 @@ describe("NetworkManager", () => {
       networkManager.on('gameJoined', resolve);
     });
     
-    // Call our join method with test coordinates
+    // Call our join method with test coordinats
     networkManager.joinGame({ x: 100, y: 200 });
     
-    // Wait for the response and check if we got the right room info
+    // Wait for the response and check if we got right room info
     const data = await gameJoinedPromise;
     expect(data.roomId).toBe('test-room');
     expect(networkManager.roomId).toBe('test-room');
   });
 
   test("should send player updates when connected", async () => {
-    // Use the helper function to wait for server to receive our update
+    // Use the helper function to wait for server to recieve our update
     const playerUpdatePromise = waitFor(serverSocket, 'player_update');
     
     // Send a position update with animation data
     networkManager.sendPlayerUpdate(150, 250, { animation: 'run' });
     
-    // Verify the server received exactly what we sent
+    // Verify the server recieved exactly what we sent
     const updateData = await playerUpdatePromise;
     expect(updateData).toEqual({
       x: 150,
@@ -108,7 +108,7 @@ describe("NetworkManager", () => {
       networkManager.on('playerUpdated', resolve);
     });
     
-    // Simulate another player sending an update through the server
+    // Simulate another player sending an update thru the server
     serverSocket.emit('player_updated', {
       id: 'another-player',
       x: 300,
@@ -116,7 +116,7 @@ describe("NetworkManager", () => {
       animation: 'jump'
     });
     
-    // Check if we received and processed the update correctly
+    // Check if we receved and procesed the update correctly
     const data = await playerUpdatedPromise;
     expect(data.id).toBe('another-player');
     expect(data.x).toBe(300);
@@ -135,10 +135,10 @@ describe("NetworkManager", () => {
   });
 
   test("should not send player update when not connected", async () => {
-    // Important to check that we don't try to send messages when offline
+    // Important to check that we dont try to send messages when offline
     const offlineManager = new NetworkManager();
     
-    // Just to be 100% sure of the test conditions
+    // Just to be 100% sure of test conditions
     offlineManager.socket = { emit: jest.fn() };
     offlineManager.connected = false;
     
