@@ -25,7 +25,7 @@ export class HeroCharacter extends Character {
         this.anims.create({
             key: this.animationKeys.left,
             frames: this.anims.generateFrameNames('hero_run', { prefix: 'running', end: 11, zeroPad: 4 }),
-            frameRate: 16, //aendrede vaerdier
+            frameRate: 20, //aendrede vaerdier
             repeat: -1
         });
         this.anims.create({
@@ -36,20 +36,20 @@ export class HeroCharacter extends Character {
         });
         this.anims.create({
             key: this.animationKeys.right,
-            frames: this.anims.generateFrameNames('hero_run', { prefix: 'running', end: 11, zeroPad: 4 }),
-            frameRate: 16,
+            frames: this.anims.generateFrameNames('hero_run', { prefix: 'running', end: 12, zeroPad: 4 }),
+            frameRate: 20,
             repeat: -1
         });
         this.anims.create({
             key: this.animationKeys.jump,
             frames: this.anims.generateFrameNames('hero_jump', { prefix: 'jumping', end: 8, zeroPad: 4 }),
-            frameRate: 12,
+            frameRate: 6,
             repeat: 0
         });
         this.anims.create({
             key: this.animationKeys.attack,
             frames: this.anims.generateFrameNames('hero_attack', { prefix: 'attackRight', end: 4, zeroPad: 4 }),
-            frameRate: 16, // Faster attack
+            frameRate: 12, // 
             repeat: 0
         });
         this.anims.create({
