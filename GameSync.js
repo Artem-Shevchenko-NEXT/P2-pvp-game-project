@@ -83,6 +83,7 @@ this.network.on('playerUpdated', (data) => {
 */
 //sikrer at der er en connection
 //causes an error
+/*
 io.on('connection', (socket) => {
     console.log('Server is running');
 
