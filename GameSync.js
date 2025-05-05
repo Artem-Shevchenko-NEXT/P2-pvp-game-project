@@ -141,4 +141,4 @@ setInterval(() => {
 function interpolation(previous, velocity, acceleration, time){
     return previous + velocity*time + ((acceleration/2) * time*time);
 }
-
+*/
