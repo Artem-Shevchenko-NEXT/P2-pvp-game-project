@@ -50,8 +50,9 @@ but the serve itself recives all updates from all players together at the same t
 */
 
 
-const { io } = require('./server');;
+const { io } = require('./server');
 //læs hvordan den fungerer
+/*
 export default class GameSync {
   constructor(scene, networkManager) {
     this.scene = scene;
@@ -73,6 +74,8 @@ export default class GameSync {
 
   
 }
+*/
+
 /*
 this.network.on('playerUpdated', (data) => {
    this.updateRemotePlayer(data);
