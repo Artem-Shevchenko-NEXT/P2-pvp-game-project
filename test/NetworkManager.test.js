@@ -1,4 +1,4 @@
-import { createServer } from "node:http";
+import { createServer } from "http";
 import { io as ioc } from "socket.io-client";
 import { Server } from "socket.io";
 import NetworkManager from '../src/multiplayer/NetworkManager';
