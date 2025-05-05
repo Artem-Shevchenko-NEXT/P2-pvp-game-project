@@ -50,8 +50,7 @@ but the serve itself recives all updates from all players together at the same t
 */
 
 
-import NetworkManager from './NetworkManager.js';
-//import  from './server.js';
+const { io } = require('./server');;
 
 //læs hvordan den fungerer
 export default class GameSync {

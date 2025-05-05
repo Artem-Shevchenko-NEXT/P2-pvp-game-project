@@ -5,8 +5,8 @@ const io = require('socket.io')(http);
 const port = process.env.PORT || 3001;
 const RoomManager = require('./server/LobbyManager');
 const LobbyManager = require('./server/LobbyManager');
-//import GameSync from './src/multiplayer/GameSync';
-//const gameSync = new GameSync(io);
+
+module.exports = { io, server };
 
 // giving directionory forfiles that the server can utilize a
 app.use(express.static(__dirname));
@@ -92,6 +92,8 @@ http.listen(port, () => {
     console.log(`Socket.IO server running on port ${port}`);
     console.log(`Access at http://130.225.37.31:${port}/`);
 });
+
+require('./GameSync');
 
 /* Socket.IO docs
 
