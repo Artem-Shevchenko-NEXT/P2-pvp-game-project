@@ -54,7 +54,7 @@ io.on('connection', (socket) => {
       const player = players.get(socket.id);
       if (player) {
         //for console logging putposes
-        console.log(`Player ${socket.id} update: x=${data.x}, y=${data.y}, animation=${data.animation || 'none'}`);
+        // console.log(`Player ${socket.id} update: x=${data.x}, y=${data.y}, animation=${data.animation || 'none'}`);
         // Updates player states with the received data from networkmanager
         if (data.x !== undefined) player.x = data.x;
         if (data.y !== undefined) player.y = data.y;
