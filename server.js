@@ -2,6 +2,7 @@ var express = require('express');
 const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
+export const io;
 const port = process.env.PORT || 3001;
 const RoomManager = require('./server/LobbyManager');
 const LobbyManager = require('./server/LobbyManager');

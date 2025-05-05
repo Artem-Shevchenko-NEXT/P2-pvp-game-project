@@ -2,6 +2,8 @@ import { PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y, SCREEN_HEIGHT, SCREEN_WIDTH } from '.
 import { TankCharacter } from '../gameObjects/TankCharacter.js';
 import { NinjaCharacter } from '../gameObjects/NinjaCharacter.js';
 import NetworkManager from '../multiplayer/NetworkManager.js';
+//import GameSync from '../multiplayer/GameSync.js';
+
 
 export class Game extends Phaser.Scene {
     constructor() {
@@ -165,7 +167,6 @@ export class Game extends Phaser.Scene {
             },
             this
         );
-        //socket.emit('newPlayer');
         //display health note. we can customise this font see description over text method
         this.player1HealthText = this.add.text(20, 20, `Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`, {
             fontFamily: 'Arial',

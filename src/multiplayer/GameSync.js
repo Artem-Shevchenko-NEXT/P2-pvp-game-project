@@ -48,8 +48,31 @@ but the serve itself recives all updates from all players together at the same t
  og der er også nogle ting som går igen i NetworkManager.js og server.js
  Men det ligger et frame for det jeg skal bygge
 */
-//gameState skal erstattes med players
-//sikrer connection
+
+
+import NetworkManager from './NetworkManager.js';
+//import  from './server.js';
+//const io = require('socket.io')(http);
+
+//læs hvordan den fungerer
+export default class GameSync {
+  constructor(scene, networkManager) {
+    this.scene = scene;
+    this.network = networkManager;
+    this.localPlayer = null;
+    this.remotePlayers = new Map(); // Map af player ID  til player objekter eller nogen andet
+
+    // Setup network events
+    this.setupEvents();
+  }
+}
+/*
+ this.network.on('playerUpdated', (data) => {
+    this.updateRemotePlayer(data);
+});
+*/
+//sikrer at der er en connection
+//causes an error
 io.on('connection', (socket) => {
 
         //Sender data når en player disconnecter
@@ -106,3 +129,6 @@ setInterval(() => {
 function interpolation(previous, velocity, acceleration, time){
     return previous + velocity*time + ((acceleration/2) * time*time);
 }
+
+
+//Importer fra NetworkManager.js
