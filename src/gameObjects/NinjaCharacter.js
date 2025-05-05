@@ -55,7 +55,7 @@ export class NinjaCharacter extends Character {
         });
         this.anims.create({
             key: this.animationKeys.hurt,
-            frames: this.anims.generateFrameNames('ninja_hurt', { prefix: 'hurt', end: 8, zeroPad: 4 }),
+            frames: this.anims.generateFrameNames('ninja_hurt', { prefix: 'hurt', end: 3, zeroPad: 4 }),
             frameRate: 12,
             repeat: 0
         });

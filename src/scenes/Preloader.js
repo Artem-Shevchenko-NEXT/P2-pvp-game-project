@@ -53,6 +53,10 @@ export class Preloader extends Phaser.Scene {
             'tank_attack',
             'tank/tank_attack.png', 'tank/tank_attack.json'    
         );
+        this.load.atlas(
+            'tank_hurt',
+            'tank/tank_hurt.png', 'tank/tank_hurt.json'    
+        );
 
         //Archer character assets loads here
         this.load.atlas(
