@@ -63,7 +63,17 @@ export default class GameSync {
 
     // Setup network events
     this.setupEvents();
-  }
+    
+    constructor(io) 
+        this.io = io;
+    
+        this.io.on('connection', (socket) => {
+          console.log('Client connected in GameSync');
+          // Handle events
+        });
+      }
+
+  
 }
 /*
 this.network.on('playerUpdated', (data) => {
