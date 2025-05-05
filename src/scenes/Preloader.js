@@ -53,7 +53,42 @@ export class Preloader extends Phaser.Scene {
             'tank_attack',
             'tank/tank_attack.png', 'tank/tank_attack.json'    
         );
-
+        
+        //Archer character assets loads here
+        this.load.atlas(
+            'archer_idle',
+            'archer/archer_idle.png', 'archer/archer_idle.json'    
+        );
+        this.load.atlas(
+            'archer_run',
+            'archer/archer_run.png', 'archer/archer_run.json'    
+        );
+        this.load.atlas(
+            'archer_jump',
+            'archer/archer_jump.png', 'archer/archer_jump.json'    
+        );
+        this.load.atlas(
+            'archer_attack',
+            'archer/archer_attack.png', 'archer/archer_attack.json'    
+        );
+        
+        //Hero character assets loads here
+        this.load.atlas(
+            'hero_idle',
+            'hero/hero_idle.png', 'hero/hero_idle.json'    
+        );
+        this.load.atlas(
+            'hero_run',
+            'hero/hero_run.png', 'hero/hero_run.json'    
+        );
+        this.load.atlas(
+            'hero_jump',
+            'hero/hero_jump.png', 'hero/hero_jump.json'    
+        );
+        this.load.atlas(
+            'hero_attack',
+            'hero/hero_attack.png', 'hero/hero_attack.json'    
+        );
     }
 
     create() {
