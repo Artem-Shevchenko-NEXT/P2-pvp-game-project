@@ -105,7 +105,7 @@ export default class NetworkManager {
         ...extras
       };
       // debug purpose
-      console.log('Sending player update:', data);
+      //console.log('Sending player update:', data);
       // emmits the message of player_update for server.js 
       this.socket.emit('player_update', data);
     }
