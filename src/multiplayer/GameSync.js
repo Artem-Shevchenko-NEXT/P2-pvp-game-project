@@ -65,11 +65,11 @@ export default class GameSync {
     this.setupEvents();
   }
 }
-
- this.network.on('playerUpdated', (data) => {
+/*
+this.network.on('playerUpdated', (data) => {
    this.updateRemotePlayer(data);
 });
-
+*/
 //sikrer at der er en connection
 //causes an error
 io.on('connection', (socket) => {
