@@ -42,6 +42,20 @@ export class CharacterSelector extends Phaser.Scene {
                 name: 'Ninja',
                 primaryAttack: 'NinjaAttack1',
                 secondaryAttack: 'NinjaAttack2'
+            },
+            {
+                key: 'hero',
+                icon: 'hero_idle',
+                name: 'Hero',
+                primaryAttack: 'HeroAttack1',
+                secondaryAttack: 'HeroAttack2'
+            },
+            {
+                key: 'archer',
+                icon: 'archer_idle',
+                name: 'Archer',
+                primaryAttack: 'ArcherAttack1',
+                secondaryAttack: 'ArcherAttack2'
             }
         ];
         this.currentCharacterIndex = 0;
