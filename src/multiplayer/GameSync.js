@@ -52,7 +52,6 @@ but the serve itself recives all updates from all players together at the same t
 
 import NetworkManager from './NetworkManager.js';
 //import  from './server.js';
-//const io = require('socket.io')(http);
 
 //læs hvordan den fungerer
 export default class GameSync {
@@ -66,11 +65,11 @@ export default class GameSync {
     this.setupEvents();
   }
 }
-/*
+
  this.network.on('playerUpdated', (data) => {
-    this.updateRemotePlayer(data);
+   this.updateRemotePlayer(data);
 });
-*/
+
 //sikrer at der er en connection
 //causes an error
 io.on('connection', (socket) => {
@@ -104,7 +103,7 @@ io.on('connection', (socket) => {
         //player skal være variablen som holder player dataen
         for (let player in players) {
             //drawPlayer skal erstattes med den const, som giver playeren position  
-            drawPlayer(players[player])
+            //drawPlayer(players[player])
         }
     })
 
@@ -130,5 +129,3 @@ function interpolation(previous, velocity, acceleration, time){
     return previous + velocity*time + ((acceleration/2) * time*time);
 }
 
-
-//Importer fra NetworkManager.js
