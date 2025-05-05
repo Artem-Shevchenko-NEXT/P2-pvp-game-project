@@ -9,6 +9,10 @@ export class Game extends Phaser.Scene {
         this.networkManager = null;
     }
 
+    init(data) {
+        this.selectedCharacter = data.character || 'tank';
+    }
+
     create() {
         // Create the tilemap
         const map = this.make.tilemap({ key: 'tilemap' });
@@ -130,7 +134,11 @@ export class Game extends Phaser.Scene {
 
         // Create player 1
         
-        this.player1 = new TankCharacter(this, 100, 450);
+        if (this.selectedCharacter === 'tank') {
+            this.player1 = new TankCharacter(this, PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y);
+        } else {
+            this.player1 = new NinjaCharacter(this, PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y);
+        }
         //socket.emit('newPlayer');
 
         // Create a dummy target for hitbox testing

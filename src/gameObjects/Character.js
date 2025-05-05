@@ -173,7 +173,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             },
             JUMP: {
                 enter: () => {
-                    this.setVelocityY(-440);
+                    this.setVelocityY(-480); // Original: 440
                     if (this.stateMachine.currentState !== 'ATTACK' && this.stateMachine.currentState !== 'ATTACK2') {
                         this.anims.play(this.animationKeys.jump, true);
                         console.log(`${this.characterType} entered JUMP state`);

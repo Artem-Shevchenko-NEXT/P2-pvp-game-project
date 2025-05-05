@@ -1,3 +1,6 @@
+import { TankCharacter }  from '../gameObjects/TankCharacter.js';
+import { NinjaCharacter } from '../gameObjects/NinjaCharacter.js';
+
 export class Preloader extends Phaser.Scene {
     constructor() {
         super('Preloader');
@@ -25,6 +28,13 @@ export class Preloader extends Phaser.Scene {
     preload() {
         //Load the assets for the game first we set path for the map assets 
         this.load.setPath('assets');
+        // Loading the assets for the main menu
+        this.load.image('arrow_left', '/UI_elements/arrow_left.png');
+        this.load.image('arrow_right', '/UI_elements/arrow_right.png');
+        this.load.image('menu_background', '/UI_elements/main_menu_background.png');
+        this.load.image('choose_text_ui', '/UI_elements/choose_text_ui.png');
+        this.load.image('blank_ui_board', '/UI_elements/blank_ui_board.png');
+        this.load.image('controls_info_ui', '/UI_elements/controls_info_ui.png');
         
         //loading our tileset png file so that our json files from the proggram Tiled can use the json and use and arrange our tileset.
         this.load.image('tiles', 'oak_woods/oak_woods_tileset.png');
@@ -60,8 +70,10 @@ export class Preloader extends Phaser.Scene {
         //  When all the assets have loaded, it's often worth creating global objects here that the rest of the game can use.
         //  For example, you can define global animations here, so we can use them in other scenes.
 
+        new TankCharacter(this, 0, 0).destroy();
+        new NinjaCharacter(this, 0, 0).destroy();
         //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
-        this.scene.start('Game');
+        this.scene.start('CharacterSelector');
          
     }
 }
