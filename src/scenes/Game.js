@@ -1,6 +1,8 @@
 import { PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y, SCREEN_HEIGHT, SCREEN_WIDTH } from '../config.js';
 import { TankCharacter } from '../gameObjects/TankCharacter.js';
 import { NinjaCharacter } from '../gameObjects/NinjaCharacter.js';
+import { ArcherCharacter } from '../gameObjects/ArcherCharacter.js';
+import { HeroCharacter } from '../gameObjects/HeroCharacter.js';
 import NetworkManager from '../multiplayer/NetworkManager.js';
 
 export class Game extends Phaser.Scene {
@@ -130,7 +132,7 @@ export class Game extends Phaser.Scene {
 
         // Create player 1
         
-        this.player1 = new TankCharacter(this, 100, 450);
+        this.player1 = new ArcherCharacter(this, 100, 450);
         //socket.emit('newPlayer');
 
         // Create a dummy target for hitbox testing
