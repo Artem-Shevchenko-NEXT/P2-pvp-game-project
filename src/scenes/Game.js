@@ -1,6 +1,8 @@
 import { PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y, SCREEN_HEIGHT, SCREEN_WIDTH } from '../config.js';
 import { TankCharacter } from '../gameObjects/TankCharacter.js';
 import { NinjaCharacter } from '../gameObjects/NinjaCharacter.js';
+import { ArcherCharacter } from '../gameObjects/ArcherCharacter.js';
+import { HeroCharacter } from '../gameObjects/HeroCharacter.js';
 import NetworkManager from '../multiplayer/NetworkManager.js';
 //import GameSync from '../multiplayer/GameSync.js';
 
