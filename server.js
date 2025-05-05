@@ -48,7 +48,9 @@ io.on('connection', (socket) => {
 
     // TODO: Notify other players in the same room that a new player has joined
     // This is probably neede to allow GameSync to create player instances
-
+    // Notify other players in the same room that a new player has joined
+    socket.to(roomId).emit('player_joined', player);
+    
     // Handle player movement/states updates
     socket.on('player_update', (data) => {
       const player = players.get(socket.id);

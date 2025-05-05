@@ -40,7 +40,11 @@ export default class GameSync2 {
     });
     
     // TODO: Add more event handlers here when we implement player joined/left events
-    // this.network.on('playerJoined', ...)
+    // this.network.on('playerJoined', ...) example
+    this.network.on('playerJoined', (data) => {
+      console.log(`New player joined: ${data.id}`);
+      this.addRemotePlayer(data);
+    });
     // this.network.on('playerLeft', ...)
   }
   

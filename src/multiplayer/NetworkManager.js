@@ -55,7 +55,10 @@ export default class NetworkManager {
           });
           // TODO: Add event handlers for player_joined and player_left
           // These events wil ptobably be needed by GameSync to add/remove remote player instances
-
+          this.socket.on('player_joined', (data) => {
+            console.log(`Player joined: ${data.id}`);
+            this.triggerEvent('playerJoined', data);
+          });
           // responsible for catching any errors such as connect_error in the try block
         } catch (error) {
           console.error('Failed to connect:', error);
