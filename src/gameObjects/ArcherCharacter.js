@@ -31,7 +31,7 @@ export class ArcherCharacter extends Character {
         this.anims.create({
             key: this.animationKeys.turn,
             frames: this.anims.generateFrameNames('archer_idle', { prefix: 'idle', end: 8, zeroPad: 4 }),
-            frameRate: 4, 
+            frameRate: 3, 
             repeat: -1
         });
         this.anims.create({
