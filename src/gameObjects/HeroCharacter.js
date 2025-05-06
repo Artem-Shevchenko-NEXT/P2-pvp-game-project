@@ -5,11 +5,11 @@ export class HeroCharacter extends Character {
         super(scene, x, y, {
             characterType: 'hero',
             idleSpriteKey: 'hero_idle', 
-            health: 80, // ninjavaerdier
-            maxHealth: 80,
-            attackDamage: 15, 
+            health: 100, // ninjavaerdier
+            maxHealth: 100,
+            attackDamage: 12, 
             invincibilityDuration: 800, 
-            hitboxConfig: { width: 30, height: 40 }, 
+            hitboxConfig: { width: 50, height: 10 }, 
             animationKeys: {
                 left: 'hero_left',
                 right: 'hero_right',
@@ -19,8 +19,9 @@ export class HeroCharacter extends Character {
                 hurt: 'hero_hurt'
             }
         });
+        this.setOrigin(4, 0.1);
     }
-
+    
     initAnimations() {
         this.anims.create({
             key: this.animationKeys.left,

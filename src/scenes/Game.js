@@ -132,7 +132,7 @@ export class Game extends Phaser.Scene {
 
         // Create player 1
         
-        this.player1 = new ArcherCharacter(this, 100, 450);
+        this.player1 = new HeroCharacter(this, 100, 450);
         //socket.emit('newPlayer');
 
         // Create a dummy target for hitbox testing
@@ -308,7 +308,7 @@ export class Game extends Phaser.Scene {
         //bar_x=1, bay_y=1;
         
         const bar_x = this.player1.x - 22;
-        const bar_y = this.player1.y - 45;
+        const bar_y = this.player1.y - 90;
         this.healthBar.setPosition(bar_x, bar_y);
         this.healthBar.setText(`${this.player1.health} HP`);
         this.healthBar.update();
