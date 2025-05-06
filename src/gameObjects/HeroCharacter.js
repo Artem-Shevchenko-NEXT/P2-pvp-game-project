@@ -19,7 +19,6 @@ export class HeroCharacter extends Character {
                 hurt: 'hero_hurt'
             }
         });
-        this.setOrigin(4, 0.1);
     }
     
     initAnimations() {

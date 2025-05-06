@@ -19,6 +19,7 @@ export class ArcherCharacter extends Character {
                 hurt: 'archer_hurt'
             }
         });
+        //this.setOrigin(0.5, 0.3);
     }
 
     initAnimations() {

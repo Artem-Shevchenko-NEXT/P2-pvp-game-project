@@ -3,7 +3,7 @@ import { StateMachine } from './state-machine/stateMachine.js';
 export class Character extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, config) {
         super(scene, x, y, config.idleSpriteKey || 'tank_idle');
-        this.setOrigin(-0.2, 0.1);
+        this.setOrigin(0.5, 0.2);
         scene.add.existing(this);
         scene.physics.add.existing(this);
         this.setBounce(0.0); //maybe set this to 0
