@@ -102,6 +102,9 @@ export class Game extends Phaser.Scene {
         const scaledWidth = mapWidth * scaleX;
         const scaledHeight = mapHeight * scaleY;
 
+        this.playersInMatch = [];
+        this.playersRanking = [];
+
         // Create player 1
         // Selecting character based on the key passed from CharacterSelector.js
         if (this.selectedCharacter === 'tank') {
@@ -116,6 +119,9 @@ export class Game extends Phaser.Scene {
             // Fall back to tank as default
             this.player1 = new TankCharacter(this, PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y);
         }
+
+        this.playersInMatch.push(this.player1);
+
         //socket.emit('newPlayer');
 
         // Create a dummy target for hitbox testing
@@ -123,6 +129,8 @@ export class Game extends Phaser.Scene {
         this.dummyTarget.setImmovable(true);
         this.dummyTarget.health = 100; // For testing damage
         this.physics.add.collider(this.dummyTarget, ground);
+
+        this.playersInMatch.push(this.dummyTarget);
         
         //Debug: to check hurt state for player: in console everything works although health bar does not correctly update.
         //this.input.keyboard.on('keydown-T', () => {
@@ -207,9 +215,21 @@ export class Game extends Phaser.Scene {
             console.log(`Hitbox collision: ${attacker.characterType} hits target, dealing ${attacker.attackDamage} damage`);
             target.health = Math.max(0, target.health - attacker.attackDamage);
             if (target.health <= 0) {
+                this.playersRanking.push(target);
                 console.log('Dummy target destroyed');
                 target.destroy();
+                this.checkForGameOver();
             }
+        }
+    }
+
+    checkForGameOver(){
+        if (this.playersRanking.length >= (this.playersInMatch.length -1)) {
+            const winner = this.playersInMatch.find(player => !this.playersRanking.includes(player));
+            this.playersRanking.push(winner);
+            this.scene.start('GameOver', { playersRanking : this.playersRanking });
+        } else {
+            return;
         }
     }
 
@@ -225,6 +245,9 @@ export class Game extends Phaser.Scene {
             }
         }
     }
+
+
+
 
     update() {
         // Update players

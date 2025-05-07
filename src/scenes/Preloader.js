@@ -35,6 +35,8 @@ export class Preloader extends Phaser.Scene {
         this.load.image('choose_text_ui', '/UI_elements/choose_text_ui.png');
         this.load.image('blank_ui_board', '/UI_elements/blank_ui_board.png');
         this.load.image('controls_info_ui', '/UI_elements/controls_info_ui.png');
+        this.load.image('newGame_button', '/UI_elements/newGame_button.png');
+        this.load.image('gameOver_sign', '/UI_elements/gameOver_sign.png');
         
         //loading our tileset png file so that our json files from the proggram Tiled can use the json and use and arrange our tileset.
         this.load.image('tiles', 'oak_woods/oak_woods_tileset.png');
@@ -46,6 +48,10 @@ export class Preloader extends Phaser.Scene {
         this.load.image('torch_1', 'torch/smalltorch1.png');
         this.load.image('torch_2', 'torch/smalltorch2.png');
         this.load.image('torch_3', 'torch/smalltorch3.png');
+
+        this.load.image('pedestal_1', 'pedestals/pedestal_1st.png');
+        this.load.image('pedestal_2', 'pedestals/pedestal_2nd.png');
+        this.load.image('pedestal_3', 'pedestals/pedestal_3rd.png');
 
         //loading our game map Json file from the program Tiled
         this.load.tilemapTiledJSON('tilemap', 'game_map_oakwood_v3.json');
@@ -150,7 +156,9 @@ export class Preloader extends Phaser.Scene {
         //  For example, you can define global animations here, so we can use them in other scenes.
 
         //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
+        
         this.scene.start('CharacterSelector');
+        // this.scene.start('GameOver');
          
     }
 }

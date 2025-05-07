@@ -11,13 +11,13 @@ export class TankCharacter extends Character {
             invincibilityDuration: 1000,
             hitboxConfig: { width: 40, height: 50 },
             animationKeys: {
-                left: 'left',
-                right: 'right',
-                turn: 'turn',
-                jump: 'jump',
-                attack: 'attack',
-                attack2: 'attack2',
-                hurt: 'hurt'
+                left: 'tank_left',
+                right: 'tank_right',
+                turn: 'tank_turn',
+                jump: 'tank_jump',
+                attack: 'tank_attack',
+                attack2: 'tank_attack2',
+                hurt: 'tank_hurt'
             }
         });
         console.log('TankCharacter initialized');

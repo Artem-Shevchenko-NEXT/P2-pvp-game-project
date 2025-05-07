@@ -10,7 +10,7 @@ export class CharacterSelector extends Phaser.Scene {
         this.add.image(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 'menu_background').setOrigin(0.5, 0.57).setDisplaySize(SCREEN_WIDTH + 300, SCREEN_HEIGHT + 300);
         this.add.image(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.16, 'choose_text_ui').setScale(0.23).setOrigin(0.5);
         this.add.image(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.922, 'blank_ui_board').setScale(0.45, 0.35).setOrigin(0.5);
-        this.add.image(Math.round(SCREEN_WIDTH / 7), Math.round(SCREEN_HEIGHT * 0.17), 'controls_info_ui').setScale(0.225).setOrigin(0.5);
+        this.add.image(Math.round(SCREEN_WIDTH / 7), Math.round(SCREEN_HEIGHT * 0.17), 'controls_info_ui').setScale(0.9).setOrigin(0.5);
 
         this.add.sprite(310, 410, 'torch').play('torch_burn').setScale(3.5);
         this.add.sprite(505, 410, 'torch').play('torch_burn').setScale(3.5);
