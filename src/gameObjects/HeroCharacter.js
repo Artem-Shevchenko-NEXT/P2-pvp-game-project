@@ -44,7 +44,7 @@ export class HeroCharacter extends Character {
         });
         this.anims.create({
             key: this.animationKeys.jump,
-            frames: this.anims.generateFrameNames('hero_jump', { prefix: 'jumping', end: 8, zeroPad: 4 }),
+            frames: this.anims.generateFrameNames('hero_jump', { prefix: 'jumping', end: 11, zeroPad: 4 }),
             frameRate: 10,
             repeat: 0
         });
