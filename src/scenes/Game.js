@@ -364,6 +364,15 @@ export class Game extends Phaser.Scene {
         this.healthBar.setText(`${this.player1.health} HP`);
         this.healthBar.update();
         
+        const hp = this.player1.health;
+
+        if (hp > 60) {
+            this.healthBar.setColor('#00ff00'); // groen
+        } else if (hp > 30) {
+            this.healthBar.setColor('#ffa500'); // orange
+        } else {
+            this.healthBar.setColor('#ff0000'); // roed
+        }
         //
     }
 }
