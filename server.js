@@ -101,8 +101,6 @@ http.listen(port, () => {
     console.log(`Access at http://130.225.37.31:${port}/`);
 });
 
-require('./GameSync');
-
 /* Socket.IO docs
 
 socket.emit('message', "this is a test"); //sending to sender-client only
