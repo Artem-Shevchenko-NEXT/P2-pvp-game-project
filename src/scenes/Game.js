@@ -108,9 +108,16 @@ export class Game extends Phaser.Scene {
         this.shockwaves = this.physics.add.group({
             allowGravity: false
         });
+        // Create bombs group with gravity
+        this.bombs = this.physics.add.group({
+            allowGravity: true 
+        });
+        //bombs collide
+        this.physics.add.collider(this.bombs, this.ground);
+        this.physics.add.collider(this.bombs, platforms);
 
         // Create player 1
-        this.player1 = new TankCharacter(this, 100, 480); // Adjusted y to align with ground
+        this.player1 = new ArcherCharacter(this, 100, 480); // Adjusted y to align with ground
         //socket.emit('newPlayer');
 
         // Create a dummy target for hitbox testing
@@ -178,7 +185,7 @@ export class Game extends Phaser.Scene {
         this.physics.world.setBounds(0, 0, scaledWidth, scaledHeight);
         this.cameras.main.setBounds(0, 0, scaledWidth, scaledHeight);
         // Set up collision between player and ground
-        this.physics.add.collider(this.player1, ground);
+        this.physics.add.collider(this.player1, ground); //DBE i think this is a mistake?
         
         //this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);

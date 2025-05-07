@@ -16,6 +16,7 @@ export class ArcherCharacter extends Character {
                 turn: 'archer_turn',
                 jump: 'archer_jump',
                 attack: 'archer_attack',
+                attack2: 'archer_attack2',
                 hurt: 'archer_hurt'
             }
         });
@@ -31,7 +32,7 @@ export class ArcherCharacter extends Character {
         this.anims.create({
             key: this.animationKeys.turn,
             frames: this.anims.generateFrameNames('archer_idle', { prefix: 'idle', end: 8, zeroPad: 4 }),
-            frameRate: 12, 
+            frameRate: 8, 
             repeat: -1
         });
         this.anims.create({
@@ -43,14 +44,20 @@ export class ArcherCharacter extends Character {
         this.anims.create({
             key: this.animationKeys.jump,
             frames: this.anims.generateFrameNames('archer_jump', { prefix: 'jumping', end: 8, zeroPad: 4 }),
-            frameRate: 6,
+            frameRate: 4,
             repeat: 0
         });
         this.anims.create({
             key: this.animationKeys.attack,
             frames: this.anims.generateFrameNames('archer_attack', { prefix: 'attackRight', end: 4, zeroPad: 4 }),
-            frameRate: 16, // Faster attack
+            frameRate: 12, // Faster attack
             repeat: 0
+        });
+        this.anims.create({ //secondary attack i.e attack2
+                key: this.animationKeys.attack2,
+                frames: this.anims.generateFrameNames('archer_attack', { prefix: 'attackRight', end: 5, zeroPad: 4 }),
+                frameRate: 12,
+                repeat: 0
         });
         this.anims.create({
             key: this.animationKeys.hurt,
