@@ -20,30 +20,31 @@ export class ArcherCharacter extends Character {
                 hurt: 'archer_hurt'
             }
         });
+        //this.setOrigin(0.5, 0.3);
     }
 
     initAnimations() {
         this.anims.create({
             key: this.animationKeys.left,
             frames: this.anims.generateFrameNames('archer_run', { prefix: 'running', end: 8, zeroPad: 4 }),
-            frameRate: 12, //ninjavaerdier hele vejen ned
+            frameRate: 10, // aendrede vaerdier
             repeat: -1
         });
         this.anims.create({
             key: this.animationKeys.turn,
             frames: this.anims.generateFrameNames('archer_idle', { prefix: 'idle', end: 8, zeroPad: 4 }),
-            frameRate: 8, 
+            frameRate: 3, 
             repeat: -1
         });
         this.anims.create({
             key: this.animationKeys.right,
             frames: this.anims.generateFrameNames('archer_run', { prefix: 'running', end: 8, zeroPad: 4 }),
-            frameRate: 12,
+            frameRate: 10,
             repeat: -1
         });
         this.anims.create({
             key: this.animationKeys.jump,
-            frames: this.anims.generateFrameNames('archer_jump', { prefix: 'jumping', end: 8, zeroPad: 4 }),
+            frames: this.anims.generateFrameNames('archer_jump', { prefix: 'jumping', end: 7, zeroPad: 4 }),
             frameRate: 4,
             repeat: 0
         });
@@ -61,7 +62,7 @@ export class ArcherCharacter extends Character {
         });
         this.anims.create({
             key: this.animationKeys.hurt,
-            frames: this.anims.generateFrameNames('archer_idle', { prefix: 'idle', end: 8, zeroPad: 4 }),
+            frames: this.anims.generateFrameNames('archer_hurt', { prefix: 'hurt', end: 3, zeroPad: 4 }),
             frameRate: 12,
             repeat: 0
         });

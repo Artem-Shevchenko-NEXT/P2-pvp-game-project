@@ -3,6 +3,7 @@ import { StateMachine } from './state-machine/stateMachine.js';
 export class Character extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, config) {
         super(scene, x, y, config.idleSpriteKey || 'tank_idle');
+        this.setOrigin(0.5, 0.2);
         scene.add.existing(this);
         scene.physics.add.existing(this);
         this.setBounce(0.0); //maybe set this to 0
@@ -13,7 +14,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         this.maxHealth = config.maxHealth || 100;
         this.isInvincible = false;
         this.invincibilityDuration = config.invincibilityDuration || 1000; // cannot take damage 1 second after hit
-        this.attackDamage = config.attackDamage || 10;
+        this.attackDamage = config.attackDamage || 50;
         this.hitboxConfig = config.hitboxConfig || { width: 40, height: 50 };
         this.hitbox = null;
         this.shockwave = null; // Shockwave: Track shockwave sprite for tank's ATTACK2

@@ -73,7 +73,11 @@ export class Preloader extends Phaser.Scene {
             'tank_attack',
             'tank/tank_attack.png', 'tank/tank_attack.json'    
         );
-        
+        this.load.atlas(
+            'tank_hurt',
+            'tank/tank_hurt.png', 'tank/tank_hurt.json'    
+        );
+
         //Archer character assets loads here
         this.load.atlas(
             'archer_idle',
@@ -93,7 +97,12 @@ export class Preloader extends Phaser.Scene {
         );
         this.load.image(
             'bomb', 
-            'bomb.png'
+            'bomb.png',
+            'archer/archer_attack.png', 'archer/archer_attack.json'   
+        );
+         this.load.atlas(
+            'archer_hurt',
+            'archer/archer_hurt.png', 'archer/archer_hurt.json'   
         );
         
         //Hero character assets loads here
@@ -112,6 +121,32 @@ export class Preloader extends Phaser.Scene {
         this.load.atlas(
             'hero_attack',
             'hero/hero_attack.png', 'hero/hero_attack.json'    
+        );
+         this.load.atlas(
+            'hero_hurt',
+            'hero/hero_hurt.png', 'hero/hero_hurt.json'   
+        );
+        
+        //Ninja character assets loads here
+        this.load.atlas(
+            'ninja_idle',
+            'ninja/ninja_idle.png', 'ninja/ninja_idle.json'    
+        );
+        this.load.atlas(
+            'ninja_run',
+            'ninja/ninja_run.png', 'ninja/ninja_run.json'    
+        );
+        this.load.atlas(
+            'ninja_jump',
+            'ninja/ninja_jump.png', 'ninja/ninja_jump.json'    
+        );
+        this.load.atlas(
+            'ninja_attack',
+            'ninja/ninja_attack.png', 'ninja/ninja_attack.json'    
+        );
+         this.load.atlas(
+            'ninja_hurt',
+            'ninja/ninja_hurt.png', 'ninja/ninja_hurt.json'   
         );
     }
 

@@ -204,6 +204,18 @@ export class Game extends Phaser.Scene {
             strokeThickness: 4
         }).setDepth(10);
 
+
+        //health bar goes here
+        const bar_x = 0;
+        const bar_y = 0;
+        this.healthBar = this.add.text(bar_x, bar_y, `${this.player1.health} HP`, {
+            fontFamily: 'Arial',
+            fontSize: 17,
+            color: '#ffffff',
+            stroke: '#000000',
+            strokeThickness: 1,
+        }).setDepth(10);        
+
         // Set up collision between player and ground and platforms
         this.physics.add.collider(this.player1, ground);
         this.physics.add.collider(this.player1, platforms);
@@ -341,5 +353,19 @@ export class Game extends Phaser.Scene {
         } else {
             this.dummyHealthText.setText('Dummy Target: Destroyed');
         }
+
+        //
+        //
+        //this.healthBar.setPosition(this.player1.x, this.player.y);
+        ;
+        //bar_x=1, bay_y=1;
+        
+        const bar_x = this.player1.x - 25;
+        const bar_y = this.player1.y - 40;
+        this.healthBar.setPosition(bar_x, bar_y);
+        this.healthBar.setText(`${this.player1.health} HP`);
+        this.healthBar.update();
+        
+        //
     }
 }

@@ -5,11 +5,11 @@ export class HeroCharacter extends Character {
         super(scene, x, y, {
             characterType: 'hero',
             idleSpriteKey: 'hero_idle', 
-            health: 80, // ninjavaerdier
-            maxHealth: 80,
-            attackDamage: 15, 
+            health: 100, // ninjavaerdier
+            maxHealth: 100,
+            attackDamage: 12, 
             invincibilityDuration: 800, 
-            hitboxConfig: { width: 30, height: 40 }, 
+            hitboxConfig: { width: 50, height: 10 }, 
             animationKeys: {
                 left: 'hero_left',
                 right: 'hero_right',
@@ -21,24 +21,24 @@ export class HeroCharacter extends Character {
             }
         });
     }
-
+    
     initAnimations() {
         this.anims.create({
             key: this.animationKeys.left,
-            frames: this.anims.generateFrameNames('hero_run', { prefix: 'running', end: 8, zeroPad: 4 }),
-            frameRate: 12, //ninjavaerdier hele vejen ned
+            frames: this.anims.generateFrameNames('hero_run', { prefix: 'running', end: 11, zeroPad: 4 }),
+            frameRate: 20, //aendrede vaerdier
             repeat: -1
         });
         this.anims.create({
             key: this.animationKeys.turn,
             frames: this.anims.generateFrameNames('hero_idle', { prefix: 'idle', end: 8, zeroPad: 4 }),
-            frameRate: 12, 
+            frameRate: 4, 
             repeat: -1
         });
         this.anims.create({
             key: this.animationKeys.right,
-            frames: this.anims.generateFrameNames('hero_run', { prefix: 'running', end: 8, zeroPad: 4 }),
-            frameRate: 12,
+            frames: this.anims.generateFrameNames('hero_run', { prefix: 'running', end: 12, zeroPad: 4 }),
+            frameRate: 20,
             repeat: -1
         });
         this.anims.create({
@@ -50,12 +50,12 @@ export class HeroCharacter extends Character {
         this.anims.create({
             key: this.animationKeys.attack,
             frames: this.anims.generateFrameNames('hero_attack', { prefix: 'attackRight', end: 4, zeroPad: 4 }),
-            frameRate: 16, // Faster attack
+            frameRate: 12, // 
             repeat: 0
         });
         this.anims.create({
             key: this.animationKeys.hurt,
-            frames: this.anims.generateFrameNames('hero_idle', { prefix: 'idle', end: 8, zeroPad: 4 }),
+            frames: this.anims.generateFrameNames('hero_hurt', { prefix: 'hurt', end: 3, zeroPad: 4 }),
             frameRate: 12,
             repeat: 0
         });

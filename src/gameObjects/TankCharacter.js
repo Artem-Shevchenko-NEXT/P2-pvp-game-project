@@ -63,7 +63,7 @@ export class TankCharacter extends Character {
             });
             this.anims.create({
                 key: this.animationKeys.hurt,
-                frames: this.anims.generateFrameNames('tank_idle', { prefix: 'idle', end: 8, zeroPad: 4 }), // Placeholder replace with hurt animation
+                frames: this.anims.generateFrameNames('tank_hurt', { prefix: 'hurt', end: 3, zeroPad: 4 }), // Placeholder replace with hurt animation
                 frameRate: 10,
                 repeat: 0
             });
