@@ -33,7 +33,7 @@ export class NinjaCharacter extends Character {
         this.anims.create({
             key: this.animationKeys.turn,
             frames: this.anims.generateFrameNames('ninja_idle', { prefix: 'idle', end: 8, zeroPad: 4 }),
-            frameRate: 3,
+            frameRate: 5,
             repeat: -1
         });
         this.anims.create({

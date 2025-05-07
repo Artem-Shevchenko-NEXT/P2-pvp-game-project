@@ -44,8 +44,8 @@ export class CharacterSelector extends Phaser.Scene {
             },
             {
                 key: 'ninja',
-                textureKey: 'tank_idle',
-                idleAnim: 'tank_turn', // Temp. tank for now, since i cant find the Ninja sprites?
+                textureKey: 'ninja_idle',
+                idleAnim: 'ninja_turn',
                 name: 'Ninja',
                 primaryAttack: 'NinjaAttack1',
                 secondaryAttack: 'NinjaAttack2'

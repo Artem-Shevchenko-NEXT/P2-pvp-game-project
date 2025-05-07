@@ -162,21 +162,21 @@ export class Preloader extends Phaser.Scene {
         this.anims.create({
             key: 'ninja_turn',
             frames: this.anims.generateFrameNames('ninja_idle', { prefix: 'idle', end: 8, zeroPad: 4 }),
-            frameRate: 10,
+            frameRate: 6,
             repeat: -1
         });
         
         this.anims.create({
             key: 'hero_turn',
             frames: this.anims.generateFrameNames('hero_idle', { prefix: 'idle', end: 8, zeroPad: 4 }),
-            frameRate: 10,
+            frameRate: 3,
             repeat: -1
         });
         
         this.anims.create({
             key: 'archer_turn',
             frames: this.anims.generateFrameNames('archer_idle', { prefix: 'idle', end: 8, zeroPad: 4 }),
-            frameRate: 10,
+            frameRate: 4,
             repeat: -1
         });
 
