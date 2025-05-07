@@ -35,16 +35,17 @@ io.on('connection', (socket) => {
     const roomId = roomManager.getDefaultRoom();
     socket.join(roomId);
     
-    // Store player data in the players map
+    // Store player data with character type in the players map
     const player = {
       id: socket.id,
       x: playerData.x || 100,
       y: playerData.y || 100,
-      roomId: roomId
+      roomId: roomId,
+      characterType: playerData.characterType || 'tank'
     };
     
     players.set(socket.id, player);
-    console.log(`Player ${socket.id} joined room ${roomId}`);
+    console.log(`Player ${socket.id} joined room ${roomId} as ${player.characterType}`);
 
     // TODO: Notify other players in the same room that a new player has joined
     // This is probably neede to allow GameSync to create player instances
@@ -83,7 +84,12 @@ io.on('connection', (socket) => {
   // Handle disconnection
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
-    // TODO: Notify other players that this player has left, also wil probably be needed for gamesync 
+
+    // notify others when a player leaves
+    const player = players.get(socket.id);
+    if (player && player.roomId) {
+      socket.to(player.roomId).emit('player_left', { id: socket.id });
+    }
     // Remove player from tracking
     players.delete(socket.id);
   });

@@ -5,7 +5,7 @@ import { ArcherCharacter } from '../gameObjects/ArcherCharacter.js';
 import { HeroCharacter } from '../gameObjects/HeroCharacter.js';
 import { SkeletonCharacter } from '../gameObjects/SkeletonCharacter.js';
 import NetworkManager from '../multiplayer/NetworkManager.js';
-import GameSync2 from '../multiplayer/GameSync2.js';
+import GameSync from '../multiplayer/GameSync.js';
 
 export class Game extends Phaser.Scene {
     constructor() {
@@ -236,14 +236,15 @@ export class Game extends Phaser.Scene {
             .then(data => {
                 console.log('Connected to server with ID:', data.id);
 
-                // Create GameSync2 to handle player data
-                this.gameSync = new GameSync2(this, this.networkManager);
+                // Create GameSync to handle player data
+                this.gameSync = new GameSync(this, this.networkManager);
                 this.gameSync.setLocalPlayer(this.player1);
                 
                 // Join the game after successful connection
                 this.networkManager.joinGame({
                     x: this.player1.x,
-                    y: this.player1.y
+                    y: this.player1.y,
+                    characterType: this.selectedCharacter 
                 });
             })
             .catch(err => {

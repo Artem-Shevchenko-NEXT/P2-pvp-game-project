@@ -53,12 +53,19 @@ export default class NetworkManager {
           this.socket.on('player_updated', (data) => {
             this.triggerEvent('playerUpdated', data);
           });
-          // TODO: Add event handlers for player_joined and player_left
-          // These events wil ptobably be needed by GameSync to add/remove remote player instances
+
+          // event for player joined
           this.socket.on('player_joined', (data) => {
             console.log(`Player joined: ${data.id}`);
             this.triggerEvent('playerJoined', data);
           });
+
+          //event for player left
+          this.socket.on('player_left', (data) => {
+            console.log(`Player left: ${data.id}`);
+            this.triggerEvent('playerLeft', data);
+          });
+          
           // responsible for catching any errors such as connect_error in the try block
         } catch (error) {
           console.error('Failed to connect:', error);
@@ -95,7 +102,15 @@ export default class NetworkManager {
     //called once after conection to set up player in gamelobby
     joinGame(playerData) {
       if (!this.connected) return;
-      this.socket.emit('join_game', playerData);
+      
+      // Geting the character type from Game scene
+      const characterType = playerData.characterType || 'tank';
+      
+      this.socket.emit('join_game', {
+        x: playerData.x,
+        y: playerData.y,
+        characterType: characterType
+      });
     }
 
     //Send player position update where x and y is the player position adn the extras is for animation and direction facing
