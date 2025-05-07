@@ -1,13 +1,14 @@
 import { Character } from './Character.js';
+//import { StateMachine } from './state-machine/stateMachine.js';
 
 export class HeroCharacter extends Character {
     constructor(scene, x, y) {
         super(scene, x, y, {
             characterType: 'hero',
             idleSpriteKey: 'hero_idle', 
-            health: 100, // ninjavaerdier
+            health: 100,  
             maxHealth: 100,
-            attackDamage: 12, 
+            attackDamage: 8, 
             invincibilityDuration: 800, 
             hitboxConfig: { width: 50, height: 10 }, 
             animationKeys: {
@@ -25,26 +26,26 @@ export class HeroCharacter extends Character {
     initAnimations() {
         this.anims.create({
             key: this.animationKeys.left,
-            frames: this.anims.generateFrameNames('hero_run', { prefix: 'running', end: 11, zeroPad: 4 }),
-            frameRate: 20, //aendrede vaerdier
+            frames: this.anims.generateFrameNames('hero_run', { prefix: 'running', end: 10, zeroPad: 4 }),
+            frameRate: 16, //aendrede vaerdier
             repeat: -1
         });
         this.anims.create({
             key: this.animationKeys.turn,
             frames: this.anims.generateFrameNames('hero_idle', { prefix: 'idle', end: 8, zeroPad: 4 }),
-            frameRate: 3, 
+            frameRate: 5, 
             repeat: -1
         });
         this.anims.create({
             key: this.animationKeys.right,
-            frames: this.anims.generateFrameNames('hero_run', { prefix: 'running', end: 12, zeroPad: 4 }),
-            frameRate: 20,
+            frames: this.anims.generateFrameNames('hero_run', { prefix: 'running', end: 10, zeroPad: 4 }),
+            frameRate: 16,
             repeat: -1
         });
         this.anims.create({
             key: this.animationKeys.jump,
             frames: this.anims.generateFrameNames('hero_jump', { prefix: 'jumping', end: 8, zeroPad: 4 }),
-            frameRate: 6,
+            frameRate: 10,
             repeat: 0
         });
         this.anims.create({
