@@ -1,0 +1,79 @@
+{
+  "sprites": [
+    {
+      "fileName": "attack-b1.png",
+      "width": 128,
+      "height": 96,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "fileName": "attack-b10.png",
+      "width": 128,
+      "height": 96,
+      "x": 128,
+      "y": 0
+    },
+    {
+      "fileName": "attack-b2.png",
+      "width": 128,
+      "height": 96,
+      "x": 256,
+      "y": 0
+    },
+    {
+      "fileName": "attack-b3.png",
+      "width": 128,
+      "height": 96,
+      "x": 384,
+      "y": 0
+    },
+    {
+      "fileName": "attack-b4.png",
+      "width": 128,
+      "height": 96,
+      "x": 0,
+      "y": 96
+    },
+    {
+      "fileName": "attack-b5.png",
+      "width": 128,
+      "height": 96,
+      "x": 128,
+      "y": 96
+    },
+    {
+      "fileName": "attack-b6.png",
+      "width": 128,
+      "height": 96,
+      "x": 256,
+      "y": 96
+    },
+    {
+      "fileName": "attack-b7.png",
+      "width": 128,
+      "height": 96,
+      "x": 384,
+      "y": 96
+    },
+    {
+      "fileName": "attack-b8.png",
+      "width": 128,
+      "height": 96,
+      "x": 0,
+      "y": 192
+    },
+    {
+      "fileName": "attack-b9.png",
+      "width": 128,
+      "height": 96,
+      "x": 128,
+      "y": 192
+    }
+  ],
+  "packMode": "grid",
+  "padding": 0,
+  "backgroundColor": "rgba(0, 0, 0, 0)",
+  "spriteSheetWidth": 512,
+  "spriteSheetHeight": 288
+}
