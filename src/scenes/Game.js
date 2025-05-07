@@ -74,7 +74,7 @@ export class Game extends Phaser.Scene {
                     //image.setScrollFactor(0.3 + index * 0.2); // 0.3, 0.5, 0.7
 
                     // Debug: Log image details there was trouble rendering the object layer Background for from Tiled hense Debug
-                    console.log(`Background image: ${imageKey}, name: ${object.name}, gid: ${object.gid}, x: ${image.x}, y: ${image.y}, scaleX: ${image.scaleX}, scaleY: ${image.scaleY}, depth: ${image.depth}`);
+                    //console.log(`Background image: ${imageKey}, name: ${object.name}, gid: ${object.gid}, x: ${image.x}, y: ${image.y}, scaleX: ${image.scaleX}, scaleY: ${image.scaleY}, depth: ${image.depth}`);
                 } else {
                     console.warn(`No valid image key for background object: ${object.name}, gid: ${object.gid}`);
                 }
@@ -90,7 +90,7 @@ export class Game extends Phaser.Scene {
         // Debug: Log ground collision bounds
         ground.forEachTile(tile => {
             if (tile.properties.collides) {
-                console.log(`Ground collision tile at x=${tile.pixelX * ground.scaleX}, y=${tile.pixelY * ground.scaleY}`);
+                //console.log(`Ground collision tile at x=${tile.pixelX * ground.scaleX}, y=${tile.pixelY * ground.scaleY}`);
             }
         });
 
@@ -252,7 +252,7 @@ export class Game extends Phaser.Scene {
             });
 
         // Debug: Log dummy grounded state and body position
-        console.log(`Dummy body: x=${this.dummyTarget.body.x}, y=${this.dummyTarget.body.y}, width=${this.dummyTarget.body.width}, height=${this.dummyTarget.body.height}`);
+        //console.log(`Dummy body: x=${this.dummyTarget.body.x}, y=${this.dummyTarget.body.y}, width=${this.dummyTarget.body.width}, height=${this.dummyTarget.body.height}`);
     }   
 
     handleHitboxCollision(attacker, target) {
