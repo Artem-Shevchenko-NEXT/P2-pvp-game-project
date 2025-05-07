@@ -65,6 +65,14 @@ export class CharacterSelector extends Phaser.Scene {
                 name: 'Archer',
                 primaryAttack: 'ArcherAttack1',
                 secondaryAttack: 'ArcherAttack2'
+            },
+            {
+                key: 'skeleton',
+                textureKey: 'skeleton_idle',
+                idleAnim: 'skeleton_turn',
+                name: 'Skeleton',
+                primaryAttack: 'SkeletonAttack1',
+                secondaryAttack: 'SkeletonAttack2'
             }
         ];
         this.currentCharacterIndex = 0;

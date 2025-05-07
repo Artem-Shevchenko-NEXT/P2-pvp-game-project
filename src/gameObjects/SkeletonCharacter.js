@@ -1,5 +1,5 @@
-//import { Character } from './Character.js';
-
+import { Character } from './Character.js';
+//temp
 export class SkeletonCharacter extends Character {
     constructor(scene, x, y) {
         super(scene, x, y, {
@@ -16,6 +16,7 @@ export class SkeletonCharacter extends Character {
                 turn: 'skeleton_turn',
                 jump: 'skeleton_jump',
                 attack: 'skeleton_attack',
+                attack2: 'skeleton_attack2',
                 hurt: 'skeleton_hurt'
             }
         });
@@ -27,43 +28,43 @@ export class SkeletonCharacter extends Character {
         try{
         this.anims.create({
             key: this.animationKeys.left,
-            frames: this.anims.generateFrameNames('SkeletonWalk', { prefix: 'running', end: 8, zeroPad: 4 }),
+            frames: this.anims.generateFrameNames('skeleton_run', { prefix: 'running', end: 8, zeroPad: 4 }),
             frameRate: 12, // Faster for ninja
             repeat: -1
         });
         this.anims.create({
             key: this.animationKeys.turn,
-            frames: this.anims.generateFrameNames('SkeletonIdle', { prefix: 'idle', end: 8, zeroPad: 4 }),
-            frameRate: 12,
+            frames: this.anims.generateFrameNames('skeleton_idle', { prefix: 'idle', end: 8, zeroPad: 4 }),
+            frameRate: 6,
             repeat: -1
         });
         this.anims.create({
             key: this.animationKeys.right,
-            frames: this.anims.generateFrameNames('SkeletonWalk', { prefix: 'running', end: 8, zeroPad: 4 }),
+            frames: this.anims.generateFrameNames('skeleton_run', { prefix: 'running', end: 8, zeroPad: 4 }),
             frameRate: 12,
             repeat: -1
         });
         this.anims.create({
             key: this.animationKeys.jump,
-            frames: this.anims.generateFrameNames('SkeletonJump', { prefix: 'jumping', end: 8, zeroPad: 4 }),
+            frames: this.anims.generateFrameNames('skeleton_jump', { prefix: 'jumping', end: 8, zeroPad: 4 }),
             frameRate: 6,
             repeat: 0
         });
         this.anims.create({
             key: this.animationKeys.attack,
-            frames: this.anims.generateFrameNames('SkeletonAttack1', { prefix: 'attackRight', end: 4, zeroPad: 4 }),
+            frames: this.anims.generateFrameNames('skeleton_attack', { prefix: 'attackRight', end: 4, zeroPad: 4 }),
             frameRate: 16, // Faster attack
             repeat: 0
         });
         this.anims.create({
             key: this.animationKeys.hurt,
-            frames: this.anims.generateFrameNames('SkeletonHit', { prefix: 'idle', end: 8, zeroPad: 4 }),
+            frames: this.anims.generateFrameNames('skeleton_hurt', { prefix: 'hurt', end: 8, zeroPad: 4 }),
             frameRate: 12,
             repeat: 0
         });
-            console.log('TankCharacter animations created successfully');
+            console.log('SkeletonCharacter animations created successfully');
         } catch (error) {
-            console.error('TankCharacter animation creation failed:', error);
+            console.error('SkeletonCharacter animation creation failed:', error);
         }
     }
 }
