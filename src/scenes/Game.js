@@ -141,8 +141,6 @@ export class Game extends Phaser.Scene {
         this.physics.add.collider(this.bombs, this.ground);
         this.physics.add.collider(this.bombs, platforms);
 
-        // Create player 1
-        this.player1 = new ArcherCharacter(this, 100, 480); // Adjusted y to align with ground
 
         //socket.emit('newPlayer');
 
