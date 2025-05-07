@@ -141,9 +141,4 @@ export default class GameSync {
       console.log(`Removed remote player ${playerId}`);
     }
   }
-
-    // Calculate interpolated position (from existing code)
-  interpolation(previous, velocity, acceleration, time) {
-    return previous + velocity*time + ((acceleration/2) * time*time);
-  }
 }
