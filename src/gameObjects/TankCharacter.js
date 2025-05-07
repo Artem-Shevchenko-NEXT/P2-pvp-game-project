@@ -67,13 +67,6 @@ export class TankCharacter extends Character {
                 frameRate: 10,
                 repeat: 0
             });
-            // Shockwave: End animation for tank's shockwave
-            this.anims.create({
-                key: 'shockwave_end',
-                frames: [{ key: 'tank_attack', frame: 'secondAttackShockwaveEnd0000' }],
-                frameRate: 10,
-                repeat: 0
-            });
             console.log('TankCharacter animations created successfully');
         } catch (error) {
             console.error('TankCharacter animation creation failed:', error);

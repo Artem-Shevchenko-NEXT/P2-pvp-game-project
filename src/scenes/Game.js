@@ -86,6 +86,13 @@ export class Game extends Phaser.Scene {
         const ground = map.createLayer('ground', tileset);
         ground.setCollisionByProperty({ collides: true });
 
+        // Debug: Log ground collision bounds
+        ground.forEachTile(tile => {
+            if (tile.properties.collides) {
+                console.log(`Ground collision tile at x=${tile.pixelX * ground.scaleX}, y=${tile.pixelY * ground.scaleY}`);
+            }
+        });
+
         // Create platforms layer and set collisions
         const platforms = map.createLayer('Platforms', tileset);
         platforms.setCollisionByProperty({ collides: true });
@@ -101,6 +108,7 @@ export class Game extends Phaser.Scene {
 
         const scaledWidth = mapWidth * scaleX;
         const scaledHeight = mapHeight * scaleY;
+
 
         this.playersInMatch = [];
         this.playersRanking = [];
@@ -121,17 +129,32 @@ export class Game extends Phaser.Scene {
         }
 
         this.playersInMatch.push(this.player1);
+        // Create shockwave group with no gravity
+        this.shockwaves = this.physics.add.group({
+            allowGravity: false
+        });
+        // Create bombs group with gravity
+        this.bombs = this.physics.add.group({
+            allowGravity: true 
+        });
+        //bombs collide
+        this.physics.add.collider(this.bombs, this.ground);
+        this.physics.add.collider(this.bombs, platforms);
+
+        // Create player 1
+        this.player1 = new ArcherCharacter(this, 100, 480); // Adjusted y to align with ground
 
         //socket.emit('newPlayer');
 
         // Create a dummy target for hitbox testing
-        this.dummyTarget = this.physics.add.sprite(200, 450, 'tank_idle');
+        this.dummyTarget = this.physics.add.sprite(200, 480, 'tank_idle'); // Adjusted y to align with ground
         this.dummyTarget.setImmovable(true);
         this.dummyTarget.health = 100; // For testing damage
         this.physics.add.collider(this.dummyTarget, ground);
 
         this.playersInMatch.push(this.dummyTarget);
         
+
         //Debug: to check hurt state for player: in console everything works although health bar does not correctly update.
         //this.input.keyboard.on('keydown-T', () => {
         //    this.player1.takeDamage(10);
@@ -150,14 +173,19 @@ export class Game extends Phaser.Scene {
 
         // Shockwave: Set up shockwave collisions with dummy target
         this.physics.add.overlap(
-            this.player1,
             this.dummyTarget,
+            this.shockwaves,
             this.handleShockwaveCollision,
-            (player, target) => {
-                return player.shockwave && target.active;
+            (target, shockwave) => {
+                const overlap = shockwave && shockwave.active && target.active;
+                if (overlap) {
+                    console.log(`Shockwave overlap detected at x=${shockwave.x}, y=${shockwave.y}, target x=${target.body.x}, y=${target.body.y}`);
+                }
+                return overlap;
             },
             this
         );
+
         //display health note. we can customise this font see description over text method
         this.player1HealthText = this.add.text(20, 20, `Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`, {
             fontFamily: 'Arial',
@@ -184,7 +212,7 @@ export class Game extends Phaser.Scene {
         this.physics.world.setBounds(0, 0, scaledWidth, scaledHeight);
         this.cameras.main.setBounds(0, 0, scaledWidth, scaledHeight);
         // Set up collision between player and ground
-        this.physics.add.collider(this.player1, ground);
+        this.physics.add.collider(this.player1, ground); //DBE i think this is a mistake?
         
         //this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
@@ -208,6 +236,9 @@ export class Game extends Phaser.Scene {
             .catch(err => {
                 console.error('Failed to connect:', err);
             });
+
+        // Debug: Log dummy grounded state and body position
+        console.log(`Dummy body: x=${this.dummyTarget.body.x}, y=${this.dummyTarget.body.y}, width=${this.dummyTarget.body.width}, height=${this.dummyTarget.body.height}`);
     }   
 
     handleHitboxCollision(attacker, target) {
@@ -234,11 +265,11 @@ export class Game extends Phaser.Scene {
     }
 
     // Shockwave: Handle collision between shockwave and target
-    handleShockwaveCollision(attacker, target) {
-        if (attacker.shockwave && attacker !== target && !target.isInvincible) {
-            console.log(`Shockwave collision: ${attacker.characterType} hits target, dealing ${attacker.attackDamage} damage`);
-            target.health = Math.max(0, target.health - attacker.attackDamage);
-            attacker.destroyShockwave(); // Destroy shockwave immediately on hit
+    handleShockwaveCollision(target, shockwave) {
+        if (shockwave && shockwave.active && target && target.active && !target.isInvincible) {
+            console.log(`Shockwave collision: ${shockwave.owner.characterType} hits target at x=${shockwave.x}, y=${shockwave.y}, dealing ${shockwave.owner.attackDamage} damage`);
+            target.health = Math.max(0, target.health - shockwave.owner.attackDamage);
+            shockwave.owner.destroyShockwave(); // Destroy shockwave immediately on hit
             if (target.health <= 0) {
                 console.log('Dummy target destroyed');
                 target.destroy();
@@ -252,6 +283,19 @@ export class Game extends Phaser.Scene {
     update() {
         // Update players
         this.player1.update();
+
+        // Debug: Update dummy debug rectangle position
+        if (this.dummyDebug && this.dummyTarget.active) {
+            this.dummyDebug.setPosition(
+                this.dummyTarget.body.x + this.dummyTarget.body.width / 2,
+                this.dummyTarget.body.y + this.dummyTarget.body.height / 2
+            );
+        }
+
+        // Debug: Log dummy grounded state
+        if (this.dummyTarget.active) {
+            console.log(`Dummy grounded: ${this.dummyTarget.body.blocked.down}`);
+        }
 
         // Send player position updates to server if connected
         if (this.networkManager && this.networkManager.connected) {
