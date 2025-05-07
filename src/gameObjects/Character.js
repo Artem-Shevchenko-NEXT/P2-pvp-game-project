@@ -271,6 +271,9 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                             } else if (this.characterType === 'ninja') {
                                 this.createHitbox(); //insert attack2 for archer
                                 console.log(`${this.characterType} created hitbox at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
+                            } else if (this.characterType === 'skeleton') {
+                                this.createHitbox(); //insert attack2 for skeleton
+                                console.log(`${this.characterType} created hitbox at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
                             }
                         }
                     });
@@ -284,6 +287,8 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                         }  else if (this.characterType === 'hero') {
                             this.destroyBombs();
                         }  else if (this.characterType === 'ninja') {
+                            this.destroyBombs();
+                        }  else if (this.characterType === 'skeleton'){
                             this.destroyBombs();
                         }
                         this.stateMachine.transition('IDLE');
@@ -308,7 +313,9 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                         this.destroyBombs();
                     } else if (this.characterType === 'ninja') {
                         this.destroyBombs();
-                    } 
+                    } else if (this.characterType === 'skeleton') {
+                        this.destroyBombs();
+                    }
                     console.log(`${this.characterType} exited ATTACK2 state`);
                     // Delay buffered input processing to next update cycle
                     this.scene.time.delayedCall(0, () => {

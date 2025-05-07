@@ -1,0 +1,30 @@
+{
+  "sprites": [
+    {
+      "fileName": "hit-1.png",
+      "width": 128,
+      "height": 96,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "fileName": "hit-2.png",
+      "width": 128,
+      "height": 96,
+      "x": 128,
+      "y": 0
+    },
+    {
+      "fileName": "hit-3.png",
+      "width": 128,
+      "height": 96,
+      "x": 0,
+      "y": 96
+    }
+  ],
+  "packMode": "grid",
+  "padding": 0,
+  "backgroundColor": "rgba(0, 0, 0, 0)",
+  "spriteSheetWidth": 256,
+  "spriteSheetHeight": 192
+}

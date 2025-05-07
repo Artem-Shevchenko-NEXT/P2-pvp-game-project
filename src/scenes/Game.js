@@ -3,6 +3,7 @@ import { TankCharacter } from '../gameObjects/TankCharacter.js';
 import { NinjaCharacter } from '../gameObjects/NinjaCharacter.js';
 import { ArcherCharacter } from '../gameObjects/ArcherCharacter.js';
 import { HeroCharacter } from '../gameObjects/HeroCharacter.js';
+import { SkeletonCharacter } from '../gameObjects/SkeletonCharacter.js';
 import NetworkManager from '../multiplayer/NetworkManager.js';
 import GameSync2 from '../multiplayer/GameSync2.js';
 
@@ -123,6 +124,8 @@ export class Game extends Phaser.Scene {
             this.player1 = new HeroCharacter(this, PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y);
         } else if (this.selectedCharacter === 'archer') {
             this.player1 = new ArcherCharacter(this, PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y);
+        } else if (this.selectedCharacter === 'skeleton') {
+            this.player1 = new SkeletonCharacter(this, PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y);
         } else {
             // Fall back to tank as default
             this.player1 = new TankCharacter(this, PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y);
@@ -364,6 +367,15 @@ export class Game extends Phaser.Scene {
         this.healthBar.setText(`${this.player1.health} HP`);
         this.healthBar.update();
         
+        const hp = this.player1.health;
+
+        if (hp > 60) {
+            this.healthBar.setColor('#00ff00'); // groen
+        } else if (hp > 30) {
+            this.healthBar.setColor('#ffa500'); // orange
+        } else {
+            this.healthBar.setColor('#ff0000'); // roed
+        }
         //
     }
 }

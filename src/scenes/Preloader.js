@@ -148,6 +148,27 @@ export class Preloader extends Phaser.Scene {
             'ninja_hurt',
             'ninja/ninja_hurt.png', 'ninja/ninja_hurt.json'   
         );
+        //skeleton assets load here
+        this.load.atlas(
+            'skeleton_idle',
+            'skeleton/skeleton_idle.png', 'skeleton/skeleton_idle.json'    
+        );
+        this.load.atlas(
+            'skeleton_run',
+            'skeleton/skeleton_run.png', 'skeleton/skeleton_run.json'    
+        );
+        this.load.atlas(
+            'skeleton_jump',
+            'skeleton/skeleton_jump.png', 'skeleton/skeleton_jump.json'    
+        );
+        this.load.atlas(
+            'skeleton_attack',
+            'skeleton/skeleton_attack.png', 'skeleton/skeleton_attack.json'    
+        );
+         this.load.atlas(
+            'skeleton_hurt',
+            'skeleton/skeleton_hurt.png', 'skeleton/skeleton_hurt.json'   
+        );
     }
 
     create() {
@@ -162,21 +183,21 @@ export class Preloader extends Phaser.Scene {
         this.anims.create({
             key: 'ninja_turn',
             frames: this.anims.generateFrameNames('ninja_idle', { prefix: 'idle', end: 8, zeroPad: 4 }),
-            frameRate: 10,
+            frameRate: 6,
             repeat: -1
         });
         
         this.anims.create({
             key: 'hero_turn',
             frames: this.anims.generateFrameNames('hero_idle', { prefix: 'idle', end: 8, zeroPad: 4 }),
-            frameRate: 10,
+            frameRate: 3,
             repeat: -1
         });
         
         this.anims.create({
             key: 'archer_turn',
             frames: this.anims.generateFrameNames('archer_idle', { prefix: 'idle', end: 8, zeroPad: 4 }),
-            frameRate: 10,
+            frameRate: 4,
             repeat: -1
         });
 

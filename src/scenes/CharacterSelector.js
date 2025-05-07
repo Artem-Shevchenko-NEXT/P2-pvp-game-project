@@ -44,8 +44,8 @@ export class CharacterSelector extends Phaser.Scene {
             },
             {
                 key: 'ninja',
-                textureKey: 'tank_idle',
-                idleAnim: 'tank_turn', // Temp. tank for now, since i cant find the Ninja sprites?
+                textureKey: 'ninja_idle',
+                idleAnim: 'ninja_turn',
                 name: 'Ninja',
                 primaryAttack: 'NinjaAttack1',
                 secondaryAttack: 'NinjaAttack2'
@@ -65,6 +65,14 @@ export class CharacterSelector extends Phaser.Scene {
                 name: 'Archer',
                 primaryAttack: 'ArcherAttack1',
                 secondaryAttack: 'ArcherAttack2'
+            },
+            {
+                key: 'skeleton',
+                textureKey: 'skeleton_idle',
+                idleAnim: 'skeleton_turn',
+                name: 'Skeleton',
+                primaryAttack: 'SkeletonAttack1',
+                secondaryAttack: 'SkeletonAttack2'
             }
         ];
         this.currentCharacterIndex = 0;

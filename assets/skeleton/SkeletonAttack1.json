@@ -1,0 +1,51 @@
+{
+  "sprites": [
+    {
+      "fileName": "attack-a1.png",
+      "width": 128,
+      "height": 96,
+      "x": 0,
+      "y": 0
+    },
+    {
+      "fileName": "attack-a2.png",
+      "width": 128,
+      "height": 96,
+      "x": 128,
+      "y": 0
+    },
+    {
+      "fileName": "attack-a3.png",
+      "width": 128,
+      "height": 96,
+      "x": 256,
+      "y": 0
+    },
+    {
+      "fileName": "attack-a4.png",
+      "width": 128,
+      "height": 96,
+      "x": 0,
+      "y": 96
+    },
+    {
+      "fileName": "attack-a5.png",
+      "width": 128,
+      "height": 96,
+      "x": 128,
+      "y": 96
+    },
+    {
+      "fileName": "attack-a6.png",
+      "width": 128,
+      "height": 96,
+      "x": 256,
+      "y": 96
+    }
+  ],
+  "packMode": "grid",
+  "padding": 0,
+  "backgroundColor": "rgba(0, 0, 0, 0)",
+  "spriteSheetWidth": 384,
+  "spriteSheetHeight": 192
+}
