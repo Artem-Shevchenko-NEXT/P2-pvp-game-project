@@ -89,7 +89,9 @@ export default class GameSync {
       default:
         remotePlayer = new TankCharacter(this.scene, playerData.x, playerData.y);
     }
-    
+
+    remotePlayer.body.setAllowGravity(false);
+    remotePlayer.body.moves = false; // Prevent physics from moving the player
     // Store the player ID with the game object
     remotePlayer.playerId = playerData.id;
     
@@ -97,6 +99,7 @@ export default class GameSync {
     //remotePlayer.setTint(0xff0000);
     
     this.remotePlayers.set(playerData.id, remotePlayer);
+    console.log(`Created remote player ${playerData.id} with gravity disabled`);
   }
   
   // Update a remote player
