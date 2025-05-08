@@ -160,6 +160,7 @@ export class Game extends Phaser.Scene {
             },
             this
         );
+=======
 
 >>>>>>> Stashed changes
         // Arrow: Set up shockwave collisions with dummy target
@@ -176,6 +177,7 @@ export class Game extends Phaser.Scene {
             },
             this
         );
+=======
 
 >>>>>>> Stashed changes
         //display health note. we can customise this font see description over text method
@@ -252,6 +254,7 @@ export class Game extends Phaser.Scene {
             }
         }
     }
+=======
 
 >>>>>>> Stashed changes
     // Arrow: Handle collision between arrow and target
@@ -266,6 +269,7 @@ export class Game extends Phaser.Scene {
             }
         }
     }
+=======
 
 
 
