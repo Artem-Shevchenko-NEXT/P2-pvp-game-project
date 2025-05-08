@@ -157,7 +157,6 @@ export class Game extends Phaser.Scene {
             },
             this
         );
-
         // Arrow: Set up shockwave collisions with dummy target
         this.physics.add.overlap(
             this.dummyTarget,
@@ -172,7 +171,6 @@ export class Game extends Phaser.Scene {
             },
             this
         );
-
         //display health note. we can customise this font see description over text method
         this.player1HealthText = this.add.text(20, 20, `Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`, {
             fontFamily: 'Arial',
@@ -260,7 +258,6 @@ export class Game extends Phaser.Scene {
             }
         }
     }
-
 
 
 
