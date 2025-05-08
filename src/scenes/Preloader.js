@@ -74,6 +74,7 @@ export class Preloader extends Phaser.Scene {
         this.load.image(
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             'bomb', 
             'bomb.png'
 =======
