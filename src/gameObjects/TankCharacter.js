@@ -7,7 +7,7 @@ export class TankCharacter extends Character {
             idleSpriteKey: 'tank_idle',
             health: 100,
             maxHealth: 100,
-            attackDamage: 10,
+            attackDamage: 1,
             invincibilityDuration: 1000,
             hitboxConfig: { width: 40, height: 50 },
             animationKeys: {
