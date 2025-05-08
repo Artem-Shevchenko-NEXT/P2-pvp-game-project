@@ -76,6 +76,7 @@ export class Preloader extends Phaser.Scene {
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             'bomb', 
             'bomb.png'
 =======
