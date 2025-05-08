@@ -89,12 +89,27 @@ export default class CombatManager {
 
   // creates shockwave for remote player
   handleRemoteShockwave(data) {
+    console.log('Handling remote shockwave creation from player:', data.playerId);
+    
     const remotePlayer = this.gameSync.remotePlayers.get(data.playerId);
     
-    if (!remotePlayer) return;
+    if (!remotePlayer) {
+      console.log(`Can't create shockwave: Player ${data.playerId} not found`);
+      return;
+    }
+    
+    // Set player direction based on data from server before creating shockwave
+    if (data.direction === 'left') {
+      remotePlayer.flipX = true;
+    } else if (data.direction === 'right') {
+      remotePlayer.flipX = false;
+    }
+    
+    console.log(`Creating shockwave for remote player ${data.playerId} (${remotePlayer.characterType}) facing ${data.direction}`);
     
     if (remotePlayer.characterType === 'tank') {
       remotePlayer.createShockwave();
+      console.log(`Remote shockwave created successfully at (${remotePlayer.x}, ${remotePlayer.y})`);
     }
   }
 }

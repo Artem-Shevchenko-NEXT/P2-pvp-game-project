@@ -133,7 +133,7 @@ io.on('connection', (socket) => {
         direction: data.direction
       });
       
-      console.log(`Player ${socket.id} created shockwave at x=${data.x}, y=${data.y}`);
+      console.log(`Player ${socket.id} created shockwave facing ${data.direction}`)
     }
   });
 });
