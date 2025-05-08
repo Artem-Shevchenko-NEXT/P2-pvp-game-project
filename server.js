@@ -93,6 +93,39 @@ io.on('connection', (socket) => {
     // Remove player from tracking
     players.delete(socket.id);
   });
+
+  socket.on('player_hit', (data) => {
+    // validate hit 
+    const attacker = players.get(socket.id);
+    const target = players.get(data.targetId);
+    
+    if (attacker && target && target.roomId === attacker.roomId) {
+      // broadcast the hit to all players in room
+      io.to(attacker.roomId).emit('player_hit', {
+        attackerId: socket.id,
+        targetId: data.targetId,
+        damage: data.damage
+      });
+      
+      console.log(`Player ${socket.id} hit player ${data.targetId} for ${data.damage} damage`);
+    }
+  });
+
+  socket.on('shockwave_created', (data) => {
+    const player = players.get(socket.id);
+    
+    if (player) {
+      // broadcast shockwave to other players in same room
+      socket.to(player.roomId).emit('shockwave_created', {
+        playerId: socket.id,
+        x: data.x,
+        y: data.y,
+        direction: data.direction
+      });
+      
+      console.log(`Player ${socket.id} created shockwave at x=${data.x}, y=${data.y}`);
+    }
+  });
 });
 
 // Server initiation

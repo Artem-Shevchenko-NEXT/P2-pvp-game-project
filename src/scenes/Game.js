@@ -6,6 +6,7 @@ import { HeroCharacter } from '../gameObjects/HeroCharacter.js';
 import { SkeletonCharacter } from '../gameObjects/SkeletonCharacter.js';
 import NetworkManager from '../multiplayer/NetworkManager.js';
 import GameSync from '../multiplayer/GameSync.js';
+import CombatManager from '../multiplayer/CombatManager.js';
 
 export class Game extends Phaser.Scene {
     constructor() {
@@ -239,7 +240,8 @@ export class Game extends Phaser.Scene {
                 // Create GameSync to handle player data
                 this.gameSync = new GameSync(this, this.networkManager);
                 this.gameSync.setLocalPlayer(this.player1);
-                
+
+                this.combatManager = new CombatManager(this, this.gameSync, this.networkManager);
                 // Join the game after successful connection
                 this.networkManager.joinGame({
                     x: this.player1.x,
@@ -255,16 +257,43 @@ export class Game extends Phaser.Scene {
         //console.log(`Dummy body: x=${this.dummyTarget.body.x}, y=${this.dummyTarget.body.y}, width=${this.dummyTarget.body.width}, height=${this.dummyTarget.body.height}`);
     }   
 
+    // new handleHitboxCollision method
     handleHitboxCollision(attacker, target) {
         if (attacker.hitbox && attacker !== target && !target.isInvincible) {
-            console.log(`Hitbox collision: ${attacker.characterType} hits target, dealing ${attacker.attackDamage} damage`);
+        console.log(`Hitbox collision: ${attacker.characterType} hits target, dealing ${attacker.attackDamage} damage`);
+        
+        // register hit with combat manager if attacker is local player
+        if (attacker === this.gameSync?.localPlayer && target.playerId) {
+            this.combatManager.registerHit(attacker, target, attacker.attackDamage);
+        } else if (!target.playerId) {
+            // for non-networked entities like dummy apply damage directly
             target.health = Math.max(0, target.health - attacker.attackDamage);
             if (target.health <= 0) {
-                this.playersRanking.push(target);
-                console.log('Dummy target destroyed');
-                target.destroy();
-                this.checkForGameOver();
+            this.playersRanking.push(target);
+            console.log(' target destroyed');
+            target.destroy();
+            this.checkForGameOver();
             }
+        }
+        }
+    }
+    
+    // new handleShockwaveCollision method
+    handleShockwaveCollision(target, shockwave) {
+        if (shockwave && shockwave.active && target && target.active && !target.isInvincible) {
+        // only process if shockwave belongs to local player
+        if (shockwave.owner === this.gameSync?.localPlayer && target.playerId) {
+            this.combatManager.registerHit(shockwave.owner, target, shockwave.owner.attackDamage);
+        } else if (!target.playerId) {
+            // for dummy targets
+            target.health = Math.max(0, target.health - shockwave.owner.attackDamage);
+            if (target.health <= 0) {
+            console.log('target destroyed');
+            target.destroy();
+            }
+        }
+        // destroy shockwave regardless
+        shockwave.owner.destroyShockwave();
         }
     }
 
@@ -278,18 +307,6 @@ export class Game extends Phaser.Scene {
         }
     }
 
-    // Shockwave: Handle collision between shockwave and target
-    handleShockwaveCollision(target, shockwave) {
-        if (shockwave && shockwave.active && target && target.active && !target.isInvincible) {
-            console.log(`Shockwave collision: ${shockwave.owner.characterType} hits target at x=${shockwave.x}, y=${shockwave.y}, dealing ${shockwave.owner.attackDamage} damage`);
-            target.health = Math.max(0, target.health - shockwave.owner.attackDamage);
-            shockwave.owner.destroyShockwave(); // Destroy shockwave immediately on hit
-            if (target.health <= 0) {
-                console.log('Dummy target destroyed');
-                target.destroy();
-            }
-        }
-    }
 
 
 
