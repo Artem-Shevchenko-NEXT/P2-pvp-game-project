@@ -100,6 +100,10 @@ io.on('connection', (socket) => {
     const target = players.get(data.targetId);
     
     if (attacker && target && target.roomId === attacker.roomId) {
+      // Calculate new health
+      if (!target.health) target.health = 100; // Default health if not set
+      target.health = Math.max(0, target.health - data.damage);
+      
       // broadcast the hit to all players in room
       io.to(attacker.roomId).emit('player_hit', {
         attackerId: socket.id,
@@ -107,7 +111,13 @@ io.on('connection', (socket) => {
         damage: data.damage
       });
       
-      console.log(`Player ${socket.id} hit player ${data.targetId} for ${data.damage} damage`);
+      // Also broadcast the updated health
+      io.to(attacker.roomId).emit('player_health_update', {
+        id: data.targetId,
+        health: target.health
+      });
+      
+      console.log(`Player ${socket.id} hit player ${data.targetId} for ${data.damage} damage. Health now: ${target.health}`);
     }
   });
 

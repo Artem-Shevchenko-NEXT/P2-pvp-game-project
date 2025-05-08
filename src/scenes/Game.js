@@ -248,15 +248,52 @@ export class Game extends Phaser.Scene {
                     y: this.player1.y,
                     characterType: this.selectedCharacter 
                 });
+
+                this.setupPvPCollisions();
             })
             .catch(err => {
                 console.error('Failed to connect:', err);
-            });
-
+            });      
         // Debug: Log dummy grounded state and body position
         //console.log(`Dummy body: x=${this.dummyTarget.body.x}, y=${this.dummyTarget.body.y}, width=${this.dummyTarget.body.width}, height=${this.dummyTarget.body.height}`);
     }   
-
+    //needed logic for the pvp 
+    setupPvPCollisions() {
+        // Skip if gameSync doesn't exist yet
+        if (!this.gameSync) return;
+        
+        // Get all remote players as array
+        const remotePlayers = Array.from(this.gameSync.remotePlayers.values());
+        
+        // No players to collide with
+        if (remotePlayers.length === 0) return;
+        
+        console.log(`Setting up PvP collisions with ${remotePlayers.length} remote players`);
+        
+        // Setup hitbox collisions with remote players
+        this.physics.add.overlap(
+            this.player1,
+            remotePlayers,
+            this.handleHitboxCollision,
+            (attacker, target) => {
+                return attacker.hitbox && target.active && attacker !== target;
+            },
+            this
+        );
+        
+        // Setup shockwave collisions with remote players
+        this.physics.add.overlap(
+            remotePlayers, 
+            this.shockwaves,
+            this.handleShockwaveCollision,
+            (target, shockwave) => {
+                return shockwave && shockwave.active && target.active;
+            },
+            this
+        );
+        
+        console.log("PvP collision handlers set up successfully");
+    }
     // new handleHitboxCollision method
     handleHitboxCollision(attacker, target) {
         if (attacker.hitbox && attacker !== target && !target.isInvincible) {

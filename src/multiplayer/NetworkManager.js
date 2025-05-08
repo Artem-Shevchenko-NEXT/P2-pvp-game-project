@@ -65,7 +65,12 @@ export default class NetworkManager {
           console.log(`Player left: ${data.id}`);
           this.triggerEvent('playerLeft', data);
         });
-        
+
+        // player health update listener
+        this.socket.on('player_health_update', (data) => {
+          console.log(`Received health update for player ${data.id}: health=${data.health}`);
+          this.triggerEvent('playerHealthUpdate', data);
+        });
         // responsible for catching any errors such as connect_error in the try block
       } catch (error) {
         console.error('Failed to connect:', error);

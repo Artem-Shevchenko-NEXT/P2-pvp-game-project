@@ -54,6 +54,23 @@ export default class GameSync {
       console.log(`Player left: ${data.id}`);
       this.removeRemotePlayer(data.id);
     });
+
+    // Listen for health updates
+    this.network.on('playerHealthUpdate', (data) => {
+      const remotePlayer = this.remotePlayers.get(data.id);
+      if (remotePlayer) {
+        remotePlayer.health = data.health;
+        console.log(`Updated remote player ${data.id} health to ${data.health}`);
+        
+        // If health is 0, the player is dead
+        if (data.health <= 0) {
+          console.log(`Remote player ${data.id} has died!`);
+          // Visual indicator for defeat (optional)
+          //remotePlayer.setTint(0x555555);
+        }
+      }
+    });
+    
   }
   
   // Set local player 
@@ -100,6 +117,9 @@ export default class GameSync {
     
     this.remotePlayers.set(playerData.id, remotePlayer);
     console.log(`Created remote player ${playerData.id} with gravity disabled`);
+    
+    // Setup PvP collisions - add this line
+    this.scene.setupPvPCollisions();
   }
   
   // Update a remote player

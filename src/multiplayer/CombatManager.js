@@ -56,7 +56,7 @@ export default class CombatManager {
     } else {
       targetPlayer = this.gameSync.remotePlayers.get(data.targetId);
     }
-
+  
     if (targetPlayer) {
       // apply damage
       targetPlayer.health = Math.max(0, targetPlayer.health - data.damage);
@@ -65,10 +65,27 @@ export default class CombatManager {
       if (targetPlayer === this.gameSync.localPlayer && !targetPlayer.isInvincible) {
         targetPlayer.stateMachine.transition('HURT');
       }
-
+  
       console.log(`Player ${data.targetId} took ${data.damage} damage, health now: ${targetPlayer.health}`);
+      
+      // Handle player death if health reaches 0
+      if (targetPlayer.health <= 0) {
+        console.log(`Player ${data.targetId} has died!`);
+        
+        // If this is the local player who died
+        if (targetPlayer === this.gameSync.localPlayer) {
+          // Notify server about death
+          this.network.socket.emit('player_died', { 
+            killedBy: data.attackerId 
+          });
+          
+          // Visual indicator for defeat
+          //targetPlayer.setTint(0x555555);
+        }
+      }
     }
   }
+
 
   // creates shockwave for remote player
   handleRemoteShockwave(data) {
