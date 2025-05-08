@@ -118,9 +118,12 @@ export class Game extends Phaser.Scene {
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         // Create player 1
         this.player1 = new ArcherCharacter(this, 100, 480); // Adjusted y to align with ground
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 =======
@@ -172,6 +175,9 @@ export class Game extends Phaser.Scene {
 
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
@@ -194,6 +200,10 @@ export class Game extends Phaser.Scene {
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 =======
 
 >>>>>>> Stashed changes
@@ -305,9 +315,13 @@ export class Game extends Phaser.Scene {
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
 =======
 =======
+=======
+
+>>>>>>> Stashed changes
 
 >>>>>>> Stashed changes
 
