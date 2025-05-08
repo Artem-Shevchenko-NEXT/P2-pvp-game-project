@@ -117,8 +117,10 @@ export class Game extends Phaser.Scene {
         this.physics.add.collider(this.arrows, platforms);
         // Create player 1
         this.player1 = new ArcherCharacter(this, 100, 480); // Adjusted y to align with ground
+=======
 
 
+>>>>>>> Stashed changes
         //socket.emit('newPlayer');
 
         // Create a dummy target for hitbox testing
@@ -159,6 +161,7 @@ export class Game extends Phaser.Scene {
             this
         );
 
+>>>>>>> Stashed changes
         // Arrow: Set up shockwave collisions with dummy target
         this.physics.add.overlap(
             this.dummyTarget,
@@ -174,6 +177,7 @@ export class Game extends Phaser.Scene {
             this
         );
 
+>>>>>>> Stashed changes
         //display health note. we can customise this font see description over text method
         this.player1HealthText = this.add.text(20, 20, `Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`, {
             fontFamily: 'Arial',
@@ -249,6 +253,7 @@ export class Game extends Phaser.Scene {
         }
     }
 
+>>>>>>> Stashed changes
     // Arrow: Handle collision between arrow and target
     handleArrowCollision(target, arrow) {
         if (arrow && arrow.active && target && target.active && !target.isInvincible) {
@@ -265,6 +270,7 @@ export class Game extends Phaser.Scene {
 
 
 
+>>>>>>> Stashed changes
     update() {
         // Update players
         this.player1.update();
