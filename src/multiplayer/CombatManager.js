@@ -49,7 +49,7 @@ export default class CombatManager {
 
   // handels hit confermation from server
   handlePlayerHit(data) {
-    // find target player
+    // Find target player
     let targetPlayer;
     if (data.targetId === this.network.playerId) {
       targetPlayer = this.gameSync.localPlayer;
@@ -58,27 +58,40 @@ export default class CombatManager {
     }
   
     if (targetPlayer) {
-      // apply damage
+      // Apply damage
       targetPlayer.health = Math.max(0, targetPlayer.health - data.damage);
       
-      // Show hurt animation for ALL players, not just local
       if (!targetPlayer.isInvincible) {
-          // For remote players, directly play the animation
-          if (targetPlayer !== this.gameSync.localPlayer) {
-            targetPlayer.anims.play(targetPlayer.animationKeys.hurt, true);
-            
-            // Visual feedback with flash effect
-            this.scene.tweens.add({
-              targets: targetPlayer,
-              alpha: 0.5,
-              duration: 100,
-              yoyo: true,
-              repeat: 3
-            });
-          } else {
-            // For local player, use state machine
-            targetPlayer.stateMachine.transition('HURT');
-          }
+        if (targetPlayer === this.gameSync.localPlayer) {
+          // For local player, use state machine
+          targetPlayer.stateMachine.transition('HURT');
+          
+          // Visual feedback with flash effect
+          this.scene.tweens.add({
+            targets: targetPlayer,
+            alpha: 0.5,
+            duration: 100,
+            yoyo: true,
+            repeat: 3
+          });
+        } else {
+          // For remote players, send animation update through the standard network update system
+          // This will be processed by the regular animation pipeline already in place
+          this.network.socket.emit('remote_animation_update', {
+            playerId: targetPlayer.playerId,
+            animation: 'hurt',
+            facing: targetPlayer.flipX ? 'left' : 'right'
+          });
+          
+          // Flash effect helps provide immediate visual feedback
+          this.scene.tweens.add({
+            targets: targetPlayer,
+            alpha: 0.5,
+            duration: 100,
+            yoyo: true,
+            repeat: 3
+          });
+        }
       }
   
       console.log(`Player ${data.targetId} took ${data.damage} damage, health now: ${targetPlayer.health}`);

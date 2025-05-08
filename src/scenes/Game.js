@@ -397,6 +397,9 @@ export class Game extends Phaser.Scene {
                 case 'ATTACK2':
                     animation = 'attack2';
                     break;    
+                case 'HURT':     
+                    animation = 'hurt';
+                    break;
             }
 
             this.networkManager.sendPlayerUpdate(
