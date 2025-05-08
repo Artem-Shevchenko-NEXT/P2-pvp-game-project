@@ -116,6 +116,7 @@ export class Game extends Phaser.Scene {
         this.physics.add.collider(this.arrows, this.ground);
         this.physics.add.collider(this.arrows, platforms);
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         // Create player 1
         this.player1 = new ArcherCharacter(this, 100, 480); // Adjusted y to align with ground
 =======
@@ -166,6 +167,8 @@ export class Game extends Phaser.Scene {
 <<<<<<< Updated upstream
 =======
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
         // Arrow: Set up shockwave collisions with dummy target
@@ -182,6 +185,7 @@ export class Game extends Phaser.Scene {
             },
             this
         );
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
 =======
 
