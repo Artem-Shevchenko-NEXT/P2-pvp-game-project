@@ -61,9 +61,24 @@ export default class CombatManager {
       // apply damage
       targetPlayer.health = Math.max(0, targetPlayer.health - data.damage);
       
-      // only do HURT state if its the local player
-      if (targetPlayer === this.gameSync.localPlayer && !targetPlayer.isInvincible) {
-        targetPlayer.stateMachine.transition('HURT');
+      // Show hurt animation for ALL players, not just local
+      if (!targetPlayer.isInvincible) {
+          // For remote players, directly play the animation
+          if (targetPlayer !== this.gameSync.localPlayer) {
+            targetPlayer.anims.play(targetPlayer.animationKeys.hurt, true);
+            
+            // Visual feedback with flash effect
+            this.scene.tweens.add({
+              targets: targetPlayer,
+              alpha: 0.5,
+              duration: 100,
+              yoyo: true,
+              repeat: 3
+            });
+          } else {
+            // For local player, use state machine
+            targetPlayer.stateMachine.transition('HURT');
+          }
       }
   
       console.log(`Player ${data.targetId} took ${data.damage} damage, health now: ${targetPlayer.health}`);
