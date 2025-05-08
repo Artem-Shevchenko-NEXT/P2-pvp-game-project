@@ -73,9 +73,12 @@ export class Preloader extends Phaser.Scene {
         );
         this.load.image(
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             'bomb', 
             'bomb.png'
 =======
+=======
+>>>>>>> Stashed changes
             'arrow', 
             'archer/3/1_0.png',
             'archer/archer_attack.png', 'archer/archer_attack.json'   
