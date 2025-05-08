@@ -71,11 +71,19 @@ export default class NetworkManager {
           console.log(`Received health update for player ${data.id}: health=${data.health}`);
           this.triggerEvent('playerHealthUpdate', data);
         });
+
+        // listener and event trigger for player hit
+        this.socket.on('player_hit', (data) => {
+          console.log(`Received player hit: ${data.attackerId} hit ${data.targetId} for ${data.damage} damage`);
+          this.triggerEvent('playerHit', data);
+        });
+
         //listener for shockwave events
         this.socket.on('shockwave_created', (data) => {
           console.log('Received shockwave_created event:', data);
           this.triggerEvent('shockwaveCreated', data);
         });
+
         // responsible for catching any errors such as connect_error in the try block
       } catch (error) {
         console.error('Failed to connect:', error);

@@ -8,14 +8,14 @@ export default class CombatManager {
   }
 
   setupEvents() {
-    // listen for hit events from server
-    this.network.socket.on('player_hit', (data) => {
-      this.handlePlayerHit(data);
+    // listen for hit events from NetworManager
+    this.network.on('playerHit', (data) => {
+        this.handlePlayerHit(data);
     });
 
-    // listen for shockwave events
-    this.network.socket.on('shockwave_created', (data) => {
-      this.handleRemoteShockwave(data);
+    // Use the NetworkManager event system
+    this.network.on('shockwaveCreated', (data) => {
+        this.handleRemoteShockwave(data);
     });
   }
 
