@@ -434,7 +434,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             this.scene.shockwaves.add(this.shockwave);
             // Shockwave: Ensure gravity after group addition
             this.shockwave.body.setAllowGravity(false);
-            this.shockwave.setVelocityX(this.flipX ? -200 : 200);
+            this.scene.shockwaves.setVelocityX(this.flipX ? -200 : 200);
             // Shockwave: Log position and physics properties over time
             this.scene.time.addEvent({
                 delay: 10,
