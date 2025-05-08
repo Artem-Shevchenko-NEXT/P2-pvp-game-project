@@ -122,6 +122,8 @@ export class Game extends Phaser.Scene {
 =======
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
 
 
 >>>>>>> Stashed changes
@@ -171,6 +173,8 @@ export class Game extends Phaser.Scene {
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
         // Arrow: Set up shockwave collisions with dummy target
         this.physics.add.overlap(
             this.dummyTarget,
@@ -187,6 +191,8 @@ export class Game extends Phaser.Scene {
         );
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+
+>>>>>>> Stashed changes
 =======
 
 >>>>>>> Stashed changes
@@ -285,6 +291,19 @@ export class Game extends Phaser.Scene {
     }
 <<<<<<< Updated upstream
 =======
+
+    // Arrow: Handle collision between arrow and target
+    handleArrowCollision(target, arrow) {
+        if (arrow && arrow.active && target && target.active && !target.isInvincible) {
+            console.log(`Arrow collision: ${arrow.owner.characterType} hits target at x=${arrow.x}, y=${arrow.y}, dealing ${arrow.owner.attackDamage} damage`);
+            target.health = Math.max(0, target.health - arrow.owner.attackDamage);
+            arrow.owner.destroyArrow(); // Destroy shockwave immediately on hit
+            if (target.health <= 0) {
+                console.log('Dummy target destroyed');
+                target.destroy();
+            }
+        }
+    }
 
     // Arrow: Handle collision between arrow and target
     handleArrowCollision(target, arrow) {
