@@ -96,8 +96,8 @@ export class Preloader extends Phaser.Scene {
             'archer/archer_attack.png', 'archer/archer_attack.json'    
         );
         this.load.image(
-            'bomb', 
-            'bomb.png',
+            'arrow', 
+            'archer/3/1_0.png',
             'archer/archer_attack.png', 'archer/archer_attack.json'   
         );
          this.load.atlas(

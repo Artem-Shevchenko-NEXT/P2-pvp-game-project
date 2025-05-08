@@ -263,7 +263,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                                 this.createShockwave(); // SHOCKWAVE!
                                 console.log(`${this.characterType} created shockwave at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
                             } else if (this.characterType === 'archer') {
-                                this.createBombs(); //insert attack2 for archer adjust console log
+                                this.createArrow(); //archer ARROW!
                                 console.log(`${this.characterType} created hitbox at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
                             } else if (this.characterType === 'hero') {
                                 this.createHitbox(); //insert attack2 for hero adjust console log
@@ -283,13 +283,11 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                         if (this.characterType === 'tank') {
                             this.destroyShockwave();
                         } else if (this.characterType === 'archer') {
-                            this.destroyBombs();
+                            this.destroyArrow();
                         }  else if (this.characterType === 'hero') {
-                            this.destroyBombs();
+                            this.destroyArrow();
                         }  else if (this.characterType === 'ninja') {
-                            this.destroyBombs();
-                        }  else if (this.characterType === 'skeleton'){
-                            this.destroyBombs();
+                            this.destroyArrow();
                         }
                         this.stateMachine.transition('IDLE');
                         console.log(`${this.characterType} attack2 animation complete`);
@@ -308,14 +306,12 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     if (this.characterType === 'tank') {
                         this.destroyShockwave();
                     } else if (this.characterType === 'archer') {
-                        this.destroyBombs();
+                        this.destroyArrow();
                     } else if (this.characterType === 'hero') {
-                        this.destroyBombs();
+                        this.destroyArrow();
                     } else if (this.characterType === 'ninja') {
-                        this.destroyBombs();
-                    } else if (this.characterType === 'skeleton') {
-                        this.destroyBombs();
-                    }
+                        this.destroyArrow();
+                    } 
                     console.log(`${this.characterType} exited ATTACK2 state`);
                     // Delay buffered input processing to next update cycle
                     this.scene.time.delayedCall(0, () => {
@@ -467,55 +463,55 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
-    /* CreateBombs Archer ATTACK2 */   
+    /* createArrow Archer ATTACK2 */   
 
-    createBombs() {
-        if (!this.bomb) {
+    createArrow() {
+        if (!this.arrow) {
             const offsetX = this.flipX ? -10 : 10; // Position 10px in front of player
-            this.bomb = this.scene.physics.add.sprite(
+            this.arrow = this.scene.physics.add.sprite(
                 this.x + offsetX,
                 this.y, // Align with player's center
-                'bomb'
+                'arrow'
             );
-            this.bomb.setDepth(5); // Ensure visibility
+            this.arrow.setDepth(5); // Ensure visibility
             if (this.flipX === true) {
-                this.bomb.flipX = true;
+                this.arrow.flipX = true;
             }
-            this.bomb.owner = this; // Reference player for collision handling
-            this.bomb.setVelocityX(this.flipX ? -200 : 200); // Move 500px/s in facing direction
-            this.bomb.body.setAllowGravity(true);
-
+            this.arrow.owner = this; // Reference player for collision handling
+            this.arrow.setVelocityX(this.flipX ? -200 : 200); // Move 500px/s in facing direction
+            this.arrow.body.setAllowGravity(false);
+            this.arrow.body.setSize(60, 30);
             // Shockwave: Add to scene's shockwave group(important due to maing physics group in game)
-            this.scene.bombs.add(this.bomb);
+            this.scene.arrows.add(this.arrow);
             // Shockwave: Ensure no gravity after group addition
-            this.bomb.body.setAllowGravity(true);
-            this.scene.bombs.setVelocityX(this.flipX ? -200 : 200);
+            this.arrow.body.setAllowGravity(false);
+            this.scene.arrows.setVelocityX(this.flipX ? -500 : 500);
             // Shockwave: Log position and physics properties over time
             this.scene.time.addEvent({
                 delay: 10,
                 callback: () => {
-                    if (this.bomb) {
-                        console.log(`Shockwave position: x=${this.bomb.x}, y=${this.bomb.y}, velocityX=${this.bomb.body.velocity.x}, allowGravity=${this.bomb.body.allowGravity}`);
+                    if (this.arrow) {
+                        console.log(`Arrow position: x=${this.arrow.x}, y=${this.arrow.y}, velocityX=${this.arrow.body.velocity.x}, allowGravity=${this.arrow.body.allowGravity}`);
                     }
                 },
                 repeat: 30 // Log for 300ms
             });
-            // Shockwave: Destroy after 300ms if no collision
-            this.scene.time.delayedCall(300, () => {
-                if (this.bomb) {
-                    this.destroyBombs();
+            // Arrow: Destroy after 300ms if no collision
+            this.scene.time.delayedCall(3000, () => {
+                if (this.arrow) {
+                    this.destroyArrow();
                 }
             });
-            console.log(`${this.characterType} bomb created at x=${this.bomb.x}, y=${this.bomb.y}`);
+            console.log(`${this.characterType} arrow created at x=${this.arrow.x}, y=${this.arrow.y}`);
         }
     }
 
-    // Bomb: Destroy bomb sprite
-    destroyBombs() {
-        if (this.bomb) {
-            console.log(`${this.characterType} bomb destroyed at x=${this.bomb.x}, y=${this.bomb.y}`);
-            this.bomb.destroy();
-            this.bomb = null;
+    // Arrow: Destroy arrow sprite
+    destroyArrow() {
+        if (this.arrow) {
+            console.log(`${this.characterType} arrow destroyed at x=${this.arrow.x}, y=${this.arrow.y}`);
+            this.arrow.destroy();
+            this.arrow = null;
         }
     } 
 

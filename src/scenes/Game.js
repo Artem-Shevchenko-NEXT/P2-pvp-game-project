@@ -137,14 +137,16 @@ export class Game extends Phaser.Scene {
         this.shockwaves = this.physics.add.group({
             allowGravity: false
         });
-        // Create bombs group with gravity
-        this.bombs = this.physics.add.group({
-            allowGravity: true 
+        // Create arrows group with gravity
+        this.arrows = this.physics.add.group({
+            allowGravity: false 
         });
-        //bombs collide
-        this.physics.add.collider(this.bombs, this.ground);
-        this.physics.add.collider(this.bombs, platforms);
+        //arrows collide
+        this.physics.add.collider(this.arrows, this.ground);
+        this.physics.add.collider(this.arrows, platforms);
 
+        // Create player 1
+        this.player1 = new ArcherCharacter(this, 100, 480); // Adjusted y to align with ground
 
         //socket.emit('newPlayer');
 
@@ -187,7 +189,20 @@ export class Game extends Phaser.Scene {
             },
             this
         );
-
+        // Arrow: Set up shockwave collisions with dummy target
+        this.physics.add.overlap(
+            this.dummyTarget,
+            this.arrows,
+            this.handleArrowCollision,
+            (target, arrow) => {
+                const overlap = arrow && arrow.active && target.active;
+                if (overlap) {
+                    console.log(`Arrow overlap detected at x=${arrow.x}, y=${arrow.y}, target x=${target.body.x}, y=${target.body.y}`);
+                }
+                return overlap;
+            },
+            this
+        );
         //display health note. we can customise this font see description over text method
         this.player1HealthText = this.add.text(20, 20, `Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`, {
             fontFamily: 'Arial',
@@ -350,9 +365,32 @@ export class Game extends Phaser.Scene {
             return;
         }
     }
-
-
-
+    /*
+    // Shockwave: Handle collision between shockwave and target
+    handleShockwaveCollision(target, shockwave) {
+        if (shockwave && shockwave.active && target && target.active && !target.isInvincible) {
+            console.log(`Shockwave collision: ${shockwave.owner.characterType} hits target at x=${shockwave.x}, y=${shockwave.y}, dealing ${shockwave.owner.attackDamage} damage`);
+            target.health = Math.max(0, target.health - shockwave.owner.attackDamage);
+            shockwave.owner.destroyShockwave(); // Destroy shockwave immediately on hit
+            if (target.health <= 0) {
+                console.log('Dummy target destroyed');
+                target.destroy();
+            }
+        }
+    }
+    */
+    // Arrow: Handle collision between arrow and target
+    handleArrowCollision(target, arrow) {
+        if (arrow && arrow.active && target && target.active && !target.isInvincible) {
+            console.log(`Arrow collision: ${arrow.owner.characterType} hits target at x=${arrow.x}, y=${arrow.y}, dealing ${arrow.owner.attackDamage} damage`);
+            target.health = Math.max(0, target.health - arrow.owner.attackDamage);
+            arrow.owner.destroyArrow(); // Destroy shockwave immediately on hit
+            if (target.health <= 0) {
+                console.log('Dummy target destroyed');
+                target.destroy();
+            }
+        }
+    }
 
 
     update() {
