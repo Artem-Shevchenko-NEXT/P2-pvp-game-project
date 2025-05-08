@@ -85,6 +85,8 @@ export class Preloader extends Phaser.Scene {
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
+=======
+>>>>>>> Stashed changes
             'arrow', 
             'archer/3/1_0.png',
             'archer/archer_attack.png', 'archer/archer_attack.json'   
