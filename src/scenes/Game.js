@@ -131,8 +131,7 @@ export class Game extends Phaser.Scene {
         } else if (this.selectedCharacter === 'skeleton') {
             this.player1 = new SkeletonCharacter(this, PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y);
             this.player1.setScale(0.80);
-            this.player1.body.setSize(40,70);
-            this.player1.body.setOrigin(60,46);
+            this.player1.body.setDisplaySize(60,30);
         } else {
             // Fall back to tank as default
             this.player1 = new TankCharacter(this, PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y);
