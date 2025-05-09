@@ -19,7 +19,10 @@ export class NinjaCharacter extends Character {
                 hurt: 'ninja_hurt'
             }
         });
-        //this.setOrigin(0.1, 0.1);
+        this.body.setSize(20, 55);
+        this.body.setOffset(10, 0);
+
+        
     }
 
     initAnimations() {

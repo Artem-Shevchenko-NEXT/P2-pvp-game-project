@@ -21,7 +21,15 @@ export class SkeletonCharacter extends Character {
             }
         });
         this.body.setSize(25, 60); 
-        this.body.setOffset(15, 15);
+        // Store original o
+        this.rightFacingOffset = { x: 15, y: 5 };
+        this.leftFacingOffset = { x: 10, y: 5 };  
+        
+        // offest based on initial direction
+        this.body.setOffset(this.rightFacingOffset.x, this.rightFacingOffset.y);
+        
+        //previous flipX state to detect changes
+        this.prevFlipX = this.flipX;
     }
 
     initAnimations() {
@@ -67,5 +75,20 @@ export class SkeletonCharacter extends Character {
         } catch (error) {
             console.error('SkeletonCharacter animation creation failed:', error);
         }
+    }
+
+    update() {
+        // Check if flipX state changed
+        if (this.flipX !== this.prevFlipX) {
+            if (this.flipX) {
+                this.body.setOffset(this.leftFacingOffset.x, this.leftFacingOffset.y);
+            } else {
+                this.body.setOffset(this.rightFacingOffset.x, this.rightFacingOffset.y);
+            }
+            this.prevFlipX = this.flipX;
+        }
+        
+        // Call parent update method
+        super.update();
     }
 }

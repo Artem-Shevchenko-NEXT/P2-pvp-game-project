@@ -21,6 +21,8 @@ export class HeroCharacter extends Character {
                 hurt: 'hero_hurt'
             }
         });
+        this.body.setSize(27, 60); 
+        this.body.setOffset(0, 0);
     }
     
     initAnimations() {

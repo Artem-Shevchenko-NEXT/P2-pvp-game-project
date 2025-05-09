@@ -20,6 +20,8 @@ export class TankCharacter extends Character {
                 hurt: 'tank_hurt'
             }
         });
+        this.body.setSize(27, 60); 
+        this.body.setOffset(0, 0);
         console.log('TankCharacter initialized');
     }
 
