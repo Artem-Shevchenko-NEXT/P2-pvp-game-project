@@ -143,7 +143,15 @@ export default class GameSync {
     } else if (data.facing === 'right') {
       remotePlayer.flipX = false;
     }
-
+    // Directly update physics body offset if flipX changed
+    if (remotePlayer.flipX !== wasFlipped && remotePlayer.rightFacingOffset && remotePlayer.leftFacingOffset) {
+      if (remotePlayer.flipX) {
+        remotePlayer.body.setOffset(remotePlayer.leftFacingOffset.x, remotePlayer.leftFacingOffset.y);
+      } else {
+        remotePlayer.body.setOffset(remotePlayer.rightFacingOffset.x, remotePlayer.rightFacingOffset.y);
+      }
+      console.log(`Updated ${data.id} physics body offset for direction: ${data.facing}`);
+    }
     // Direct animation playing instead of state machine transition
     if (data.animation) {
       if (remotePlayer.animationKeys && remotePlayer.animationKeys[data.animation]) {
