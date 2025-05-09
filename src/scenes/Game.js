@@ -302,60 +302,69 @@ export class Game extends Phaser.Scene {
             this.shockwaves,
             this.handleShockwaveCollision,
             (target, shockwave) => {
+                // CRITICAL FIX: Don't allow shockwave to collide with its owner
+                if (shockwave.owner === target) {
+                    return false;
+                }
                 return shockwave && shockwave.active && target.active;
             },
             this
         );
-        
         console.log("PvP collision handlers set up successfully");
     }
     // new handleHitboxCollision method
     handleHitboxCollision(attacker, target) {
         if (attacker.hitbox && attacker !== target && !target.isInvincible) {
-          // Get the damage from the attacker's configuration
-          const damage = attacker.attackDamage || 10; // Default to 10 if not defined
-          
-          console.log(`Hitbox collision: ${attacker.characterType} hits target, dealing ${damage} damage`);
-          
-          // register hit with combat manager if attacker is local player
-          if (attacker === this.gameSync?.localPlayer && target.playerId) {
-            this.combatManager.registerHit(attacker, target, damage);
-          } else if (!target.playerId) {
-            // for non-networked entities like dummy apply damage directly
-            target.health = Math.max(0, target.health - damage);
-            if (target.health <= 0) {
-              this.playersRanking.push(target);
-              console.log(' target destroyed');
-              target.destroy();
-              this.checkForGameOver();
+            // Get the damage from the attacker's configuration
+            const damage = attacker.attackDamage || 10; // Default to 10 if not defined
+            
+            console.log(`Hitbox collision: ${attacker.characterType} hits target, dealing ${damage} damage`);
+            
+            // register hit with combat manager if attacker is local player
+            if (attacker === this.gameSync?.localPlayer && target.playerId) {
+                    this.combatManager.registerHit(attacker, target, damage);
+            } else if (!target.playerId) {
+                // for non-networked entities like dummy apply damage directly
+                target.health = Math.max(0, target.health - damage);
+                if (target.health <= 0) {
+                    this.playersRanking.push(target);
+                    console.log(' target destroyed');
+                    target.destroy();
+                    this.checkForGameOver();
+                }
             }
-          }
         }
-      }
+    }
 
     // new handleShockwaveCollision method
     handleShockwaveCollision(target, shockwave) {
         if (shockwave && shockwave.active && target && target.active && !target.isInvincible) {
-          // Use the correct damage value from owner character
-          const damage = shockwave.owner ? shockwave.owner.attackDamage : 10;
-          
-          console.log(`Shockwave hit: dealing ${damage} damage to target`);
-          
-          // only process if shockwave belongs to local player
-          if (shockwave.owner === this.gameSync?.localPlayer && target.playerId) {
-            this.combatManager.registerHit(shockwave.owner, target, damage);
-          } else if (!target.playerId) {
-            // for dummy targets
-            target.health = Math.max(0, target.health - damage);
-            if (target.health <= 0) {
-              console.log('target destroyed');
-              target.destroy();
+            //Double-check to prevent self-collision
+            if (shockwave.owner === target) {
+                console.log("Prevented self-collision with shockwave owner");
+                return;
             }
-          }
-          // destroy shockwave regardless
-          shockwave.owner.destroyShockwave();
+            
+            // Use the correct damage value from owner character
+            const damage = shockwave.owner ? shockwave.owner.attackDamage : 10;
+          
+            console.log(`Shockwave hit: ${shockwave.owner.characterType} dealing ${damage} damage to target at (${target.x}, ${target.y})`);
+          
+            // only process if shockwave belongs to local player
+            if (shockwave.owner === this.gameSync?.localPlayer && target.playerId) {
+                this.combatManager.registerHit(shockwave.owner, target, damage);
+            } else if (!target.playerId) {
+                // for dummy targets
+                target.health = Math.max(0, target.health - damage);
+                if (target.health <= 0) {
+                console.log('target destroyed');
+                target.destroy();
+                }
+            }
+            // destroy shockwave regardless
+            shockwave.owner.destroyShockwave();
         }
-      }
+    }
     checkForGameOver(){
         if (this.playersRanking.length >= (this.playersInMatch.length -1)) {
             const winner = this.playersInMatch.find(player => !this.playersRanking.includes(player));
