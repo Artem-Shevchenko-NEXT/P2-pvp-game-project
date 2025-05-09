@@ -270,7 +270,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                                 this.createHitbox(); //insert attack2 for hero adjust console log
                                 console.log(`${this.characterType} created hitbox at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
                             } else if (this.characterType === 'ninja') {
-                                this.createNinjawave(); //insert attack2 for archer
+                                this.createShockwave(); //insert attack2 for archer
                                 console.log(`${this.characterType} created hitbox at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
                             } else if (this.characterType === 'skeleton') {
                                 this.createHitbox(); //insert attack2 for skeleton
@@ -425,8 +425,14 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             this.shockwave = this.scene.physics.add.sprite(
                 this.x + offsetX,
                 this.y, // Align with player's center
-                'tank_attack',
-                'secondAttackShockwave0000'
+                if (this.characterType === 'tank') {
+                    'tank_attack',
+                    'secondAttackShockwave0000';
+                }
+                else if (this.characterType === 'ninja') {
+                    'ninja_attack2',
+                    'secondAttackNinjawave0000';
+                }
             );
             this.shockwave.setDepth(5); // Ensure visibility
             if (this.flipX === true) {
@@ -540,33 +546,33 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
     }
 
     createNinjawave() {
-        if (!this.ninjawave) {
+        if (!this.shockwave) {
             const offsetX = this.flipX ? -10 : 10; // Position 10px in front of player
-            this.ninjawave = this.scene.physics.add.sprite(
+            this.shockwave = this.scene.physics.add.sprite(
                 this.x + offsetX,
                 this.y, // Align with player's center
                 'ninja_attack2',
                 'secondAttackNinjawave0000'
             );
-            this.ninjawave.setDepth(5); // Ensure visibility
+            this.shockwave.setDepth(5); // Ensure visibility
             if (this.flipX === true) {
-                this.ninjawave.flipX = true;
+                this.shockwave.flipX = true;
             }
-            this.ninjawave.owner = this; // Reference player for collision handling
-            this.ninjawave.setVelocityX(this.flipX ? -200 : 200); // Move 500px/s in facing direction
-            this.ninjawave.body.setAllowGravity(false);
+            this.shockwave.owner = this; // Reference player for collision handling
+            this.shockwave.setVelocityX(this.flipX ? -200 : 200); // Move 500px/s in facing direction
+            this.shockwave.body.setAllowGravity(false);
 
             // Ninjawave: Add to scene's ninjawave group(important due to maing physics group in game)
-            this.scene.ninjawaves.add(this.ninjawave);
+            this.scene.shockwaves.add(this.shockwave);
             // Ninjawave: Ensure gravity after group addition
-            this.ninjawave.body.setAllowGravity(false);
-            this.scene.ninjawaves.setVelocityX(this.flipX ? -200 : 200);
+            this.shockwave.body.setAllowGravity(false);
+            this.scene.shockwaves.setVelocityX(this.flipX ? -200 : 200);
             // Ninjawave: Log position and physics properties over time
             this.scene.time.addEvent({
                 delay: 10,
                 callback: () => {
-                    if (this.ninjawave) {
-                        console.log(`Ninjawave position: x=${this.ninjawave.x}, y=${this.ninjawave.y}, velocityX=${this.ninjawave.body.velocity.x}, allowGravity=${this.ninjawave.body.allowGravity}`);
+                    if (this.shockwave) {
+                        console.log(`Ninjawave position: x=${this.shockwave.x}, y=${this.shockwave.y}, velocityX=${this.shockwave.body.velocity.x}, allowGravity=${this.shockwave.body.allowGravity}`);
                     }
                 },
                 repeat: 30 // Log for 300ms
@@ -576,25 +582,25 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             }
             // Ninjawave: Destroy after 300ms if no collision
             this.scene.time.delayedCall(300, () => {
-                if (this.ninjawave) {
+                if (this.shockwave) {
                     this.destroyNinjawave();
                 }
             });
-            console.log(`${this.characterType} ninjawave created at x=${this.ninjawave.x}, y=${this.ninjawave.y}`);
+            console.log(`${this.characterType} ninjawave created at x=${this.shockwave.x}, y=${this.shockwave.y}`);
         }
     }
 
     // Ninjawave: Destroy ninjawave sprite
     destroyNinjawave() {
-        if (this.ninjawave) {
+        if (this.shockwave) {
             // If this is local player, notify network
             if (this === this.scene.gameSync?.localPlayer) {
               this.scene.networkManager.sendNinjawaveDestroyed({ id: this.scene.networkManager.playerId });
             }
             
-            console.log(`${this.characterType} ninjawave destroyed at x=${this.ninjawave.x}, y=${this.ninjawave.y}`);
-            this.ninjawave.destroy();
-            this.ninjawave = null;
+            console.log(`${this.characterType} ninjawave destroyed at x=${this.shockwave.x}, y=${this.shockwave.y}`);
+            this.shockwave.destroy();
+            this.shockwave = null;
         }
     }
     update() {
