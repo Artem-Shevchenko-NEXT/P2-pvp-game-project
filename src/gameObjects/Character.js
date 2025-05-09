@@ -405,8 +405,10 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
     destroyHitbox() {
         if (this.hitbox) {
             console.log(`${this.characterType} destroyed hitbox at x=${this.hitbox.x}, y=${this.hitbox.y}`);
-            this.hitbox.destroy();
-            this.hitbox = null;
+            this.scene.time.delayedCall(300, () => {
+                this.hitbox.destroy();
+                this.hitbox = null;
+            });
         }
     }
 
