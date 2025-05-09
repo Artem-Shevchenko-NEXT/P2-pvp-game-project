@@ -135,7 +135,7 @@ export default class GameSync {
     remotePlayer.y = data.y;
     
     // Just logging to demonstrate its working
-    console.log(`Updated remote player ${data.id} to position x=${data.x}, y=${data.y}`);
+    //console.log(`Updated remote player ${data.id} to position x=${data.x}, y=${data.y}`);
     
     // Update facing direction
     if (data.facing === 'left') {
