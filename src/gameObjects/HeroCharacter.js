@@ -10,7 +10,7 @@ export class HeroCharacter extends Character {
             maxHealth: 100,
             attackDamage: 8, 
             invincibilityDuration: 800, 
-            hitboxConfig: { width: 50, height: 10 }, 
+            hitboxConfig: { width: 100, height: 10 }, 
             animationKeys: {
                 left: 'hero_left',
                 right: 'hero_right',
