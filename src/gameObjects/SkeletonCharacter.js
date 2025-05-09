@@ -20,8 +20,8 @@ export class SkeletonCharacter extends Character {
                 hurt: 'skeleton_hurt'
             }
         });
-        this.body.setSize(25, 50); 
-        this.body.setOffset(20, 10);
+        this.body.setSize(25, 60); 
+        this.body.setOffset(15, 15);
     }
 
     initAnimations() {
