@@ -39,7 +39,7 @@ export default class GameSync {
     
     // Handle player updates
     this.network.on('playerUpdated', (data) => {
-      console.log(`Got update for player ${data.id}: x=${data.x}, y=${data.y}`);
+      //console.log(`Got update for player ${data.id}: x=${data.x}, y=${data.y}`);
       this.updateRemotePlayer(data);
     });
 
@@ -60,7 +60,7 @@ export default class GameSync {
       const remotePlayer = this.remotePlayers.get(data.id);
       if (remotePlayer) {
         remotePlayer.health = data.health;
-        console.log(`Updated remote player ${data.id} health to ${data.health}`);
+        //console.log(`Updated remote player ${data.id} health to ${data.health}`);
         
         // If health is 0, the player is dead
         if (data.health <= 0) {
