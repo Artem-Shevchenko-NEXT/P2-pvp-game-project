@@ -267,7 +267,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                                 this.createArrow(); //archer ARROW!
                                 console.log(`${this.characterType} created hitbox at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
                             } else if (this.characterType === 'hero') {
-                                this.createHitbox(); //insert attack2 for hero adjust console log
+                                this.createShockwave(); //insert attack2 for hero adjust console log
                                 console.log(`${this.characterType} created hitbox at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
                             } else if (this.characterType === 'ninja') {
                                 this.createHitbox(); //insert attack2 for archer
