@@ -164,13 +164,13 @@ export default class CombatManager {
     } else if (data.direction === 'right') {
       remotePlayer.flipX = false;
     }
-    
+    /*
     // Force position update before creating arrow if provided
     if (data.x && data.y) {
       remotePlayer.x = data.x;
       remotePlayer.y = data.y;
     }
-    
+    */
     console.log(`Creating arrow for remote player ${data.playerId} (${remotePlayer.characterType}) facing ${data.direction}`);
     
     if (remotePlayer.characterType === 'archer') {
