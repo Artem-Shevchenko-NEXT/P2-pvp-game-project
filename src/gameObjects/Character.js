@@ -17,7 +17,10 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         this.invincibilityDuration = config.invincibilityDuration || 1000; // cannot take damage 1 second after hit
         this.attackDamage = config.attackDamage || 50;
         this.hitboxConfig = config.hitboxConfig || { width: 40, height: 50 };
-        this.hitboxOffsetConfig = config.hitboxOffsetConfig  ||  1;
+        this.hitboxOffsetConfig = config.hitboxOffsetConfig || { 
+            x: { left: -40, right: 40 },  // Different values for left/right facing
+            y: 0 // Y offset (can be positive or negative)
+        };
         this.hitbox = null;
         this.shockwave = null; // Shockwave: Track shockwave sprite for tank's ATTACK2
 
@@ -390,14 +393,20 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
     createHitbox() {
         if (!this.hitbox) {
             const { width, height } = this.hitboxConfig;
-            const offsetX = this.flipX ? -width : this.width; //set hitbox in front of player
-            const offsetY = this.hitboxOffsetConfig;
+            // Get the appropriate X offset based on direction
+            const offsetX = this.flipX 
+                ? this.hitboxOffsetConfig.x.left 
+                : this.hitboxOffsetConfig.x.right;
+            const offsetY = this.hitboxOffsetConfig.y;
+
+            // Create the hitbox rectangle
             this.hitbox = this.scene.add.rectangle(
                 this.x + offsetX,
                 this.y + offsetY,
                 width,
                 height
             );
+            // Add to physics group and set properties
             this.scene.hitboxes.add(this.hitbox);
             this.hitbox.body.setAllowGravity(false);
             this.hitbox.owner = this; // this is referencing player for collision handling
@@ -406,6 +415,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             
             this.hitbox.setStrokeStyle(2, 0xff0000); //debug
             console.log(`${this.characterType} hitbox position: x=${this.hitbox.x}, y=${this.hitbox.y}, width=${width}, height=${height}`);
+            // Auto-destroy after delay
             this.scene.time.delayedCall(500, () => {
                 if (this.hitbox) {
                     this.destroyHitbox();
@@ -595,9 +605,13 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         this.stateMachine.update();
         // Update hitbox position so it will follow player
         if (this.hitbox) {
-            const { width } = this.hitboxConfig;
-            const offsetX = this.flipX ? -width : this.width;
-            this.hitbox.setPosition(this.x + offsetX, this.y - this.height / 2);
+            const offsetX = this.flipX 
+                ? this.hitboxOffsetConfig.x.left 
+                : this.hitboxOffsetConfig.x.right;
+            const offsetY = this.hitboxOffsetConfig.y;
+
+            // Update position
+            this.hitbox.setPosition(this.x + offsetX, this.y + offsetY);
         }
         // Shockwave: Log physics body position to confirm movement
         if (this.shockwave) {
