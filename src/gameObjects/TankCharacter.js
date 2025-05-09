@@ -20,9 +20,16 @@ export class TankCharacter extends Character {
                 hurt: 'tank_hurt'
             }
         });
-        this.body.setSize(27, 60); 
-        this.body.setOffset(0, 0);
-        console.log('TankCharacter initialized');
+        this.body.setSize(20, 48); 
+        // Store the different offsets 
+        this.rightFacingOffset = { x: 5, y: 0 };
+        this.leftFacingOffset = { x: 0, y: 0 };  
+        
+        // offest based on initial direction
+        this.body.setOffset(this.rightFacingOffset.x, this.rightFacingOffset.y);
+        
+        //previous flipX state to detect changes
+        this.prevFlipX = this.flipX;
     }
 
     initAnimations() {
@@ -73,5 +80,20 @@ export class TankCharacter extends Character {
         } catch (error) {
             console.error('TankCharacter animation creation failed:', error);
         }
+    }
+
+    update() {
+        // Check if flipX state changed
+        if (this.flipX !== this.prevFlipX) {
+            if (this.flipX) {
+                this.body.setOffset(this.leftFacingOffset.x, this.leftFacingOffset.y);
+            } else {
+                this.body.setOffset(this.rightFacingOffset.x, this.rightFacingOffset.y);
+            }
+            this.prevFlipX = this.flipX;
+        }
+        
+        // Call parent update method
+        super.update();
     }
 }

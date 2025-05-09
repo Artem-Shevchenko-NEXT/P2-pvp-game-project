@@ -21,9 +21,9 @@ export class SkeletonCharacter extends Character {
             }
         });
         this.body.setSize(25, 60); 
-        // Store original o
-        this.rightFacingOffset = { x: 15, y: 5 };
-        this.leftFacingOffset = { x: 10, y: 5 };  
+        // Store the different offsets 
+        this.rightFacingOffset = { x: 15, y: 0 };
+        this.leftFacingOffset = { x: 35, y: 0 };  
         
         // offest based on initial direction
         this.body.setOffset(this.rightFacingOffset.x, this.rightFacingOffset.y);

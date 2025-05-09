@@ -20,8 +20,15 @@ export class NinjaCharacter extends Character {
             }
         });
         this.body.setSize(20, 55);
-        this.body.setOffset(10, 0);
-
+        // Store the different offsets 
+        this.rightFacingOffset = { x: 10, y: 0 };
+        this.leftFacingOffset = { x: 0, y: 0 };  
+        
+        // offest based on initial direction
+        this.body.setOffset(this.rightFacingOffset.x, this.rightFacingOffset.y);
+        
+        //previous flipX state to detect changes
+        this.prevFlipX = this.flipX;
         
     }
 
@@ -63,5 +70,20 @@ export class NinjaCharacter extends Character {
             frameRate: 12,
             repeat: 0
         });
+    }
+
+    update() {
+        // Check if flipX state changed
+        if (this.flipX !== this.prevFlipX) {
+            if (this.flipX) {
+                this.body.setOffset(this.leftFacingOffset.x, this.leftFacingOffset.y);
+            } else {
+                this.body.setOffset(this.rightFacingOffset.x, this.rightFacingOffset.y);
+            }
+            this.prevFlipX = this.flipX;
+        }
+        
+        // Call parent update method
+        super.update();
     }
 }
