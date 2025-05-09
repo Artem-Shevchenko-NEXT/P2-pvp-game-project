@@ -120,7 +120,7 @@ export default class CombatManager {
           this.network.socket.emit('player_died', { 
             killedBy: data.attackerId 
           });
-          
+          console.log(`Player ${data.targetId} was killed by ${data.attackerId } `);
           // Visual indicator for defeat
           //targetPlayer.setTint(0x555555);
         }
