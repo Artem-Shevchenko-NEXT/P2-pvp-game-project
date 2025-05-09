@@ -374,20 +374,7 @@ export class Game extends Phaser.Scene {
             return;
         }
     }
-    /*
-    // Shockwave: Handle collision between shockwave and target
-    handleShockwaveCollision(target, shockwave) {
-        if (shockwave && shockwave.active && target && target.active && !target.isInvincible) {
-            console.log(`Shockwave collision: ${shockwave.owner.characterType} hits target at x=${shockwave.x}, y=${shockwave.y}, dealing ${shockwave.owner.attackDamage} damage`);
-            target.health = Math.max(0, target.health - shockwave.owner.attackDamage);
-            shockwave.owner.destroyShockwave(); // Destroy shockwave immediately on hit
-            if (target.health <= 0) {
-                console.log('Dummy target destroyed');
-                target.destroy();
-            }
-        }
-    }
-    */
+    
     // Arrow: Handle collision between arrow and target
     handleArrowCollision(target, arrow) {
         if (arrow && arrow.active && target && target.active && !target.isInvincible) {
