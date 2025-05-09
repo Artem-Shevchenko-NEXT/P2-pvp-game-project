@@ -1,5 +1,5 @@
 import { Character } from './Character.js';
-//temp
+
 export class SkeletonCharacter extends Character {
     constructor(scene, x, y) {
         super(scene, x, y, {
@@ -24,12 +24,12 @@ export class SkeletonCharacter extends Character {
     }
 
     initAnimations() {
-        // Placeholder: Using tank animations; replace with skeleton assets
+        //frameRate should be tweaked
         try{
         this.anims.create({
             key: this.animationKeys.left,
             frames: this.anims.generateFrameNames('skeleton_run', { prefix: 'running', end: 8, zeroPad: 4 }),
-            frameRate: 12, // Faster for ninja
+            frameRate: 12,
             repeat: -1
         });
         this.anims.create({
@@ -53,7 +53,7 @@ export class SkeletonCharacter extends Character {
         this.anims.create({
             key: this.animationKeys.attack,
             frames: this.anims.generateFrameNames('skeleton_attack', { prefix: 'attackRight', end: 4, zeroPad: 4 }),
-            frameRate: 16, // Faster attack
+            frameRate: 8, // Faster attack
             repeat: 0
         });
         this.anims.create({

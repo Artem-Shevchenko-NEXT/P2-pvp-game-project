@@ -288,6 +288,8 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                             this.destroyArrow();
                         }  else if (this.characterType === 'ninja') {
                             this.destroyArrow();
+                        }  else if (this.characterType === 'skeleton') {
+                            this.destroyArrow();
                         }
                         this.stateMachine.transition('IDLE');
                         console.log(`${this.characterType} attack2 animation complete`);
@@ -311,7 +313,9 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                         this.destroyArrow();
                     } else if (this.characterType === 'ninja') {
                         this.destroyArrow();
-                    } 
+                    } else if (this.characterType === 'skeleton') {
+                        this.destroyArrow();
+                    }
                     console.log(`${this.characterType} exited ATTACK2 state`);
                     // Delay buffered input processing to next update cycle
                     this.scene.time.delayedCall(0, () => {
