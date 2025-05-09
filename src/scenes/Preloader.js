@@ -200,6 +200,12 @@ export class Preloader extends Phaser.Scene {
             frameRate: 4,
             repeat: -1
         });
+        this.anims.create({
+            key: 'skeleton_turn',
+            frames: this.anims.generateFrameNames('skeleton_idle', { prefix: 'idle', end: 8, zeroPad: 4 }),
+            frameRate: 4,
+            repeat: -1
+        });
 
         this.anims.create({
             key: 'torch_burn',

@@ -272,7 +272,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                                 this.createHitbox(); //insert attack2 for archer
                                 console.log(`${this.characterType} created hitbox at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
                             } else if (this.characterType === 'skeleton') {
-                                this.createHitbox(); //insert attack2 for skeleton
+                                this.createFireball(); //insert attack2 for skeleton
                                 console.log(`${this.characterType} created hitbox at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
                             }
                         }
@@ -537,6 +537,69 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             this.arrow = null;
         }
     } 
+    //Skeleton fireball special attack
+    createFireball() {
+        if (!this.fireball) {
+            console.log('fireball has been called')
+           /* const offsetX = this.flipX ? -10 : 10; // Position 10px in front of player
+            this.fireball = this.scene.physics.add.sprite(
+                this.x + offsetX,
+                this.y, // Align with player's center
+                //Find me
+                'skeleton_attack',
+                //needs to go through fireball0000-fireball0005
+                'fireball0000'
+            );
+            this.fireball.setDepth(5); // Ensure visibility
+            if (this.flipX === true) {
+                this.fireball.flipX = true;
+            }
+            this.fireball.owner = this; // Reference player for collision handling
+            this.fireball.setVelocityX(this.flipX ? -200 : 200); // Move 500px/s in facing direction
+            this.fireball.body.setAllowGravity(false);
+
+            // Shockwave: Add to scene's shockwave group(important due to maing physics group in game)
+            this.scene.fireballs.add(this.fireball);
+            // Shockwave: Ensure gravity after group addition
+            this.fireball.body.setAllowGravity(false);
+            this.scene.fireballs.setVelocityX(this.flipX ? -200 : 200);
+            // Shockwave: Log position and physics properties over time
+            this.scene.time.addEvent({
+                delay: 10,
+                callback: () => {
+                    if (this.fireball) {
+                        console.log(`fireball position: x=${this.shockwave.x}, y=${this.shockwave.y}, velocityX=${this.shockwave.body.velocity.x}, allowGravity=${this.shockwave.body.allowGravity}`);
+                    }
+                },
+                repeat: 30 // Log for 300ms
+            });
+            if (this === this.scene.gameSync?.localPlayer) {
+                this.scene.combatManager.registerFireball();
+            }
+            // Shockwave: Destroy after 300ms if no collision
+            this.scene.time.delayedCall(300, () => {
+                if (this.fireball) {
+                    this.destroyFireball();
+                }
+            }); */
+            //console.log(`${this.characterType} shockwave created at x=${this.fireball.x}, y=${this.fireball.y}`);
+        }
+    }
+
+    // Shockwave: Destroy shockwave sprite
+    destroyFireball() {
+        if (this.fireball) {
+            // If this is local player, notify network
+            if (this === this.scene.gameSync?.localPlayer) {
+              this.scene.networkManager.sendFireballDestroyed({ id: this.scene.networkManager.playerId });
+            }
+            
+            console.log(`${this.characterType} fireball destroyed at x=${this.fireball.x}, y=${this.fireball.y}`);
+            this.fireball.destroy();
+            this.fireball = null;
+        }
+    }
+
 
     update() {
         this.stateMachine.update();
