@@ -330,24 +330,31 @@ export class Game extends Phaser.Scene {
     }
     // new handleHitboxCollision method
     handleHitboxCollision(attacker, target) {
-        if (attacker.hitbox && attacker !== target && !target.isInvincible) {
-            // Get the damage from the attacker's configuration
-            const damage = attacker.attackDamage || 10; // Default to 10 if not defined
-            
-            console.log(`Hitbox collision: ${attacker.characterType} hits target, dealing ${damage} damage`);
-            
-            // register hit with combat manager if attacker is local player
-            if (attacker === this.gameSync?.localPlayer && target.playerId) {
-                    this.combatManager.registerHit(attacker, target, damage);
-            } else if (!target.playerId) {
-                // for non-networked entities like dummy apply damage directly
-                target.health = Math.max(0, target.health - damage);
-                if (target.health <= 0) {
-                    this.playersRanking.push(target);
-                    console.log(' target destroyed');
-                    target.destroy();
-                    this.checkForGameOver();
-                }
+        // Skip if no hitbox, same entity, target is invincible, or target already hit by this hitbox
+        if (!attacker.hitbox || attacker === target || target.isInvincible || 
+            attacker.hitbox.hitTargets.has(target.playerId || target)) {
+            return;
+        }
+        
+        // Mark this target as hit
+        attacker.hitbox.hitTargets.add(target.playerId || target);
+        
+        // Get the damage from the attacker's configuration
+        const damage = attacker.attackDamage || 10; // Default to 10 if not defined
+        
+        console.log(`Hitbox collision: ${attacker.characterType} hits target, dealing ${damage} damage`);
+        
+        // register hit with combat manager if attacker is local player
+        if (attacker === this.gameSync?.localPlayer && target.playerId) {
+            this.combatManager.registerHit(attacker, target, damage);
+        } else if (!target.playerId) {
+            // for non-networked entities like dummy apply damage directly
+            target.health = Math.max(0, target.health - damage);
+            if (target.health <= 0) {
+                this.playersRanking.push(target);
+                console.log(' target destroyed');
+                target.destroy();
+                this.checkForGameOver();
             }
         }
     }
