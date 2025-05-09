@@ -20,6 +20,7 @@ export class SkeletonCharacter extends Character {
                 hurt: 'skeleton_hurt'
             }
         });
+        this.setScale(0.80);
         this.body.setSize(25, 60); 
         // Store the different offsets 
         this.rightFacingOffset = { x: 15, y: 0 };
