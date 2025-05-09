@@ -391,13 +391,13 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 width,
                 height
             );
-            this.scene.physics.add.existing(this.hitbox);
+            this.scene.hitboxes.add(this.hitbox);
             this.hitbox.body.setAllowGravity(false);
             this.hitbox.owner = this; // this is referencing player for collision handling
             this.hitbox.hitTargets = new Set();
             //Debug: visual hitbox will/need to be removed later
             
-            //this.hitbox.setStrokeStyle(2, 0xff0000); //debug
+            this.hitbox.setStrokeStyle(2, 0xff0000); //debug
             console.log(`${this.characterType} hitbox position: x=${this.hitbox.x}, y=${this.hitbox.y}, width=${width}, height=${height}`);
         }
     }

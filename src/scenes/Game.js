@@ -133,6 +133,12 @@ export class Game extends Phaser.Scene {
         }
 
         this.playersInMatch.push(this.player1);
+
+        // Create shockwave group with no gravity
+        this.hitboxes = this.physics.add.group({
+            allowGravity: false
+        });
+
         // Create shockwave group with no gravity
         this.shockwaves = this.physics.add.group({
             allowGravity: false
