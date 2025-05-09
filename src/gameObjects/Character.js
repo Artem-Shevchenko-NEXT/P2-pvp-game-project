@@ -16,6 +16,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         this.invincibilityDuration = config.invincibilityDuration || 1000; // cannot take damage 1 second after hit
         this.attackDamage = config.attackDamage || 50;
         this.hitboxConfig = config.hitboxConfig || { width: 40, height: 50 };
+        this.hitboxOffsetConfig = config.hitboxOffsetConfig  ||  50;
         this.hitbox = null;
         this.shockwave = null; // Shockwave: Track shockwave sprite for tank's ATTACK2
 
@@ -389,9 +390,10 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         if (!this.hitbox) {
             const { width, height } = this.hitboxConfig;
             const offsetX = this.flipX ? -width : this.width; //set hitbox in front of player
+            const offsetY = this.hitboxOffsetConfig;
             this.hitbox = this.scene.add.rectangle(
                 this.x + offsetX,
-                this.y - this.height / 2 - 30,
+                this.y + offsetY,
                 width,
                 height
             );
