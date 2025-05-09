@@ -9,7 +9,12 @@ export class TankCharacter extends Character {
             maxHealth: 100,
             attackDamage: 1,
             invincibilityDuration: 1000,
-            hitboxConfig: { width: 40, height: 50 },
+            hitboxConfig: { width: 35, height: 45 },
+            // Define custom hitbox offsets for the specific charecter sub class
+            hitboxOffsetConfig: {
+                x: { left: -5, right: 5 },  // Adjust these values based on chrecters attack animation
+                y: 15 // Vertical offset from character center
+            },
             animationKeys: {
                 left: 'tank_left',
                 right: 'tank_right',

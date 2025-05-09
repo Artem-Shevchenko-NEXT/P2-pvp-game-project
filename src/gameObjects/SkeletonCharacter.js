@@ -9,11 +9,11 @@ export class SkeletonCharacter extends Character {
             maxHealth: 80,
             attackDamage: 15, // TBD
             invincibilityDuration: 800, // TBD
-            hitboxConfig: { width: 30, height: 40 }, // TBD
+            hitboxConfig: { width: 45, height: 10 }, // TBD
             // Define custom hitbox offsets for the specific charecter sub class
             hitboxOffsetConfig: {
-                x: { left: -40, right: 40 },  // Adjust these values based on chrecters attack animation
-                y: 0 // Vertical offset from character center
+                x: { left: -15, right: 15 },  // Adjust these values based on chrecters attack animation
+                y: 15 // Vertical offset from character center
             },
             animationKeys: {
                 left: 'skeleton_left',

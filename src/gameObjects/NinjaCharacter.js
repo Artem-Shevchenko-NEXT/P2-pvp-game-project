@@ -9,7 +9,12 @@ export class NinjaCharacter extends Character {
             maxHealth: 80,
             attackDamage: 15, // Higher damage
             invincibilityDuration: 800, // Shorter invincibility
-            hitboxConfig: { width: 30, height: 40 }, // Smaller hitbox
+            hitboxConfig: { width: 50, height: 45 }, // Smaller hitbox
+            // Define custom hitbox offsets for the specific charecter sub class
+            hitboxOffsetConfig: {
+                x: { left: -15, right: 15  },  // Adjust these values based on chrecters attack animation
+                y: 15 // Vertical offset from character center
+            },
             animationKeys: {
                 left: 'ninja_left',
                 right: 'ninja_right',

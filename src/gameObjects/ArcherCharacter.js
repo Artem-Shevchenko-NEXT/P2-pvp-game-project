@@ -9,7 +9,12 @@ export class ArcherCharacter extends Character {
             maxHealth: 80,
             attackDamage: 15, 
             invincibilityDuration: 800, 
-            hitboxConfig: { width: 30, height: 40 }, 
+            hitboxConfig: { width: 20, height: 45 },
+            // Define custom hitbox offsets for the specific charecter sub class
+            hitboxOffsetConfig: {
+                x: { left: -5, right: 5 },  // Adjust these values based on chrecters attack animation
+                y: 15 // Vertical offset from character center
+            }, 
             animationKeys: {
                 left: 'archer_left',
                 right: 'archer_right',

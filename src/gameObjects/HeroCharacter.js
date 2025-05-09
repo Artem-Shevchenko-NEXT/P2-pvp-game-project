@@ -10,8 +10,12 @@ export class HeroCharacter extends Character {
             maxHealth: 100,
             attackDamage: 8, 
             invincibilityDuration: 800, 
-            hitboxConfig: { width: 50, height: -50 }, 
-            hitboxOffsetConfig: 1,
+            hitboxConfig: { width: 45, height: 10 }, 
+            // Define custom hitbox offsets for the specific charecter sub class
+            hitboxOffsetConfig: {
+                x: { left: -17, right: 17 },  // Adjust these values based on chrecters attack animation
+                y: 10 // Vertical offset from character center
+            },
             animationKeys: {
                 left: 'hero_left',
                 right: 'hero_right',
