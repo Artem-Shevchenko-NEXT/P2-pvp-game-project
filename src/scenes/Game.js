@@ -310,6 +310,22 @@ export class Game extends Phaser.Scene {
             },
             this
         );
+
+        // Setup arrow collisions with remote players
+        this.physics.add.overlap(
+            remotePlayers, 
+            this.arrows,
+            this.handleArrowCollision,
+            (target, arrow) => {
+                // Don't allow arrow to collide with its owner
+                if (arrow.owner === target) {
+                return false;
+                }
+                return arrow && arrow.active && target.active;
+            },
+            this
+        );
+
         console.log("PvP collision handlers set up successfully");
     }
     // new handleHitboxCollision method
@@ -365,6 +381,40 @@ export class Game extends Phaser.Scene {
             shockwave.owner.destroyShockwave();
         }
     }
+
+
+
+    // Arrow: Handle collision between arrow and target
+    handleArrowCollision(target, arrow) {
+        if (arrow && arrow.active && target && target.active && !target.isInvincible) {
+            // Double-check to prevent self-collision
+            if (arrow.owner === target) {
+                console.log("Prevented self-collision with arrow owner");
+                return;
+            }
+
+            // Get damage from arrow owner
+            const damage = arrow.owner ? arrow.owner.attackDamage : 10;
+
+            console.log(`Arrow hit: ${arrow.owner.characterType} dealing ${damage} damage to target at (${target.x}, ${target.y})`);
+
+            // Only process if arrow belongs to local player
+            if (arrow.owner === this.scene.gameSync?.localPlayer && target.playerId) {
+                this.scene.combatManager.registerHit(arrow.owner, target, damage);
+            } else if (!target.playerId) {
+                // For dummy targets
+                target.health = Math.max(0, target.health - damage);
+                if (target.health <= 0) {
+                    console.log('Target destroyed');
+                    target.destroy();
+                }
+            }
+
+            // Destroy arrow regardless
+            arrow.owner.destroyArrow();
+        }
+    }
+
     checkForGameOver(){
         if (this.playersRanking.length >= (this.playersInMatch.length -1)) {
             const winner = this.playersInMatch.find(player => !this.playersRanking.includes(player));
@@ -374,20 +424,6 @@ export class Game extends Phaser.Scene {
             return;
         }
     }
-    
-    // Arrow: Handle collision between arrow and target
-    handleArrowCollision(target, arrow) {
-        if (arrow && arrow.active && target && target.active && !target.isInvincible) {
-            console.log(`Arrow collision: ${arrow.owner.characterType} hits target at x=${arrow.x}, y=${arrow.y}, dealing ${arrow.owner.attackDamage} damage`);
-            target.health = Math.max(0, target.health - arrow.owner.attackDamage);
-            arrow.owner.destroyArrow(); // Destroy shockwave immediately on hit
-            if (target.health <= 0) {
-                console.log('Dummy target destroyed');
-                target.destroy();
-            }
-        }
-    }
-
 
     update() {
         // Update players

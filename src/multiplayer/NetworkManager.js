@@ -84,6 +84,12 @@ export default class NetworkManager {
           this.triggerEvent('shockwaveCreated', data);
         });
 
+        //listener for arrow events
+        this.socket.on('arrow_created', (data) => {
+          console.log('Received arrow_created event:', data);
+          this.triggerEvent('arrowCreated', data);
+        });
+        
         // responsible for catching any errors such as connect_error in the try block
       } catch (error) {
         console.error('Failed to connect:', error);

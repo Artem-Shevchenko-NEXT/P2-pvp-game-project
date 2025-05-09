@@ -496,6 +496,10 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 },
                 repeat: 30 // Log for 300ms
             });
+            // Register arrow with combat manager if this is the local player
+            if (this === this.scene.gameSync?.localPlayer) {
+                this.scene.combatManager.registerArrow();
+            }         
             // Arrow: Destroy after 300ms if no collision
             this.scene.time.delayedCall(3000, () => {
                 if (this.arrow) {

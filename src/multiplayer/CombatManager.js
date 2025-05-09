@@ -17,6 +17,11 @@ export default class CombatManager {
     this.network.on('shockwaveCreated', (data) => {
         this.handleRemoteShockwave(data);
     });
+    
+    // Listen for arrow created events
+    this.network.on('arrowCreated', (data) => {
+      this.handleRemoteArrow(data);
+    });
   }
 
   // this is called when local player hits somone
@@ -45,6 +50,19 @@ export default class CombatManager {
     
     // debug log
     console.log("Sent shockwave creation event to server");
+  }
+
+  // method for arrow registration
+  registerArrow() {
+    if (!this.gameSync.localPlayer) return;
+    
+    this.network.socket.emit('arrow_created', {
+      x: this.gameSync.localPlayer.x,
+      y: this.gameSync.localPlayer.y,
+      direction: this.gameSync.localPlayer.flipX ? 'left' : 'right'
+    });
+    
+    console.log("Sent arrow creation event to server");
   }
 
   // handels hit confermation from server
@@ -126,6 +144,41 @@ export default class CombatManager {
     if (remotePlayer.characterType === 'tank') {
       remotePlayer.createShockwave();
       console.log(`Remote shockwave created successfully at (${remotePlayer.x}, ${remotePlayer.y})`);
+    }
+  }
+
+  // handle remote arrows
+  handleRemoteArrow(data) {
+    console.log('Handling remote arrow creation from player:', data.playerId);
+    
+    const remotePlayer = this.gameSync.remotePlayers.get(data.playerId);
+    
+    if (!remotePlayer) {
+      console.log(`Can't create arrow: Player ${data.playerId} not found`);
+      return;
+    }
+    
+    // Set player direction based on data from server before creating arrow
+    if (data.direction === 'left') {
+      remotePlayer.flipX = true;
+    } else if (data.direction === 'right') {
+      remotePlayer.flipX = false;
+    }
+    
+    // Force position update before creating arrow if provided
+    if (data.x && data.y) {
+      remotePlayer.x = data.x;
+      remotePlayer.y = data.y;
+    }
+    
+    console.log(`Creating arrow for remote player ${data.playerId} (${remotePlayer.characterType}) facing ${data.direction}`);
+    
+    if (remotePlayer.characterType === 'archer') {
+      // Add small delay to ensure positioning is correct
+      this.scene.time.delayedCall(10, () => {
+        remotePlayer.createArrow();
+        console.log(`Remote arrow created successfully at (${remotePlayer.x}, ${remotePlayer.y})`);
+      });
     }
   }
 }
