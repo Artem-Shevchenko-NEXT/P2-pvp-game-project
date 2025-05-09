@@ -172,11 +172,11 @@ export class Game extends Phaser.Scene {
 
         // Set up hitbox collisions with dummy target
         this.physics.add.overlap(
-            this.player1,
             this.dummyTarget,
+            this.hitbox,
             this.handleHitboxCollision,
-            (player, target) => {
-                return player.hitbox && target.active;
+            (target, hitbox) => {
+                return hitbox && target.active;
             },
             this
         );

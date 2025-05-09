@@ -18,6 +18,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         this.hitboxConfig = config.hitboxConfig || { width: 40, height: 50 };
         this.hitbox = null;
         this.shockwave = null; // Shockwave: Track shockwave sprite for tank's ATTACK2
+        this.ninjawave = null;
 
         // Character specific properties
         this.characterType = config.characterType || 'unknown';
@@ -269,7 +270,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                                 this.createHitbox(); //insert attack2 for hero adjust console log
                                 console.log(`${this.characterType} created hitbox at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
                             } else if (this.characterType === 'ninja') {
-                                this.createHitbox(); //insert attack2 for archer
+                                this.createNinjawave(); //insert attack2 for archer
                                 console.log(`${this.characterType} created hitbox at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
                             } else if (this.characterType === 'skeleton') {
                                 this.createHitbox(); //insert attack2 for skeleton
@@ -536,8 +537,66 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             this.arrow.destroy();
             this.arrow = null;
         }
-    } 
+    }
 
+    createNinjawave() {
+        if (!this.ninjawave) {
+            const offsetX = this.flipX ? -10 : 10; // Position 10px in front of player
+            this.ninjawave = this.scene.physics.add.sprite(
+                this.x + offsetX,
+                this.y, // Align with player's center
+                'ninja_attack2',
+                'secondAttackNinjawave0000'
+            );
+            this.ninjawave.setDepth(5); // Ensure visibility
+            if (this.flipX === true) {
+                this.ninjawave.flipX = true;
+            }
+            this.ninjawave.owner = this; // Reference player for collision handling
+            this.ninjawave.setVelocityX(this.flipX ? -200 : 200); // Move 500px/s in facing direction
+            this.ninjawave.body.setAllowGravity(false);
+
+            // Ninjawave: Add to scene's ninjawave group(important due to maing physics group in game)
+            this.scene.ninjawaves.add(this.ninjawave);
+            // Ninjawave: Ensure gravity after group addition
+            this.ninjawave.body.setAllowGravity(false);
+            this.scene.ninjawaves.setVelocityX(this.flipX ? -200 : 200);
+            // Ninjawave: Log position and physics properties over time
+            this.scene.time.addEvent({
+                delay: 10,
+                callback: () => {
+                    if (this.ninjawave) {
+                        console.log(`Ninjawave position: x=${this.ninjawave.x}, y=${this.ninjawave.y}, velocityX=${this.ninjawave.body.velocity.x}, allowGravity=${this.ninjawave.body.allowGravity}`);
+                    }
+                },
+                repeat: 30 // Log for 300ms
+            });
+            if (this === this.scene.gameSync?.localPlayer) {
+                this.scene.combatManager.registerNinjawave();
+            }
+            // Ninjawave: Destroy after 300ms if no collision
+            this.scene.time.delayedCall(300, () => {
+                if (this.ninjawave) {
+                    this.destroyNinjawave();
+                }
+            });
+            console.log(`${this.characterType} ninjawave created at x=${this.ninjawave.x}, y=${this.ninjawave.y}`);
+        }
+    }
+
+    // Ninjawave: Destroy ninjawave sprite
+    destroyNinjawave() {
+        if (this.ninjawave) {
+            // If this is local player, notify network
+            if (this === this.scene.gameSync?.localPlayer) {
+              this.scene.networkManager.sendNinjawaveDestroyed({ id: this.scene.networkManager.playerId });
+            }
+            
+            console.log(`${this.characterType} ninjawave destroyed at x=${this.ninjawave.x}, y=${this.ninjawave.y}`);
+            this.ninjawave.destroy();
+            this.ninjawave = null;
+        }
+    }
     update() {
         this.stateMachine.update();
         // Update hitbox position so it will follow player

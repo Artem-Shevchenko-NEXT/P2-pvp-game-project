@@ -16,6 +16,7 @@ export class NinjaCharacter extends Character {
                 turn: 'ninja_turn',
                 jump: 'ninja_jump',
                 attack: 'ninja_attack',
+                attack2: 'ninja_attack2',
                 hurt: 'ninja_hurt'
             }
         });
@@ -52,6 +53,12 @@ export class NinjaCharacter extends Character {
             key: this.animationKeys.attack,
             frames: this.anims.generateFrameNames('ninja_attack', { prefix: 'attackRight', end: 4, zeroPad: 4 }),
             frameRate: 16, // Faster attack
+            repeat: 0
+        });
+        this.anims.create({
+            key: this.animationKeys.attack2,
+            frames: this.anims.generateFrameNames('ninja_attack2', { prefix: 'ninjaspecial', end: 7, zeroPad: 4 }),
+            frameRate: 16, // slow attack
             repeat: 0
         });
         this.anims.create({
