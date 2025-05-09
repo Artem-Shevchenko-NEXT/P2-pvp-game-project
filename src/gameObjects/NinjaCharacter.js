@@ -19,6 +19,7 @@ export class NinjaCharacter extends Character {
                 hurt: 'ninja_hurt'
             }
         });
+        this.setScale(0.90);
         this.body.setSize(20, 55);
         // Store the different offsets 
         this.rightFacingOffset = { x: 10, y: 0 };

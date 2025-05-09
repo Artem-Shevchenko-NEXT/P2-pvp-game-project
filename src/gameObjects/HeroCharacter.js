@@ -21,6 +21,7 @@ export class HeroCharacter extends Character {
                 hurt: 'hero_hurt'
             }
         });
+        this.setScale(0.80);
         this.body.setSize(27, 60); 
         this.body.setOffset(0, 0);
         // Store the different offsets 

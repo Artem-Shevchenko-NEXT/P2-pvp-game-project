@@ -121,13 +121,10 @@ export class Game extends Phaser.Scene {
             this.player1 = new TankCharacter(this, PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y);
         } else if (this.selectedCharacter === 'ninja') {
             this.player1 = new NinjaCharacter(this, PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y);
-            this.player1.setScale(0.90);
         } else if (this.selectedCharacter === 'hero') {
             this.player1 = new HeroCharacter(this, PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y);
-            this.player1.setScale(0.80);
         } else if (this.selectedCharacter === 'archer') {
             this.player1 = new ArcherCharacter(this, PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y);
-            this.player1.setScale(0.85);
         } else if (this.selectedCharacter === 'skeleton') {
             this.player1 = new SkeletonCharacter(this, PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y);
         } else {

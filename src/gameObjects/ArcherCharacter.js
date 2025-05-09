@@ -20,6 +20,7 @@ export class ArcherCharacter extends Character {
                 hurt: 'archer_hurt'
             }
         });
+        this.setScale(0.85);
         this.body.setSize(27, 55); 
         // Store the different offsets 
         this.rightFacingOffset = { x: 0, y: 0 };
