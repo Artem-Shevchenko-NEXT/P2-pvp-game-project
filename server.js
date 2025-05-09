@@ -136,6 +136,22 @@ io.on('connection', (socket) => {
       console.log(`Player ${socket.id} created shockwave facing ${data.direction}`)
     }
   });
+  
+  socket.on('arrow_created', (data) => {
+    const player = players.get(socket.id);
+    
+    if (player) {
+      // broadcast arrow to other players in same room
+      socket.to(player.roomId).emit('arrow_created', {
+        playerId: socket.id,
+        x: data.x,
+        y: data.y,
+        direction: data.direction
+      });
+      
+      console.log(`Player ${socket.id} created arrow facing ${data.direction}`)
+    }
+  });
 });
 
 // Server initiation
