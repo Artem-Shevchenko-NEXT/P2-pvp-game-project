@@ -488,7 +488,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             const offsetX = this.flipX ? -10 : 10; // Position 10px in front of player
             this.arrow = this.scene.physics.add.sprite(
                 this.x + offsetX,
-                this.y, // Align with player's center
+                this.y+8, // Align with player's center
                 'arrow'
             );
             this.arrow.setDepth(5); // Ensure visibility
@@ -498,7 +498,8 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             this.arrow.owner = this; // Reference player for collision handling
             this.arrow.setVelocityX(this.flipX ? -200 : 200); // Move 500px/s in facing direction
             this.arrow.body.setAllowGravity(false);
-            this.arrow.body.setSize(60, 30);
+            this.arrow.body.setSize(30,15);
+            this.arrow.setScale(0.5);
             // Shockwave: Add to scene's shockwave group(important due to maing physics group in game)
             this.scene.arrows.add(this.arrow);
             // Shockwave: Ensure no gravity after group addition
