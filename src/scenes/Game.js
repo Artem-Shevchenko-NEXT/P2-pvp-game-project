@@ -171,6 +171,7 @@ export class Game extends Phaser.Scene {
         //});
 
         // Set up hitbox collisions with dummy target
+        /*
         this.physics.add.overlap(
             this.player1,
             this.dummyTarget,
@@ -180,7 +181,15 @@ export class Game extends Phaser.Scene {
             },
             this
         );
-
+        */
+        // Set up hitbox collisions with dummy target
+        this.physics.add.overlap(
+            this.hitboxes,          // Use the hitboxes group instead of player
+            this.dummyTarget,
+            this.handleHitboxCollision,
+            null,                   // No need for additional checks
+            this
+        );
         // Shockwave: Set up shockwave collisions with dummy target
         this.physics.add.overlap(
             this.dummyTarget,
@@ -293,12 +302,10 @@ export class Game extends Phaser.Scene {
         
         // Setup hitbox collisions with remote players
         this.physics.add.overlap(
-            this.player1,
+            this.hitboxes,
             remotePlayers,
             this.handleHitboxCollision,
-            (attacker, target) => {
-                return attacker.hitbox && target.active && attacker !== target;
-            },
+            null,
             this
         );
         
@@ -334,6 +341,7 @@ export class Game extends Phaser.Scene {
 
         console.log("PvP collision handlers set up successfully");
     }
+    /*
     // new handleHitboxCollision method
     handleHitboxCollision(attacker, target) {
         // Skip if no hitbox, same entity, target is invincible, or target already hit by this hitbox
@@ -364,7 +372,38 @@ export class Game extends Phaser.Scene {
             }
         }
     }
-
+    */
+    // new handleHitboxCollision method
+    handleHitboxCollision(target, hitbox) {  // Order is now target, hitbox
+        // Skip if target is invincible or already hit
+        if (target.isInvincible || hitbox.hitTargets.has(target.playerId || target)) {
+            return;
+        }
+        
+        // Get the owner (player) of the hitbox
+        const attacker = hitbox.owner;
+        
+        // Mark this target as hit
+        hitbox.hitTargets.add(target.playerId || target);
+        
+        // Rest of your collision handling
+        const damage = attacker.attackDamage || 10;
+        console.log(`Hitbox collision: ${attacker.characterType} hits target, dealing ${damage} damage`);
+        
+        // Register hit with combat manager if attacker is local player
+        if (attacker === this.gameSync?.localPlayer && target.playerId) {
+            this.combatManager.registerHit(attacker, target, damage);
+        } else if (!target.playerId) {
+            // For non-networked entities like dummy target
+            target.health = Math.max(0, target.health - damage);
+            if (target.health <= 0) {
+                this.playersRanking.push(target);
+                console.log('target destroyed');
+                target.destroy();
+                this.checkForGameOver();
+            }
+        }
+    }
     // new handleShockwaveCollision method
     handleShockwaveCollision(target, shockwave) {
         if (shockwave && shockwave.active && target && target.active && !target.isInvincible) {
