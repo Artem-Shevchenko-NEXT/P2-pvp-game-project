@@ -70,6 +70,7 @@ export default class CombatManager {
           // This will be processed by the regular animation pipeline already in place
           targetPlayer.anims.play(targetPlayer.animationKeys.hurt, true);
         }
+        /*
         // Flash effect helps provide immediate visual feedback
         this.scene.tweens.add({
           targets: targetPlayer,
@@ -78,6 +79,7 @@ export default class CombatManager {
           yoyo: true,
           repeat: 3
         });
+        */
       }
   
       console.log(`Player ${data.targetId} took ${data.damage} damage, health now: ${targetPlayer.health}`);
