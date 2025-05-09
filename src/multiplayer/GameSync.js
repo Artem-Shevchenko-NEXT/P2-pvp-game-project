@@ -92,15 +92,19 @@ export default class GameSync {
     switch (playerData.characterType) {
       case 'ninja':
         remotePlayer = new NinjaCharacter(this.scene, playerData.x, playerData.y);
+        this.remotePlayer.setScale(0.90);
         break;
       case 'archer':
         remotePlayer = new ArcherCharacter(this.scene, playerData.x, playerData.y);
+        this.remotePlayer.setScale(0.85);
         break;
       case 'hero':
         remotePlayer = new HeroCharacter(this.scene, playerData.x, playerData.y);
+        this.remotePlayer.setScale(0.80);
         break;
       case 'skeleton':
         remotePlayer = new SkeletonCharacter(this.scene, playerData.x, playerData.y);
+        this.remotePlayer.setScale(0.80);
         break;
       case 'tank':
       default:
