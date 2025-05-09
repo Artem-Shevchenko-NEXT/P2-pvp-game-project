@@ -446,7 +446,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 this.scene.combatManager.registerShockwave();
             }
             // Shockwave: Destroy after 300ms if no collision
-            this.scene.time.delayedCall(300, () => {
+            this.scene.time.delayedCall(3000, () => {
                 if (this.shockwave) {
                     this.destroyShockwave();
                 }
