@@ -399,8 +399,8 @@ export class Game extends Phaser.Scene {
             console.log(`Arrow hit: ${arrow.owner.characterType} dealing ${damage} damage to target at (${target.x}, ${target.y})`);
 
             // Only process if arrow belongs to local player
-            if (arrow.owner === this.scene.gameSync?.localPlayer && target.playerId) {
-                this.scene.combatManager.registerHit(arrow.owner, target, damage);
+            if (arrow.owner === this.gameSync?.localPlayer && target.playerId) {
+                this.combatManager.registerHit(arrow.owner, target, damage);
             } else if (!target.playerId) {
                 // For dummy targets
                 target.health = Math.max(0, target.health - damage);
@@ -409,7 +409,6 @@ export class Game extends Phaser.Scene {
                     target.destroy();
                 }
             }
-
             // Destroy arrow regardless
             arrow.owner.destroyArrow();
         }
