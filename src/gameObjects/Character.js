@@ -1,4 +1,5 @@
 import { StateMachine } from './state-machine/stateMachine.js';
+import { PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y, SCREEN_HEIGHT, SCREEN_WIDTH } from '../config.js';
 
 export class Character extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, config) {
@@ -290,7 +291,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                         }  else if (this.characterType === 'ninja') {
                             this.destroyArrow();
                         }  else if (this.characterType === 'skeleton') {
-                            this.destroyArrow();
+                            //this.destroyFireball();
                         }
                         this.stateMachine.transition('IDLE');
                         console.log(`${this.characterType} attack2 animation complete`);
@@ -315,7 +316,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     } else if (this.characterType === 'ninja') {
                         this.destroyArrow();
                     } else if (this.characterType === 'skeleton') {
-                        this.destroyArrow();
+                        //this.destroyFireball();
                     }
                     console.log(`${this.characterType} exited ATTACK2 state`);
                     // Delay buffered input processing to next update cycle
@@ -547,63 +548,45 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
     //Skeleton fireball special attack
     createFireball() {
         if (!this.fireball) {
+            let i = 0;
             console.log('fireball has been called')
-           /* const offsetX = this.flipX ? -10 : 10; // Position 10px in front of player
-            this.fireball = this.scene.physics.add.sprite(
-                this.x + offsetX,
-                this.y, // Align with player's center
-                //Find me
-                'skeleton_attack',
-                //needs to go through fireball0000-fireball0005
-                'fireball0000'
-            );
+            //for (let i = 0; i < 12; i++) {
+                this.fireball = this.scene.physics.add.sprite(
+                    200+i*SCREEN_WIDTH/12, //needs to be semi random
+                    0, // spawns at the top
+                    //brug en enkel sprite i stedet for spritesheetet
+                    'fireball'
+                );
+            //}
             this.fireball.setDepth(5); // Ensure visibility
-            if (this.flipX === true) {
-                this.fireball.flipX = true;
-            }
-            this.fireball.owner = this; // Reference player for collision handling
-            this.fireball.setVelocityX(this.flipX ? -200 : 200); // Move 500px/s in facing direction
-            this.fireball.body.setAllowGravity(false);
+            //make it collide with dummy
+            //make it disappear after a couple seconds
 
+            this.fireball.owner = this; // Reference player for collision handling
+            this.fireball.body.setSize(60, 30);//skal tweakes
             // Shockwave: Add to scene's shockwave group(important due to maing physics group in game)
             this.scene.fireballs.add(this.fireball);
-            // Shockwave: Ensure gravity after group addition
-            this.fireball.body.setAllowGravity(false);
-            this.scene.fireballs.setVelocityX(this.flipX ? -200 : 200);
-            // Shockwave: Log position and physics properties over time
-            this.scene.time.addEvent({
-                delay: 10,
-                callback: () => {
-                    if (this.fireball) {
-                        console.log(`fireball position: x=${this.shockwave.x}, y=${this.shockwave.y}, velocityX=${this.shockwave.body.velocity.x}, allowGravity=${this.shockwave.body.allowGravity}`);
-                    }
-                },
-                repeat: 30 // Log for 300ms
-            });
-            if (this === this.scene.gameSync?.localPlayer) {
-                this.scene.combatManager.registerFireball();
-            }
-            // Shockwave: Destroy after 300ms if no collision
-            this.scene.time.delayedCall(300, () => {
+
+            this.scene.time.delayedCall(1150, () => {
                 if (this.fireball) {
                     this.destroyFireball();
                 }
-            }); */
-            //console.log(`${this.characterType} shockwave created at x=${this.fireball.x}, y=${this.fireball.y}`);
+            });
         }
     }
 
-    // Shockwave: Destroy shockwave sprite
+    // fireball: Destroy fireball sprite (doesnt work properly)
     destroyFireball() {
         if (this.fireball) {
             // If this is local player, notify network
             if (this === this.scene.gameSync?.localPlayer) {
               this.scene.networkManager.sendFireballDestroyed({ id: this.scene.networkManager.playerId });
             }
-            
+            //sletter en enkel fireball, har brug for at lade fireballen falde længere
             console.log(`${this.characterType} fireball destroyed at x=${this.fireball.x}, y=${this.fireball.y}`);
             this.fireball.destroy();
             this.fireball = null;
+            
         }
     }
 

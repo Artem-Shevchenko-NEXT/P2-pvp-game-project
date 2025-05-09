@@ -67,6 +67,12 @@ export class SkeletonCharacter extends Character {
             repeat: 0
         });
         this.anims.create({
+            key: this.animationKeys.attack2,
+            frames: this.anims.generateFrameNames('skeleton_attack', { prefix: 'attackRight', end: 4, zeroPad: 4 }),
+            frameRate: 8, // Faster attack
+            repeat: 0
+        });
+        this.anims.create({
             key: this.animationKeys.hurt,
             frames: this.anims.generateFrameNames('skeleton_hurt', { prefix: 'hurt', end: 8, zeroPad: 4 }),
             frameRate: 12,

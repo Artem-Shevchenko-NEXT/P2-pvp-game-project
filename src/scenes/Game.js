@@ -151,6 +151,14 @@ export class Game extends Phaser.Scene {
         this.physics.add.collider(this.arrows, this.ground);
         this.physics.add.collider(this.arrows, platforms);
 
+        //create fireball group
+        this.fireballs = this.physics.add.group({
+            allowGravity: true
+        });
+        //fireball collision
+        this.physics.add.collider(this.fireballs, this.ground);
+        //this.physics.add.collider(this.fireballs, platforms);
+
         // Create player 1
         //this.player1 = new ArcherCharacter(this, 100, 480); // Adjusted y to align with ground
 
@@ -213,6 +221,20 @@ export class Game extends Phaser.Scene {
                 const overlap = arrow && arrow.active && target.active;
                 if (overlap) {
                     console.log(`Arrow overlap detected at x=${arrow.x}, y=${arrow.y}, target x=${target.body.x}, y=${target.body.y}`);
+                }
+                return overlap;
+            },
+            this
+        );
+        //Dummy/fireball collision
+        this.physics.add.overlap(
+            this.dummyTarget,
+            this.fireballs,
+            this.handleFireballCollision,
+            (target, fireball) => {
+                const overlap = fireball && fireball.active && target.active;
+                if (overlap) {
+                    console.log(`Fireball overlap detected at x=${fireball.x}, y=${fireball.y}, target x=${target.body.x}, y=${target.body.y}`);
                 }
                 return overlap;
             },
@@ -463,6 +485,35 @@ export class Game extends Phaser.Scene {
             }
             // Destroy arrow regardless
             arrow.owner.destroyArrow();
+        }
+    }
+    //fireball collision
+    handleFireballCollision(target, fireball) {
+        if (fireball && fireball.active && target && target.active && !target.isInvincible) {
+            // Double-check to prevent self-collision
+            if (fireball.owner === target) {
+                console.log("Prevented self-collision with fireball owner");
+                return;
+            }
+
+            // Get damage from arrow owner
+            const damage = fireball.owner ? fireball.owner.attackDamage : 10;
+
+            console.log(`Fireball hit: ${fireball.owner.characterType} dealing ${damage} damage to target at (${target.x}, ${target.y})`);
+
+            // Only process if arrow belongs to local player
+            if (fireball.owner === this.gameSync?.localPlayer && target.playerId) {
+                this.combatManager.registerHit(fireball.owner, target, damage);
+            } else if (!target.playerId) {
+                // For dummy targets
+                target.health = Math.max(0, target.health - damage);
+                if (target.health <= 0) {
+                    console.log('Target destroyed');
+                    target.destroy();
+                }
+            }
+            // Destroy arrow regardless
+            fireball.owner.destroyFireball();
         }
     }
 
