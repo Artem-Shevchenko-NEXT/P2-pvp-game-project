@@ -65,33 +65,19 @@ export default class CombatManager {
         if (targetPlayer === this.gameSync.localPlayer) {
           // For local player, use state machine
           targetPlayer.stateMachine.transition('HURT');
-          
-          // Visual feedback with flash effect
-          this.scene.tweens.add({
-            targets: targetPlayer,
-            alpha: 0.5,
-            duration: 100,
-            yoyo: true,
-            repeat: 3
-          });
         } else {
           // For remote players, send animation update through the standard network update system
           // This will be processed by the regular animation pipeline already in place
-          this.network.socket.emit('remote_animation_update', {
-            playerId: targetPlayer.playerId,
-            animation: 'hurt',
-            facing: targetPlayer.flipX ? 'left' : 'right'
-          });
-          
-          // Flash effect helps provide immediate visual feedback
-          this.scene.tweens.add({
-            targets: targetPlayer,
-            alpha: 0.5,
-            duration: 100,
-            yoyo: true,
-            repeat: 3
-          });
+          targetPlayer.anims.play(targetPlayer.animationKeys.hurt, true);
         }
+        // Flash effect helps provide immediate visual feedback
+        this.scene.tweens.add({
+          targets: targetPlayer,
+          alpha: 0.5,
+          duration: 100,
+          yoyo: true,
+          repeat: 3
+        });
       }
   
       console.log(`Player ${data.targetId} took ${data.damage} damage, health now: ${targetPlayer.health}`);
