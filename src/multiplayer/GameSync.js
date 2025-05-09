@@ -136,6 +136,9 @@ export default class GameSync {
     
     // Just logging to demonstrate its working
     //console.log(`Updated remote player ${data.id} to position x=${data.x}, y=${data.y}`);
+
+    // Store previous flipX state to detect changes
+    const wasFlipped = remotePlayer.flipX;
     
     // Update facing direction
     if (data.facing === 'left') {
@@ -143,6 +146,13 @@ export default class GameSync {
     } else if (data.facing === 'right') {
       remotePlayer.flipX = false;
     }
+    
+    // If flipX changed, manually call the character's update method
+    // This will trigger the offset logic in the character class
+    if (wasFlipped !== remotePlayer.flipX) {
+      remotePlayer.update();
+    }
+
     // Direct animation playing instead of state machine transition
     if (data.animation) {
       if (remotePlayer.animationKeys && remotePlayer.animationKeys[data.animation]) {
