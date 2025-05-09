@@ -427,7 +427,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             const offsetX = this.flipX ? -10 : 10; // Position 10px in front of player
             this.shockwave = this.scene.physics.add.sprite(
                 this.x + offsetX,
-                this.y, // Align with player's center
+                this.y + 8, // Align with player's center
                 'tank_attack',
                 'secondAttackShockwave0000'
             );
