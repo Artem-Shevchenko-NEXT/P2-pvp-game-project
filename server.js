@@ -136,7 +136,18 @@ io.on('connection', (socket) => {
       console.log(`Player ${socket.id} created shockwave facing ${data.direction}`)
     }
   });
-  
+
+  socket.on('shockwave_destroyed', (data) => {
+    const player = players.get(socket.id);
+    if (player) {
+      // Broadcast destruction to all clients in room
+      io.to(player.roomId).emit('shockwave_destroyed', {
+        playerId: socket.id,
+        id: data.id
+      });
+    }
+  });
+
   socket.on('arrow_created', (data) => {
     const player = players.get(socket.id);
     
@@ -150,6 +161,17 @@ io.on('connection', (socket) => {
       });
       
       console.log(`Player ${socket.id} created arrow facing ${data.direction}`)
+    }
+  });
+
+  socket.on('arrow_destroyed', (data) => {
+    const player = players.get(socket.id);
+    if (player) {
+      // Broadcast destruction to all clients in room
+      io.to(player.roomId).emit('arrow_destroyed', {
+        playerId: socket.id,
+        id: data.id
+      });
     }
   });
 });

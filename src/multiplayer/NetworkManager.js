@@ -84,12 +84,22 @@ export default class NetworkManager {
           this.triggerEvent('shockwaveCreated', data);
         });
 
+        this.socket.on('shockwave_destroyed', (data) => {
+          console.log('Received shockwave_destroyed event:', data);
+          this.triggerEvent('shockwaveDestroyed', data);
+        });
+
         //listener for arrow events
         this.socket.on('arrow_created', (data) => {
           console.log('Received arrow_created event:', data);
           this.triggerEvent('arrowCreated', data);
         });
-        
+
+        this.socket.on('arrow_destroyed', (data) => {
+          console.log('Received arrow_destroyed event:', data);
+          this.triggerEvent('arrowDestroyed', data);
+        });
+
         // responsible for catching any errors such as connect_error in the try block
       } catch (error) {
         console.error('Failed to connect:', error);
@@ -150,5 +160,14 @@ export default class NetworkManager {
     //console.log('Sending player update:', data);
     // emmits the message of player_update for server.js 
     this.socket.emit('player_update', data);
+  }
+  sendShockwaveDestroyed(id) {
+    if (!this.connected) return;
+    this.socket.emit('shockwave_destroyed', { id });
+  }
+
+  sendArrowDestroyed(id) {
+    if (!this.connected) return;
+    this.socket.emit('arrow_destroyed', { id });
   }
 }

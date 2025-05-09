@@ -457,6 +457,11 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
     // Shockwave: Destroy shockwave sprite
     destroyShockwave() {
         if (this.shockwave) {
+            // If this is local player, notify network
+            if (this === this.scene.gameSync?.localPlayer) {
+              this.scene.networkManager.sendShockwaveDestroyed({ id: this.scene.networkManager.playerId });
+            }
+            
             console.log(`${this.characterType} shockwave destroyed at x=${this.shockwave.x}, y=${this.shockwave.y}`);
             this.shockwave.destroy();
             this.shockwave = null;
@@ -513,6 +518,11 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
     // Arrow: Destroy arrow sprite
     destroyArrow() {
         if (this.arrow) {
+            // If this is local player, notify network
+            if (this === this.scene.gameSync?.localPlayer) {
+              this.scene.networkManager.sendArrowDestroyed({ id: this.scene.networkManager.playerId });
+            }
+            
             console.log(`${this.characterType} arrow destroyed at x=${this.arrow.x}, y=${this.arrow.y}`);
             this.arrow.destroy();
             this.arrow = null;

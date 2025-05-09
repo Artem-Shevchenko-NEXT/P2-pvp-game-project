@@ -17,10 +17,18 @@ export default class CombatManager {
     this.network.on('shockwaveCreated', (data) => {
         this.handleRemoteShockwave(data);
     });
-    
+
+    this.network.on('shockwaveDestroyed', (data) => {
+      this.handleRemoteShockwaveDestroyed(data);
+    });
+
     // Listen for arrow created events
     this.network.on('arrowCreated', (data) => {
       this.handleRemoteArrow(data);
+    });
+
+    this.network.on('arrowDestroyed', (data) => {
+      this.handleRemoteArrowDestroyed(data);
     });
   }
 
@@ -147,6 +155,13 @@ export default class CombatManager {
     }
   }
 
+  handleRemoteShockwaveDestroyed(data) {
+    const remotePlayer = this.gameSync.remotePlayers.get(data.playerId);
+    if (remotePlayer && remotePlayer.shockwave) {
+      remotePlayer.destroyShockwave();
+    }
+  }
+
   // handle remote arrows
   handleRemoteArrow(data) {
     console.log('Handling remote arrow creation from player:', data.playerId);
@@ -179,6 +194,13 @@ export default class CombatManager {
         remotePlayer.createArrow();
         console.log(`Remote arrow created successfully at (${remotePlayer.x}, ${remotePlayer.y})`);
       });
+    }
+  }
+  
+  handleRemoteArrowDestroyed(data) {
+    const remotePlayer = this.gameSync.remotePlayers.get(data.playerId);
+    if (remotePlayer && remotePlayer.arrow) {
+      remotePlayer.destroyArrow();
     }
   }
 }
