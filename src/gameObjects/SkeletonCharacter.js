@@ -22,6 +22,7 @@ export class SkeletonCharacter extends Character {
         });
         this.body.setSize(25, 50); 
         this.body.setOffset(20, 10);
+        this.body.setScale(0.80);
     }
 
     initAnimations() {
