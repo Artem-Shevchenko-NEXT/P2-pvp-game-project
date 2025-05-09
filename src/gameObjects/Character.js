@@ -217,7 +217,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     // Transition to IDLE when attack anim. is complete
                     this.off(`animationcomplete-${this.animationKeys.attack}`);
                     this.once(`animationcomplete-${this.animationKeys.attack}`, () => {
-                        this.destroyHitbox();
+                        //this.destroyHitbox();
                         this.stateMachine.transition('IDLE');
                         console.log(`${this.characterType} attack animation complete`);
                     });
@@ -232,7 +232,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     this.inputBuffer.moveRight = cursors.right.isDown;
                 },
                 exit: () => {
-                    this.destroyHitbox();
+                    //this.destroyHitbox();
                     console.log(`${this.characterType} exited ATTACK state`);
                     // Delay buffered input processing to next update cycle
                     this.scene.time.delayedCall(0, () => {
@@ -387,7 +387,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             const offsetX = this.flipX ? -width : this.width; //set hitbox in front of player
             this.hitbox = this.scene.add.rectangle(
                 this.x + offsetX,
-                this.y - this.height / 2,
+                this.y - this.height / 2 - 30,
                 width,
                 height
             );
@@ -399,16 +399,21 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             
             this.hitbox.setStrokeStyle(2, 0xff0000); //debug
             console.log(`${this.characterType} hitbox position: x=${this.hitbox.x}, y=${this.hitbox.y}, width=${width}, height=${height}`);
+            this.scene.time.delayedCall(500, () => {
+                if (this.hitbox) {
+                    this.destroyHitbox();
+                }
+            });
         }
     }
 
     destroyHitbox() {
         if (this.hitbox) {
             console.log(`${this.characterType} destroyed hitbox at x=${this.hitbox.x}, y=${this.hitbox.y}`);
-            this.scene.time.delayedCall(300, () => {
+            //this.scene.time.delayedCall(300, () => {
                 this.hitbox.destroy();
                 this.hitbox = null;
-            });
+            //});
         }
     }
 
