@@ -109,14 +109,11 @@ export default class HealthDisplayManager {
         .setDepth(10)
         .setScrollFactor(0); // Keep fixed on screen during camera movement
         
-        // Add color based on whether this is local or remote player
-        if (isLocalPlayer) {
-            text.setColor('#00ff00'); // Green for local player
-        } else {
-            text.setColor('#ff9900'); // Orange for remote players
-        }
-        
         this.healthDisplays.set(playerId, text);
+
+        // Always update display immediately to set the correct color based on health
+        this.updateHealthDisplay(playerId, player.health || 100);
+    
         
         // If this is a new display for an existing player, ensure it shows correct health
         if (player.health !== undefined && player.health !== 100) {
