@@ -658,7 +658,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             });
             // Herowave: Destroy after 300ms if no collision
             this.scene.time.delayedCall(300, () => {
-                if (this.shockwave) {
+                if (this.herowave) {
                     this.destroyHerowave();
                 }
             });
