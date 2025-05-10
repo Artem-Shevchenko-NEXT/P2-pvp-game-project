@@ -152,7 +152,33 @@ io.on('connection', (socket) => {
       });
     }
   });
+  
+  socket.on('herowave_created', (data) => {
+    const player = players.get(socket.id);
+    
+    if (player) {
+      // broadcast herowave to other players in same room
+      socket.to(player.roomId).emit('herowave_created', {
+        playerId: socket.id,
+        x: data.x,
+        y: data.y,
+        direction: data.direction
+      });
+      
+      console.log(`Player ${socket.id} created herowave facing ${data.direction}`)
+    }
+  });
 
+  socket.on('herowave_destroyed', (data) => {
+    const player = players.get(socket.id);
+    if (player) {
+      // Broadcast destruction to all clients in room
+      io.to(player.roomId).emit('herowave_destroyed', {
+        playerId: socket.id,
+        id: data.id
+      });
+    }
+  });
   socket.on('arrow_created', (data) => {
     const player = players.get(socket.id);
     

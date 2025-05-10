@@ -332,7 +332,25 @@ export class Game extends Phaser.Scene {
             },
             this
         );
-
+        // Setup herowave collisions with remote players - add herowave-specific behavior 
+        this.physics.add.overlap(
+            remotePlayers, 
+            this.shockwaves,  // Using the same physics group since herowaves are added to shockwaves group
+            this.handleHerowaveCollision,
+            (target, projectile) => {
+                // Only process if this is a herowave (from Hero character)
+                if (!projectile.owner || projectile.owner.characterType !== 'hero') {
+                    return false;
+                }
+                
+                // Don't allow herowave to collide with its owner
+                if (projectile.owner === target) {
+                    return false;
+                }
+                return projectile && projectile.active && target.active;
+            },
+            this
+        );
         // Setup arrow collisions with remote players
         this.physics.add.overlap(
             remotePlayers, 

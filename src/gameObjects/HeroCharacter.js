@@ -8,7 +8,8 @@ export class HeroCharacter extends Character {
             idleSpriteKey: 'hero_idle', 
             health: 100,  
             maxHealth: 100,
-            attackDamage: 8, 
+            attackDamage: 20,       // Normal attack damage
+            attack2Damage: 30,      // Shockwave damage
             invincibilityDuration: 800, 
             hitboxConfig: { width: 45, height: 10 }, 
             // Define custom hitbox offsets for the specific charecter sub class

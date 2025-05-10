@@ -623,7 +623,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 'tank_attack',
                 'secondAttackShockwave0000'
                 );
-                this.herowave.setTint(0xff0000);
+                this.herowave.setTint(0xff0000); // Red tint to differentiate from tank's shockwave
                 this.herowave.setDepth(5); // Ensure visibility
                 //tweens
                 if (this.flipX === true) {
@@ -631,15 +631,21 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             }
             
             this.herowave.owner = this; // Reference player for collision handling
-            this.herowave.setVelocityX(this.flipX ? -200 : 200); // Move 500px/s in facing direction
+            this.herowave.damage = this.attack2Damage; // Use hero's attack2 damage
+            this.herowave.setVelocityX(this.flipX ? -250 : 250); // Slightly faster than tank's shockwave
             this.herowave.body.setAllowGravity(false);
 
             // Herowave: Add to scene's shockwave group(important due to maing physics group in game)
             this.scene.shockwaves.add(this.herowave);
             // Herowave: Ensure gravity after group addition
             this.herowave.body.setAllowGravity(false);
-            this.scene.shockwaves.setVelocityX(this.flipX ? -200 : 200);
-            
+            this.scene.shockwaves.setVelocityX(this.flipX ? -250 : 250);
+
+            // Register herowave with combat manager if this is the local player
+            if (this === this.scene.gameSync?.localPlayer) {
+                this.scene.combatManager.registerHerowave();
+            }
+
             // Herowave: Log position and physics properties over time
             this.scene.time.addEvent({
                 delay: 10,
@@ -650,9 +656,6 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 },
                 repeat: 30 // Log for 300ms
             });
-            if (this === this.scene.gameSync?.localPlayer) {
-                this.scene.combatManager.registerShockwave();
-            }
             // Herowave: Destroy after 300ms if no collision
             this.scene.time.delayedCall(300, () => {
                 if (this.shockwave) {
@@ -668,7 +671,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         if (this.herowave) {
             // If this is local player, notify network
             if (this === this.scene.gameSync?.localPlayer) {
-              this.scene.networkManager.sendHerowaveDestroyed({ id: this.scene.networkManager.playerId });
+                this.scene.networkManager.sendHerowaveDestroyed({ id: this.scene.networkManager.playerId });
             }
             
             console.log(`${this.characterType} Herowave destroyed at x=${this.herowave.x}, y=${this.herowave.y}`);

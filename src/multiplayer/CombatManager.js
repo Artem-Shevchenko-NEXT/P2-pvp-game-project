@@ -22,6 +22,15 @@ export default class CombatManager {
       this.handleRemoteShockwaveDestroyed(data);
     });
 
+    // Listen for herowave created events
+    this.network.on('herowaveCreated', (data) => {
+      this.handleRemoteHerowave(data);
+    });
+
+    this.network.on('herowaveDestroyed', (data) => {
+      this.handleRemoteHerowaveDestroyed(data);
+    });
+
     // Listen for arrow created events
     this.network.on('arrowCreated', (data) => {
       this.handleRemoteArrow(data);
@@ -58,6 +67,19 @@ export default class CombatManager {
     
     // debug log
     console.log("Sent shockwave creation event to server");
+  }
+
+  registerHerowave() {
+    if (!this.gameSync.localPlayer) return;
+    
+    this.network.socket.emit('herowave_created', {
+      x: this.gameSync.localPlayer.x,
+      y: this.gameSync.localPlayer.y,
+      direction: this.gameSync.localPlayer.flipX ? 'left' : 'right'
+    });
+    
+    // debug log
+    console.log("Sent herowave creation event to server");
   }
 
   // method for arrow registration
@@ -159,6 +181,39 @@ export default class CombatManager {
     const remotePlayer = this.gameSync.remotePlayers.get(data.playerId);
     if (remotePlayer && remotePlayer.shockwave) {
       remotePlayer.destroyShockwave();
+    }
+  }
+  
+  // handle remote herowave creation
+  handleRemoteHerowave(data) {
+    console.log('Handling remote herowave creation from player:', data.playerId);
+    
+    const remotePlayer = this.gameSync.remotePlayers.get(data.playerId);
+    
+    if (!remotePlayer) {
+      console.log(`Can't create herowave: Player ${data.playerId} not found`);
+      return;
+    }
+    
+    // Set player direction based on data from server before creating herowave
+    if (data.direction === 'left') {
+      remotePlayer.flipX = true;
+    } else if (data.direction === 'right') {
+      remotePlayer.flipX = false;
+    }
+    
+    console.log(`Creating herowave for remote player ${data.playerId} (${remotePlayer.characterType}) facing ${data.direction}`);
+    
+    if (remotePlayer.characterType === 'hero') {
+      remotePlayer.createHerowave();
+      console.log(`Remote herowave created successfully at (${remotePlayer.x}, ${remotePlayer.y})`);
+    }
+  }
+
+  handleRemoteHerowaveDestroyed(data) {
+    const remotePlayer = this.gameSync.remotePlayers.get(data.playerId);
+    if (remotePlayer && remotePlayer.herowave) {
+      remotePlayer.destroyHerowave();
     }
   }
 

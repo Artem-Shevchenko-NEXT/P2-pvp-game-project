@@ -88,6 +88,17 @@ export default class NetworkManager {
           console.log('Received shockwave_destroyed event:', data);
           this.triggerEvent('shockwaveDestroyed', data);
         });
+        
+        //listener for herowave events
+        this.socket.on('herowave_created', (data) => {
+          console.log('Received herowave_created event:', data);
+          this.triggerEvent('herowaveCreated', data);
+        });
+
+        this.socket.on('herowave_destroyed', (data) => {
+          console.log('Received herowave_destroyed event:', data);
+          this.triggerEvent('herowaveDestroyed', data);
+        });
 
         //listener for arrow events
         this.socket.on('arrow_created', (data) => {
