@@ -429,7 +429,36 @@ export class Game extends Phaser.Scene {
             shockwave.owner.destroyShockwave();
         }
     }
-
+    
+    handleHerowaveCollision(target, herowave) {
+        if (herowave && herowave.active && target && target.active && !target.isInvincible) {
+            // Double-check to prevent self-collision
+            if (herowave.owner === target) {
+                console.log("Prevented self-collision with herowave owner");
+                return;
+            }
+            
+            // Use the correct damage value from owner character
+            const damage = herowave.damage || (herowave.owner ? herowave.owner.attack2Damage : 30);
+            
+            console.log(`Herowave hit: ${herowave.owner.characterType} dealing ${damage} damage to target at (${target.x}, ${target.y})`);
+            
+            // Only process if herowave belongs to local player
+            if (herowave.owner === this.gameSync?.localPlayer && target.playerId) {
+                this.combatManager.registerHit(herowave.owner, target, damage);
+            } else if (!target.playerId) {
+                // For dummy targets
+                target.health = Math.max(0, target.health - damage);
+                if (target.health <= 0) {
+                    console.log('target destroyed');
+                    target.destroy();
+                }
+            }
+            
+            // Destroy herowave after collision
+            herowave.owner.destroyHerowave();
+        }
+    }
 
 
     // Arrow: Handle collision between arrow and target
