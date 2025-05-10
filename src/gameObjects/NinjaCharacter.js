@@ -8,6 +8,8 @@ export class NinjaCharacter extends Character {
             health: 80, // Less health than tank
             maxHealth: 80,
             attackDamage: 15, // Higher damage
+            moveSpeed: 350,         // Faster movement (ninja is agile)
+            jumpVelocity: 520,     // Higher jump (ninja is agile)
             invincibilityDuration: 800, // Shorter invincibility
             hitboxConfig: { width: 50, height: 45 }, // Smaller hitbox
             // Define custom hitbox offsets for the specific charecter sub class

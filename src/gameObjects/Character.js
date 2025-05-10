@@ -25,6 +25,9 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         this.hitbox = null;
         this.shockwave = null; // Shockwave: Track shockwave sprite for tank's ATTACK2
 
+        // Movement properties
+        this.moveSpeed = config.moveSpeed || 200; // Default movement speed
+        this.jumpVelocity = config.jumpVelocity || 480; // Default jump velocity (negative for upward)
         // Character specific properties
         this.characterType = config.characterType || 'unknown';
         this.animationKeys = config.animationKeys || {
@@ -139,7 +142,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             },
             MOVE_LEFT: {
                 enter: () => {
-                    this.setVelocityX(-200);
+                    this.setVelocityX(-this.moveSpeed);
                     this.flipX = true;
                     this.anims.play(this.animationKeys.left, true);
                     console.log(`${this.characterType} entered MOVE_LEFT state`);
@@ -163,7 +166,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             },
             MOVE_RIGHT: {
                 enter: () => {
-                    this.setVelocityX(200);
+                    this.setVelocityX(this.moveSpeed);
                     this.flipX = false;
                     this.anims.play(this.animationKeys.right, true);
                     console.log(`${this.characterType} entered MOVE_RIGHT state`);
@@ -187,7 +190,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             },
             JUMP: {
                 enter: () => {
-                    this.setVelocityY(-480); // Original: 440
+                    this.setVelocityY(-this.jumpVelocity); // Original: 440
                     if (this.stateMachine.currentState !== 'ATTACK' && this.stateMachine.currentState !== 'ATTACK2') {
                         this.anims.play(this.animationKeys.jump, true);
                         console.log(`${this.characterType} entered JUMP state`);
