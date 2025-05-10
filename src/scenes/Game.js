@@ -149,8 +149,32 @@ export class Game extends Phaser.Scene {
         });
         //arrows collide
         this.physics.add.collider(this.arrows, this.ground);
-        this.physics.add.collider(this.arrows, platforms);
-
+        this.physics.add.collider(
+            this.arrows, 
+            platforms, 
+            (arrow, platform) => {
+                if (arrow.owner) {
+                    arrow.owner.destroyArrow();
+                } else {
+                    arrow.destroy();
+                }
+            },
+            null,
+            this
+        );
+        //logic for arrow getting destroyed when hittitng the worlbounds
+        this.physics.world.on('worldbounds', (body) => {
+            const gameObject = body.gameObject;
+            // Check if it's an arrow
+            if (gameObject && gameObject.texture && gameObject.texture.key === 'arrow') {
+                console.log('Arrow hit world bounds');
+                if (gameObject.owner) {
+                    gameObject.owner.destroyArrow();
+                } else {
+                    gameObject.destroy();
+                }
+            }
+        });
         //create fireball group
         this.fireballs = this.physics.add.group({
             allowGravity: true

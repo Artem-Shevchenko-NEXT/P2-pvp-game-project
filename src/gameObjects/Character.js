@@ -517,6 +517,8 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             this.arrow.damage = this.attack2Damage;
             this.arrow.setVelocityX(this.flipX ? -200 : 200); // Move 500px/s in facing direction
             this.arrow.body.setAllowGravity(false);
+            this.arrow.body.setCollideWorldBounds(true);
+            this.arrow.body.onWorldBounds = true;
             this.arrow.body.setSize(30,15);
             this.arrow.setScale(0.5);
             // Shockwave: Add to scene's shockwave group(important due to maing physics group in game)
