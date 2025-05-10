@@ -143,7 +143,8 @@ export default class NetworkManager {
     this.socket.emit('join_game', {
       x: playerData.x,
       y: playerData.y,
-      characterType: characterType
+      characterType: characterType,
+      health: health
     });
   }
 

@@ -315,7 +315,8 @@ export class Game extends Phaser.Scene {
                 this.networkManager.joinGame({
                     x: this.player1.x,
                     y: this.player1.y,
-                    characterType: this.selectedCharacter 
+                    characterType: this.selectedCharacter, 
+                    health: this.player1.health 
                 });
 
                 this.setupPvPCollisions();

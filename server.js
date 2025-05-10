@@ -42,7 +42,7 @@ io.on('connection', (socket) => {
       y: playerData.y || 100,
       roomId: roomId,
       characterType: playerData.characterType || 'tank',
-      health: 100 
+      health: playerData.health || 100  
     };
     
     players.set(socket.id, player);
