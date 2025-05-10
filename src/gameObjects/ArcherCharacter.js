@@ -7,7 +7,8 @@ export class ArcherCharacter extends Character {
             idleSpriteKey: 'archer_idle', 
             health: 80, // ninjavaerdier
             maxHealth: 80,
-            attackDamage: 15, 
+            attackDamage: 15,       // Normal attack damage
+            attack2Damage: 25,      // arrow damage
             invincibilityDuration: 800, 
             hitboxConfig: { width: 20, height: 45 },
             // Define custom hitbox offsets for the specific charecter sub class
