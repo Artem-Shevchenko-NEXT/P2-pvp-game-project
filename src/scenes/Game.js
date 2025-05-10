@@ -228,6 +228,20 @@ export class Game extends Phaser.Scene {
             },
             this
         );
+        // Setup herowave collisions with dummy target
+        this.physics.add.overlap(
+            this.dummyTarget,
+            this.herowaves,
+            this.handleHerowaveCollision,
+            (target, herowave) => {
+                const overlap = herowave && herowave.active && target.active;
+                if (overlap) {
+                    console.log(`Herowave overlap detected at x=${herowave.x}, y=${herowave.y}, target x=${target.body.x}, y=${target.body.y}`);
+                }
+                return overlap;
+            },
+            this
+        );
         // Arrow: Set up shockwave collisions with dummy target
         this.physics.add.overlap(
             this.dummyTarget,
