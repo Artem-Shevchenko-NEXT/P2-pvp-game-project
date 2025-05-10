@@ -600,7 +600,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 'tank_attack',
                 'secondAttackShockwave0000'
                 );
-            
+                this.herowave.setTint(0xff0000);
                 this.herowave.setDepth(5); // Ensure visibility
                 //tweens
                 if (this.flipX === true) {
