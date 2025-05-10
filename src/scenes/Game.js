@@ -183,25 +183,23 @@ export class Game extends Phaser.Scene {
         this.physics.add.collider(this.dummyTarget, ground);
 
         this.playersInMatch.push(this.dummyTarget);
-        
 
-        //Debug: to check hurt state for player: in console everything works although health bar does not correctly update.
-        //this.input.keyboard.on('keydown-T', () => {
-        //    this.player1.takeDamage(10);
-        //});
+        // Add a floating health text for the dummy target
+        this.dummyHealthBar = this.add.text(
+            this.dummyTarget.x, 
+            this.dummyTarget.y - 40, 
+            `${this.dummyTarget.health} HP`, 
+            {
+                fontFamily: 'Arial',
+                fontSize: 17,
+                color: '#00ff00',
+                stroke: '#000000',
+                strokeThickness: 1,
+                align: 'center'
+            }
+        ).setOrigin(0.5, 0.5)
+        .setDepth(10);
 
-        // Set up hitbox collisions with dummy target
-        /*
-        this.physics.add.overlap(
-            this.player1,
-            this.dummyTarget,
-            this.handleHitboxCollision,
-            (player, target) => {
-                return player.hitbox && target.active;
-            },
-            this
-        );
-        */
         // Set up hitbox collisions with dummy target
         this.physics.add.overlap(
             this.hitboxes,          // Use the hitboxes group instead of player
@@ -252,38 +250,6 @@ export class Game extends Phaser.Scene {
             },
             this
         );
-        //outcommenting the old healthdisplay
-        /*
-        //display health note. we can customise this font see description over text method
-        this.player1HealthText = this.add.text(20, 20, `Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`, {
-            fontFamily: 'Arial',
-            fontSize: 24,
-            color: '#ffffff',
-            stroke: '#000000',
-            strokeThickness: 4
-        }).setDepth(10);
-
-        //dummy health
-        this.dummyHealthText = this.add.text(500, 20, `Dummy Target Health: ${this.dummyTarget.health}`, {
-            fontFamily: 'Arial',
-            fontSize: 24,
-            color: '#ffffff',
-            stroke: '#000000',
-            strokeThickness: 4
-        }).setDepth(10);
-
-
-        //health bar goes here
-        const bar_x = 0;
-        const bar_y = 0;
-        this.healthBar = this.add.text(bar_x, bar_y, `${this.player1.health} HP`, {
-            fontFamily: 'Arial',
-            fontSize: 17,
-            color: '#ffffff',
-            stroke: '#000000',
-            strokeThickness: 1,
-        }).setDepth(10);        
-        */
         // Set up collision between player and ground and platforms
         this.physics.add.collider(this.player1, ground);
         this.physics.add.collider(this.player1, platforms);
@@ -569,40 +535,35 @@ export class Game extends Phaser.Scene {
                 }
             );
         }
-        /*
-        // Update health text
-        //this.player1HealthText.setText(`Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`);
-        if (this.dummyTarget && this.dummyTarget.active) {
-            this.dummyHealthText.setText(`Dummy Target Health: ${this.dummyTarget.health}`);
-        } else {
-            this.dummyHealthText.setText('Dummy Target: Destroyed');
-        }
-        */
+
         // Update player health displays 
         if (this.healthDisplayManager) {
             this.healthDisplayManager.update();
         }
-
-        //
-        //
-        //this.healthBar.setPosition(this.player1.x, this.player.y);
-        //bar_x=1, bay_y=1;
-        /*
-        const bar_x = this.player1.x - 25;
-        const bar_y = this.player1.y - 40;
-        this.healthBar.setPosition(bar_x, bar_y);
-        this.healthBar.setText(`${this.player1.health} HP`);
-        this.healthBar.update();
-        
-        const hp = this.player1.health;
-
-        if (hp > 60) {
-            this.healthBar.setColor('#00ff00'); // groen
-        } else if (hp > 30) {
-            this.healthBar.setColor('#ffa500'); // orange
+        // Update dummy target health bar
+        if (this.dummyTarget && this.dummyTarget.active) {
+            // Position the health text above the dummy target
+            this.dummyHealthBar.setPosition(
+                this.dummyTarget.x, 
+                this.dummyTarget.y - 40
+            );
+            
+            // Update health text
+            this.dummyHealthBar.setText(`${this.dummyTarget.health} HP`);
+            
+            // Update color based on health percentage
+            const dummyHealthPercent = (this.dummyTarget.health / 100) * 100;
+            if (dummyHealthPercent > 60) {
+                this.dummyHealthBar.setColor('#00ff00'); // green
+            } else if (dummyHealthPercent > 30) {
+                this.dummyHealthBar.setColor('#ffa500'); // orange
+            } else {
+                this.dummyHealthBar.setColor('#ff0000'); // red
+            }
         } else {
-            this.healthBar.setColor('#ff0000'); // roed
+            // Hide health text if target is destroyed
+            this.dummyHealthBar.setText('');
         }
-        */
+
     }
 }
