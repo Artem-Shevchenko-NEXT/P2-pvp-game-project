@@ -7,6 +7,7 @@ import { SkeletonCharacter } from '../gameObjects/SkeletonCharacter.js';
 import NetworkManager from '../multiplayer/NetworkManager.js';
 import GameSync from '../multiplayer/GameSync.js';
 import CombatManager from '../multiplayer/CombatManager.js';
+import CombatManager from '../multiplayer/HealthDisplayManager.js';
 
 export class Game extends Phaser.Scene {
     constructor() {
