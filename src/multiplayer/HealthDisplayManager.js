@@ -49,7 +49,30 @@ export default class HealthDisplayManager {
                 }
             }, 200); // Short delay to ensure player is added to gameSync
         });
-        
+        // event listener for gameJoined event
+        this.network.on('gameJoined', (data) => {
+            console.log('Initializing health displays for existing players:', data.players);
+            
+            // Create health displays for all players in the room
+            data.players.forEach(playerData => {
+                // Skip if this is the local player 
+                if (playerData.id === this.network.playerId) {
+                    return;
+                }
+                
+                // Get the player object from gameSync
+                const remotePlayer = this.gameSync.remotePlayers.get(playerData.id);
+                if (remotePlayer) {
+                    // Create health display for this existing player
+                    this.createHealthDisplay(playerData.id, remotePlayer);
+                    
+                    // Update the health to match server data
+                    if (playerData.health !== undefined) {
+                        this.updateHealthDisplay(playerData.id, playerData.health);
+                    }
+                }
+            });
+        });
         // Listen for players leaving
         this.network.on('playerLeft', (data) => {
             this.removeHealthDisplay(data.id);
