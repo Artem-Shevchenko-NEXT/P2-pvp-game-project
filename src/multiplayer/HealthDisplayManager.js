@@ -138,18 +138,29 @@ export default class HealthDisplayManager {
         
         if (!player) return;
         
+        // Calculate health percentage relative to max health
+        const maxHealth = player.maxHealth || 100;
+        const healthPercent = (health / maxHealth) * 100;
+        
         // Update text
         const isLocalPlayer = playerId === this.network.playerId;
         const playerLabel = isLocalPlayer ? 'You' : `Player ${playerId.substring(0, 4)}`;
-        display.setText(`${playerLabel} (${player.characterType}): ${health} HP`);
+        display.setText(`${playerLabel} (${player.characterType}): ${health}/${maxHealth} HP`);
         
-        // Update color based on health
-        if (health > 60) {
-            display.setColor(isLocalPlayer ? '#00ff00' : '#ff9900'); // Green/orange
-        } else if (health > 30) {
-            display.setColor('#ffa500'); // Orange
+        // Update color based on health percentage (same for all players)
+        if (healthPercent > 60) {
+            display.setColor('#00ff00'); // Green for everyone above 60%
+        } else if (healthPercent > 30) {
+            display.setColor('#ffa500'); // Orange for everyone between 30-60%
         } else {
-            display.setColor('#ff0000'); // Red
+            display.setColor('#ff0000'); // Red for everyone below 30%
+        }
+        
+        // Make local player text bold to distinguish it
+        if (isLocalPlayer) {
+            display.setFontStyle('bold');
+        } else {
+            display.setFontStyle('normal');
         }
     }
 
