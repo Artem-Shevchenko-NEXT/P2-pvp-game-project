@@ -323,6 +323,9 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                         this.destroyArrow();
                     } else if (this.characterType === 'skeleton') {
                         //this.destroyFireball();
+                    }else if (this.characterType === 'archer') {
+                        // DON'T destroy arrow on state exit - archer's arrows should persist
+                        console.log("Archer keeping arrow active when exiting ATTACK2 state");
                     }
                     console.log(`${this.characterType} exited ATTACK2 state`);
                     // Delay buffered input processing to next update cycle
