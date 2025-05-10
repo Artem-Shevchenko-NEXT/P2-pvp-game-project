@@ -636,10 +636,10 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             this.herowave.body.setAllowGravity(false);
 
             // Herowave: Add to scene's shockwave group(important due to maing physics group in game)
-            this.scene.shockwaves.add(this.herowave);
+            this.scene.herowaves.add(this.herowave);
             // Herowave: Ensure gravity after group addition
             this.herowave.body.setAllowGravity(false);
-            this.scene.shockwaves.setVelocityX(this.flipX ? -250 : 250);
+            this.scene.herowaves.setVelocityX(this.flipX ? -250 : 250);
 
             // Register herowave with combat manager if this is the local player
             if (this === this.scene.gameSync?.localPlayer) {

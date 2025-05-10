@@ -144,6 +144,10 @@ export class Game extends Phaser.Scene {
         this.shockwaves = this.physics.add.group({
             allowGravity: false
         });
+
+        this.herowaves = this.physics.add.group({
+            allowGravity: false
+        });
         // Create arrows group with gravity
         this.arrows = this.physics.add.group({
             allowGravity: false 
@@ -332,22 +336,17 @@ export class Game extends Phaser.Scene {
             },
             this
         );
-        // Setup herowave collisions with remote players - add herowave-specific behavior 
+        // Setup herowave collisions with remote players
         this.physics.add.overlap(
             remotePlayers, 
-            this.shockwaves,  // Using the same physics group since herowaves are added to shockwaves group
+            this.herowaves,  // Now using dedicated herowave group
             this.handleHerowaveCollision,
-            (target, projectile) => {
-                // Only process if this is a herowave (from Hero character)
-                if (!projectile.owner || projectile.owner.characterType !== 'hero') {
+            (target, herowave) => {
+                // Only need to check owner collision now, no need to filter by character type
+                if (herowave.owner === target) {
                     return false;
                 }
-                
-                // Don't allow herowave to collide with its owner
-                if (projectile.owner === target) {
-                    return false;
-                }
-                return projectile && projectile.active && target.active;
+                return herowave && herowave.active && target.active;
             },
             this
         );
@@ -429,7 +428,7 @@ export class Game extends Phaser.Scene {
             shockwave.owner.destroyShockwave();
         }
     }
-    
+
     handleHerowaveCollision(target, herowave) {
         if (herowave && herowave.active && target && target.active && !target.isInvincible) {
             // Double-check to prevent self-collision
