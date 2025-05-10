@@ -543,7 +543,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 this.scene.combatManager.registerArrow();
             }         
             // Arrow: Destroy after 300ms if no collision
-            this.scene.time.delayedCall(6000, () => {
+            this.scene.time.delayedCall(18000, () => {
                 if (this.arrow) {
                     this.destroyArrow();
                 }
