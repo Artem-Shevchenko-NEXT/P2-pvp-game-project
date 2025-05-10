@@ -251,6 +251,8 @@ export class Game extends Phaser.Scene {
             },
             this
         );
+        //outcommenting the old healthdisplay
+        /*
         //display health note. we can customise this font see description over text method
         this.player1HealthText = this.add.text(20, 20, `Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`, {
             fontFamily: 'Arial',
@@ -280,7 +282,7 @@ export class Game extends Phaser.Scene {
             stroke: '#000000',
             strokeThickness: 1,
         }).setDepth(10);        
-
+        */
         // Set up collision between player and ground and platforms
         this.physics.add.collider(this.player1, ground);
         this.physics.add.collider(this.player1, platforms);
@@ -565,7 +567,7 @@ export class Game extends Phaser.Scene {
                 }
             );
         }
-
+        /*
         // Update health text
         //this.player1HealthText.setText(`Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`);
         if (this.dummyTarget && this.dummyTarget.active) {
@@ -573,6 +575,7 @@ export class Game extends Phaser.Scene {
         } else {
             this.dummyHealthText.setText('Dummy Target: Destroyed');
         }
+        */
         // Update player health displays 
         if (this.healthDisplayManager) {
             this.healthDisplayManager.update();

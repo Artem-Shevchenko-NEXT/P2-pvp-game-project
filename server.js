@@ -41,7 +41,8 @@ io.on('connection', (socket) => {
       x: playerData.x || 100,
       y: playerData.y || 100,
       roomId: roomId,
-      characterType: playerData.characterType || 'tank'
+      characterType: playerData.characterType || 'tank',
+      health: 100 
     };
     
     players.set(socket.id, player);
@@ -51,7 +52,7 @@ io.on('connection', (socket) => {
     // This is probably neede to allow GameSync to create player instances
     // Notify other players in the same room that a new player has joined
     socket.to(roomId).emit('player_joined', player);
-    
+
     socket.to(roomId).emit('player_health_update', {
       id: socket.id,
       health: player.health
