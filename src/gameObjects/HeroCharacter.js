@@ -22,7 +22,7 @@ export class HeroCharacter extends Character {
                 turn: 'hero_turn',
                 jump: 'hero_jump',
                 attack: 'hero_attack',
-                attack2: 'hero_atack2',
+                attack2: 'hero_attack2',
                 hurt: 'hero_hurt'
             }
         });

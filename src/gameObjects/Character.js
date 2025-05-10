@@ -282,8 +282,8 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                                 this.createArrow(); //archer ARROW!
                                 console.log(`${this.characterType} created hitbox at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
                             } else if (this.characterType === 'hero') {
-                                this.createHitbox(); //insert attack2 for hero adjust console log
-                                console.log(`${this.characterType} created hitbox at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
+                                this.createHerowave(); //insert attack2 for hero adjust console log
+                                console.log(`${this.characterType} created HeroWave at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
                             } else if (this.characterType === 'ninja') {
                                 this.createHitbox(); //insert attack2 for archer
                                 console.log(`${this.characterType} created hitbox at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
@@ -301,7 +301,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                         } else if (this.characterType === 'archer') {
                             //nothing happens
                         }  else if (this.characterType === 'hero') {
-                            this.destroyArrow();
+                            this.destroyHerowave();
                         }  else if (this.characterType === 'ninja') {
                             this.destroyArrow();
                         }  else if (this.characterType === 'skeleton') {
@@ -326,7 +326,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     } else if (this.characterType === 'archer') {
                         //nithing happens
                     } else if (this.characterType === 'hero') {
-                        this.destroyArrow();
+                        this.destroyHerowave();
                     } else if (this.characterType === 'ninja') {
                         this.destroyArrow();
                     } else if (this.characterType === 'skeleton') {
