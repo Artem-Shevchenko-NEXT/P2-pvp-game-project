@@ -593,17 +593,8 @@ export class Game extends Phaser.Scene {
             this.healthBar.setColor('#ff0000'); // roed
         }
         //
-        // Check if arrow is outside world bounds
-        if (this.arrow) {
-            const worldBounds = this.scene.physics.world.bounds;
-            if (
-                this.arrow.x < worldBounds.x || 
-                this.arrow.x > worldBounds.width || 
-                this.arrow.y < worldBounds.y || 
-                this.arrow.y > worldBounds.height
-            ) {
-                this.destroyArrow();
-            }
+        if (this.characterType === 'archer' && this.stateMachine.currentState === 'ATTACK2') {
+            console.log(`ATTACK2 state, arrow exists: ${!!this.arrow}`);
         }
     }
 }

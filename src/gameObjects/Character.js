@@ -547,6 +547,8 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 }
             });
             console.log(`${this.characterType} arrow created at x=${this.arrow.x}, y=${this.arrow.y}`);
+        }else {
+            console.log("Arrow already exists, not creating a new one");
         }
     }
 
