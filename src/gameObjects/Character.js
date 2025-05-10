@@ -570,6 +570,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         }
     }
     }
+
     // fireball: Destroy fireball sprite
     destroyFireball() {
         if (this.fireball) {
