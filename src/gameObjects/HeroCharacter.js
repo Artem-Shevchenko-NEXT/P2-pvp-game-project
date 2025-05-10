@@ -72,6 +72,12 @@ export class HeroCharacter extends Character {
             repeat: 0
         });
         this.anims.create({
+            key: this.animationKeys.attack2,
+            frames: this.anims.generateFrameNames('hero_attack2', { prefix: 'HeroWave', end: 7, zeroPad: 4 }),
+            frameRate: 15, // 
+            repeat: 0
+        });
+        this.anims.create({
             key: this.animationKeys.hurt,
             frames: this.anims.generateFrameNames('hero_hurt', { prefix: 'hurt', end: 3, zeroPad: 4 }),
             frameRate: 12,
