@@ -16,6 +16,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         this.isInvincible = false;
         this.invincibilityDuration = config.invincibilityDuration || 1000; // cannot take damage 1 second after hit
         this.attackDamage = config.attackDamage || 50;
+        this.attack2Damage = config.attack2Damage || 75;
         this.hitboxConfig = config.hitboxConfig || { width: 40, height: 50 };
         this.hitboxOffsetConfig = config.hitboxOffsetConfig || { 
             x: { left: -40, right: 40 },  // Different values for left/right facing
@@ -416,6 +417,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             this.scene.hitboxes.add(this.hitbox);
             this.hitbox.body.setAllowGravity(false);
             this.hitbox.owner = this; // this is referencing player for collision handling
+            this.hitbox.damage = this.attackDamage;
             this.hitbox.hitTargets = new Set();
             //Debug: visual hitbox will/need to be removed later
             
@@ -455,6 +457,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 this.shockwave.flipX = true;
             }
             this.shockwave.owner = this; // Reference player for collision handling
+            this.shockwave.damage = this.attack2Damage; 
             this.shockwave.setVelocityX(this.flipX ? -200 : 200); // Move 500px/s in facing direction
             this.shockwave.body.setAllowGravity(false);
 
@@ -515,6 +518,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 this.arrow.flipX = true;
             }
             this.arrow.owner = this; // Reference player for collision handling
+            this.arrow.damage = this.attack2Damage;
             this.arrow.setVelocityX(this.flipX ? -200 : 200); // Move 500px/s in facing direction
             this.arrow.body.setAllowGravity(false);
             this.arrow.body.setSize(30,15);

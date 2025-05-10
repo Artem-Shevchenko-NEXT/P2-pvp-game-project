@@ -363,38 +363,6 @@ export class Game extends Phaser.Scene {
 
         console.log("PvP collision handlers set up successfully");
     }
-    /*
-    // new handleHitboxCollision method
-    handleHitboxCollision(attacker, target) {
-        // Skip if no hitbox, same entity, target is invincible, or target already hit by this hitbox
-        if (!attacker.hitbox || attacker === target || target.isInvincible || 
-            attacker.hitbox.hitTargets.has(target.playerId || target)) {
-            return;
-        }
-        
-        // Mark this target as hit
-        attacker.hitbox.hitTargets.add(target.playerId || target);
-        
-        // Get the damage from the attacker's configuration
-        const damage = attacker.attackDamage || 10; // Default to 10 if not defined
-        
-        console.log(`Hitbox collision: ${attacker.characterType} hits target, dealing ${damage} damage`);
-        
-        // register hit with combat manager if attacker is local player
-        if (attacker === this.gameSync?.localPlayer && target.playerId) {
-            this.combatManager.registerHit(attacker, target, damage);
-        } else if (!target.playerId) {
-            // for non-networked entities like dummy apply damage directly
-            target.health = Math.max(0, target.health - damage);
-            if (target.health <= 0) {
-                this.playersRanking.push(target);
-                console.log(' target destroyed');
-                target.destroy();
-                this.checkForGameOver();
-            }
-        }
-    }
-    */
     // new handleHitboxCollision method
     handleHitboxCollision(target, hitbox) {  // Order is now target, hitbox
         // Skip if target is invincible or already hit
@@ -408,8 +376,8 @@ export class Game extends Phaser.Scene {
         // Mark this target as hit
         hitbox.hitTargets.add(target.playerId || target);
         
-        // Rest of your collision handling
-        const damage = attacker.attackDamage || 10;
+        // Use the specific damage from the hitbox
+        const damage = hitbox.damage || attacker.attackDamage; // Fallback to owner's attackDamage if not set
         console.log(`Hitbox collision: ${attacker.characterType} hits target, dealing ${damage} damage`);
         
         // Register hit with combat manager if attacker is local player
@@ -436,7 +404,7 @@ export class Game extends Phaser.Scene {
             }
             
             // Use the correct damage value from owner character
-            const damage = shockwave.owner ? shockwave.owner.attackDamage : 10;
+            const damage = shockwave.damage || (shockwave.owner ? shockwave.owner.attack2Damage : 10);
           
             console.log(`Shockwave hit: ${shockwave.owner.characterType} dealing ${damage} damage to target at (${target.x}, ${target.y})`);
           
