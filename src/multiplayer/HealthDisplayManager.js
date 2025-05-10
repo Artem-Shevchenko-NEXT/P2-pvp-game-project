@@ -101,7 +101,7 @@ export default class HealthDisplayManager {
         const text = this.scene.add.text(
             corner.x, 
             corner.y, 
-            `${playerLabel} (${player.characterType}): ${player.health || 100} HP`, 
+            initialText,
             {
                 fontFamily: 'Arial',
                 fontSize: 22,
