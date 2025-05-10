@@ -16,9 +16,18 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         this.isInvincible = false;
         this.invincibilityDuration = config.invincibilityDuration || 1000; // cannot take damage 1 second after hit
         this.attackDamage = config.attackDamage || 50;
+        this.attack2Damage = config.attack2Damage || 75;
         this.hitboxConfig = config.hitboxConfig || { width: 40, height: 50 };
+        this.hitboxOffsetConfig = config.hitboxOffsetConfig || { 
+            x: { left: -40, right: 40 },  // different values for left/right facing
+            y: 0 // Y offset (can be positive or negative)
+        };
         this.hitbox = null;
         this.shockwave = null; // Shockwave: Track shockwave sprite for tank's ATTACK2
+
+        // Movement properties
+        this.moveSpeed = config.moveSpeed || 200; // Default movement speed
+        this.jumpVelocity = config.jumpVelocity || 480; // Default jump velocity (negative for upward)
 
         // Character specific properties
         this.characterType = config.characterType || 'unknown';
@@ -46,6 +55,12 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
 
         // Initialize Shift key for ATTACK2
         this.shiftKey = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SHIFT);
+
+        // Initialize WASD keys
+        this.wKey = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+        this.aKey = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+        this.sKey = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
+        this.dKey = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
 
         console.log(`Creating ${this.characterType} character at x=${x}, y=${y}`);
         this.initAnimations();
@@ -113,11 +128,11 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 },
                 execute: () => {
                     const cursors = scene.input.keyboard.createCursorKeys();
-                    if (cursors.left.isDown) {
+                    if (cursors.left.isDown || this.aKey.isDown) {
                         this.stateMachine.transition('MOVE_LEFT');
-                    } else if (cursors.right.isDown) {
+                    } else if (cursors.right.isDown || this.dKey.isDown) {
                         this.stateMachine.transition('MOVE_RIGHT');
-                    } else if (cursors.up.isDown && this.body.blocked.down) {
+                    } else if ((cursors.up.isDown || this.wKey.isDown) && this.body.blocked.down) {
                         this.stateMachine.transition('JUMP');
                     } else if (Phaser.Input.Keyboard.JustDown(cursors.space)) {
                         this.stateMachine.transition('ATTACK');
@@ -128,20 +143,20 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             },
             MOVE_LEFT: {
                 enter: () => {
-                    this.setVelocityX(-200);
+                    this.setVelocityX(-this.moveSpeed);
                     this.flipX = true;
                     this.anims.play(this.animationKeys.left, true);
                     console.log(`${this.characterType} entered MOVE_LEFT state`);
                 },
                 execute: () => {
                     const cursors = scene.input.keyboard.createCursorKeys();
-                    if (!cursors.left.isDown) {
-                        if (cursors.right.isDown) {
+                    if (!cursors.left.isDown && !this.aKey.isDown) {
+                        if (cursors.right.isDown || this.dKey.isDown) {
                             this.stateMachine.transition('MOVE_RIGHT');
                         } else {
                             this.stateMachine.transition('IDLE');
                         }
-                    } else if (cursors.up.isDown && this.body.blocked.down) {
+                    } else if ((cursors.up.isDown || this.wKey.isDown) && this.body.blocked.down) {
                         this.stateMachine.transition('JUMP');
                     } else if (Phaser.Input.Keyboard.JustDown(cursors.space)) {
                         this.stateMachine.transition('ATTACK');
@@ -152,20 +167,20 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             },
             MOVE_RIGHT: {
                 enter: () => {
-                    this.setVelocityX(200);
+                    this.setVelocityX(this.moveSpeed);
                     this.flipX = false;
                     this.anims.play(this.animationKeys.right, true);
                     console.log(`${this.characterType} entered MOVE_RIGHT state`);
                 },
                 execute: () => {
                     const cursors = scene.input.keyboard.createCursorKeys();
-                    if (!cursors.right.isDown) {
-                        if (cursors.left.isDown) {
+                    if (!cursors.right.isDown && !this.dKey.isDown) {
+                        if (cursors.left.isDown || this.aKey.isDown) {
                             this.stateMachine.transition('MOVE_LEFT');
                         } else {
                             this.stateMachine.transition('IDLE');
                         }
-                    } else if (cursors.up.isDown && this.body.blocked.down) {
+                    } else if ((cursors.up.isDown || this.wKey.isDown) && this.body.blocked.down) {
                         this.stateMachine.transition('JUMP');
                     } else if (Phaser.Input.Keyboard.JustDown(cursors.space)) {
                         this.stateMachine.transition('ATTACK');
@@ -176,7 +191,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             },
             JUMP: {
                 enter: () => {
-                    this.setVelocityY(-480); // Original: 440
+                    this.setVelocityY(-this.jumpVelocity); // Original: 440
                     if (this.stateMachine.currentState !== 'ATTACK' && this.stateMachine.currentState !== 'ATTACK2') {
                         this.anims.play(this.animationKeys.jump, true);
                         console.log(`${this.characterType} entered JUMP state`);
@@ -194,11 +209,11 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                         this.lastGroundedFrame = 0; //reset last lastGroundedFrame
                     }
                     // Buffer inputs during jump
-                    this.inputBuffer.jump = cursors.up.isDown && this.body.blocked.down && !this.inputBuffer.jump;
+                    this.inputBuffer.jump = (cursors.up.isDown || this.wKey.isDown) && this.body.blocked.down && !this.inputBuffer.jump;
                     this.inputBuffer.attack = Phaser.Input.Keyboard.JustDown(cursors.space);
                     this.inputBuffer.attack2 = Phaser.Input.Keyboard.JustDown(this.shiftKey);
-                    this.inputBuffer.moveLeft = cursors.left.isDown;
-                    this.inputBuffer.moveRight = cursors.right.isDown;
+                    this.inputBuffer.moveLeft = cursors.left.isDown || this.aKey.isDown;
+                    this.inputBuffer.moveRight = cursors.right.isDown || this.dKey.isDown;
                 }
             },
             ATTACK: {
@@ -226,11 +241,11 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 execute: () => {
                     // Buffer inputs during attack
                     const cursors = scene.input.keyboard.createCursorKeys();
-                    this.inputBuffer.jump = cursors.up.isDown && this.body.blocked.down && !this.inputBuffer.jump;
+                    this.inputBuffer.jump = (cursors.up.isDown || this.wKey.isDown) && this.body.blocked.down && !this.inputBuffer.jump;
                     this.inputBuffer.attack = Phaser.Input.Keyboard.JustDown(cursors.space);
                     this.inputBuffer.attack2 = Phaser.Input.Keyboard.JustDown(this.shiftKey);
-                    this.inputBuffer.moveLeft = cursors.left.isDown;
-                    this.inputBuffer.moveRight = cursors.right.isDown;
+                    this.inputBuffer.moveLeft = cursors.left.isDown || this.aKey.isDown;
+                    this.inputBuffer.moveRight = cursors.right.isDown || this.dKey.isDown;
                 },
                 exit: () => {
                     //this.destroyHitbox();
@@ -284,7 +299,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                         if (this.characterType === 'tank') {
                             this.destroyShockwave();
                         } else if (this.characterType === 'archer') {
-                            this.destroyArrow();
+                            //nothing happens
                         }  else if (this.characterType === 'hero') {
                             this.destroyArrow();
                         }  else if (this.characterType === 'ninja') {
@@ -299,17 +314,17 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 execute: () => {
                     // Buffer inputs during attack
                     const cursors = scene.input.keyboard.createCursorKeys();
-                    this.inputBuffer.jump = cursors.up.isDown && this.body.blocked.down && !this.inputBuffer.jump;
+                    this.inputBuffer.jump = (cursors.up.isDown || this.wKey.isDown) && this.body.blocked.down && !this.inputBuffer.jump;
                     this.inputBuffer.attack = Phaser.Input.Keyboard.JustDown(cursors.space);
                     this.inputBuffer.attack2 = Phaser.Input.Keyboard.JustDown(this.shiftKey);
-                    this.inputBuffer.moveLeft = cursors.left.isDown;
-                    this.inputBuffer.moveRight = cursors.right.isDown;
+                    this.inputBuffer.moveLeft = cursors.left.isDown || this.aKey.isDown;
+                    this.inputBuffer.moveRight = cursors.right.isDown || this.dKey.isDown;
                 },
                 exit: () => {
                     if (this.characterType === 'tank') {
                         this.destroyShockwave();
                     } else if (this.characterType === 'archer') {
-                        this.destroyArrow();
+                        //nithing happens
                     } else if (this.characterType === 'hero') {
                         this.destroyArrow();
                     } else if (this.characterType === 'ninja') {
@@ -359,11 +374,11 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 execute: () => {
                     // Buffer inputs during hurt state
                     const cursors = scene.input.keyboard.createCursorKeys();
-                    this.inputBuffer.jump = cursors.up.isDown && this.body.blocked.down && !this.inputBuffer.jump;
+                    this.inputBuffer.jump = (cursors.up.isDown || this.wKey.isDown) && this.body.blocked.down && !this.inputBuffer.jump;
                     this.inputBuffer.attack = Phaser.Input.Keyboard.JustDown(cursors.space);
                     this.inputBuffer.attack2 = Phaser.Input.Keyboard.JustDown(this.shiftKey);
-                    this.inputBuffer.moveLeft = cursors.left.isDown;
-                    this.inputBuffer.moveRight = cursors.right.isDown;
+                    this.inputBuffer.moveLeft = cursors.left.isDown || this.aKey.isDown;
+                    this.inputBuffer.moveRight = cursors.right.isDown || this.dKey.isDown;
                 },
                 exit: () => {
                     // Delay buffered input processing to next update cycle
@@ -389,22 +404,29 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
     createHitbox() {
         if (!this.hitbox) {
             const { width, height } = this.hitboxConfig;
-            const offsetX = this.flipX ? -width : this.width; //set hitbox in front of player
+            // Get the appropriate X offset based on direction
+            const offsetX = this.flipX 
+                ? this.hitboxOffsetConfig.x.left 
+                : this.hitboxOffsetConfig.x.right;
+            const offsetY = this.hitboxOffsetConfig.y;
+
+            // Create the hitbox rectangle
             this.hitbox = this.scene.add.rectangle(
                 this.x + offsetX,
-                this.y - this.height / 2 - 30,
+                this.y + offsetY,
                 width,
                 height
             );
             this.scene.hitboxes.add(this.hitbox);
             this.hitbox.body.setAllowGravity(false);
             this.hitbox.owner = this; // this is referencing player for collision handling
+            this.hitbox.damage = this.attackDamage;
             this.hitbox.hitTargets = new Set();
             //Debug: visual hitbox will/need to be removed later
             
             this.hitbox.setStrokeStyle(2, 0xff0000); //debug
             console.log(`${this.characterType} hitbox position: x=${this.hitbox.x}, y=${this.hitbox.y}, width=${width}, height=${height}`);
-            this.scene.time.delayedCall(500, () => {
+            this.scene.time.delayedCall(250, () => {
                 if (this.hitbox) {
                     this.destroyHitbox();
                 }
@@ -428,7 +450,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             const offsetX = this.flipX ? -10 : 10; // Position 10px in front of player
             this.shockwave = this.scene.physics.add.sprite(
                 this.x + offsetX,
-                this.y, // Align with player's center
+                this.y + 8, // Align with player's center
                 'tank_attack',
                 'secondAttackShockwave0000'
             );
@@ -437,6 +459,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 this.shockwave.flipX = true;
             }
             this.shockwave.owner = this; // Reference player for collision handling
+            this.shockwave.damage = this.attack2Damage; 
             this.shockwave.setVelocityX(this.flipX ? -200 : 200); // Move 500px/s in facing direction
             this.shockwave.body.setAllowGravity(false);
 
@@ -489,7 +512,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             const offsetX = this.flipX ? -10 : 10; // Position 10px in front of player
             this.arrow = this.scene.physics.add.sprite(
                 this.x + offsetX,
-                this.y, // Align with player's center
+                this.y + 8, // Align with player's center
                 'arrow'
             );
             this.arrow.setDepth(5); // Ensure visibility
@@ -497,9 +520,13 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 this.arrow.flipX = true;
             }
             this.arrow.owner = this; // Reference player for collision handling
+            this.arrow.damage = this.attack2Damage;
             this.arrow.setVelocityX(this.flipX ? -200 : 200); // Move 500px/s in facing direction
             this.arrow.body.setAllowGravity(false);
+            this.arrow.body.setCollideWorldBounds(true);
+            this.arrow.body.onWorldBounds = true;
             this.arrow.body.setSize(60, 30);
+            this.arrow.setScale(0.5);
             // Shockwave: Add to scene's shockwave group(important due to maing physics group in game)
             this.scene.arrows.add(this.arrow);
             // Shockwave: Ensure no gravity after group addition
@@ -520,7 +547,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 this.scene.combatManager.registerArrow();
             }         
             // Arrow: Destroy after 300ms if no collision
-            this.scene.time.delayedCall(6000, () => {
+            this.scene.time.delayedCall(1600, () => {
                 if (this.arrow) {
                     this.destroyArrow();
                 }
@@ -590,9 +617,13 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         this.stateMachine.update();
         // Update hitbox position so it will follow player
         if (this.hitbox) {
-            const { width } = this.hitboxConfig;
-            const offsetX = this.flipX ? -width : this.width;
-            this.hitbox.setPosition(this.x + offsetX, this.y - this.height / 2);
+            const offsetX = this.flipX 
+                ? this.hitboxOffsetConfig.x.left 
+                : this.hitboxOffsetConfig.x.right;
+            const offsetY = this.hitboxOffsetConfig.y;
+
+            // Update position
+            this.hitbox.setPosition(this.x + offsetX, this.y + offsetY);
         }
         // Shockwave: Log physics body position to confirm movement
         if (this.shockwave) {

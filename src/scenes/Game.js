@@ -7,6 +7,7 @@ import { SkeletonCharacter } from '../gameObjects/SkeletonCharacter.js';
 import NetworkManager from '../multiplayer/NetworkManager.js';
 import GameSync from '../multiplayer/GameSync.js';
 import CombatManager from '../multiplayer/CombatManager.js';
+import HealthDisplayManager from '../multiplayer/HealthDisplayManager.js';
 
 export class Game extends Phaser.Scene {
     constructor() {
@@ -149,7 +150,19 @@ export class Game extends Phaser.Scene {
         });
         //arrows collide
         this.physics.add.collider(this.arrows, this.ground);
-        this.physics.add.collider(this.arrows, platforms);
+        this.physics.add.collider(
+            this.arrows, 
+            platforms, 
+            (arrow, platform) => {
+                if (arrow.owner) {
+                    arrow.owner.destroyArrow();
+                } else {
+                    arrow.destroy();
+                }
+            },
+            null,
+            this
+        );
 
         //create fireball group
         this.fireballs = this.physics.add.group({
@@ -173,23 +186,22 @@ export class Game extends Phaser.Scene {
         this.playersInMatch.push(this.dummyTarget);
         
 
-        //Debug: to check hurt state for player: in console everything works although health bar does not correctly update.
-        //this.input.keyboard.on('keydown-T', () => {
-        //    this.player1.takeDamage(10);
-        //});
+       // Add a floating health text for the dummy target
+        this.dummyHealthBar = this.add.text(
+            this.dummyTarget.x, 
+            this.dummyTarget.y - 40, 
+            `${this.dummyTarget.health} HP`, 
+            {
+                fontFamily: 'Arial',
+                fontSize: 17,
+                color: '#00ff00',
+                stroke: '#000000',
+                strokeThickness: 1,
+                align: 'center'
+            }
+        ).setOrigin(0.5, 0.5)
+        .setDepth(10);
 
-        // Set up hitbox collisions with dummy target
-        /*
-        this.physics.add.overlap(
-            this.player1,
-            this.dummyTarget,
-            this.handleHitboxCollision,
-            (player, target) => {
-                return player.hitbox && target.active;
-            },
-            this
-        );
-        */
         // Set up hitbox collisions with dummy target
         this.physics.add.overlap(
             this.hitboxes,          // Use the hitboxes group instead of player
@@ -240,35 +252,6 @@ export class Game extends Phaser.Scene {
             },
             this
         );
-        //display health note. we can customise this font see description over text method
-        this.player1HealthText = this.add.text(20, 20, `Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`, {
-            fontFamily: 'Arial',
-            fontSize: 24,
-            color: '#ffffff',
-            stroke: '#000000',
-            strokeThickness: 4
-        }).setDepth(10);
-
-        //dummy health
-        this.dummyHealthText = this.add.text(500, 20, `Dummy Target Health: ${this.dummyTarget.health}`, {
-            fontFamily: 'Arial',
-            fontSize: 24,
-            color: '#ffffff',
-            stroke: '#000000',
-            strokeThickness: 4
-        }).setDepth(10);
-
-
-        //health bar goes here
-        const bar_x = 0;
-        const bar_y = 0;
-        this.healthBar = this.add.text(bar_x, bar_y, `${this.player1.health} HP`, {
-            fontFamily: 'Arial',
-            fontSize: 17,
-            color: '#ffffff',
-            stroke: '#000000',
-            strokeThickness: 1,
-        }).setDepth(10);        
 
         // Set up collision between player and ground and platforms
         this.physics.add.collider(this.player1, ground);
@@ -294,11 +277,15 @@ export class Game extends Phaser.Scene {
                 this.gameSync.setLocalPlayer(this.player1);
 
                 this.combatManager = new CombatManager(this, this.gameSync, this.networkManager);
+
+                // Create health display manager
+                this.healthDisplayManager = new HealthDisplayManager(this, this.gameSync, this.networkManager);
                 // Join the game after successful connection
                 this.networkManager.joinGame({
                     x: this.player1.x,
                     y: this.player1.y,
-                    characterType: this.selectedCharacter 
+                    characterType: this.selectedCharacter, 
+                    health: this.player1.health 
                 });
 
                 this.setupPvPCollisions();
@@ -363,38 +350,7 @@ export class Game extends Phaser.Scene {
 
         console.log("PvP collision handlers set up successfully");
     }
-    /*
-    // new handleHitboxCollision method
-    handleHitboxCollision(attacker, target) {
-        // Skip if no hitbox, same entity, target is invincible, or target already hit by this hitbox
-        if (!attacker.hitbox || attacker === target || target.isInvincible || 
-            attacker.hitbox.hitTargets.has(target.playerId || target)) {
-            return;
-        }
-        
-        // Mark this target as hit
-        attacker.hitbox.hitTargets.add(target.playerId || target);
-        
-        // Get the damage from the attacker's configuration
-        const damage = attacker.attackDamage || 10; // Default to 10 if not defined
-        
-        console.log(`Hitbox collision: ${attacker.characterType} hits target, dealing ${damage} damage`);
-        
-        // register hit with combat manager if attacker is local player
-        if (attacker === this.gameSync?.localPlayer && target.playerId) {
-            this.combatManager.registerHit(attacker, target, damage);
-        } else if (!target.playerId) {
-            // for non-networked entities like dummy apply damage directly
-            target.health = Math.max(0, target.health - damage);
-            if (target.health <= 0) {
-                this.playersRanking.push(target);
-                console.log(' target destroyed');
-                target.destroy();
-                this.checkForGameOver();
-            }
-        }
-    }
-    */
+
     // new handleHitboxCollision method
     handleHitboxCollision(target, hitbox) {  // Order is now target, hitbox
         // Skip if target is invincible or already hit
@@ -407,9 +363,9 @@ export class Game extends Phaser.Scene {
         
         // Mark this target as hit
         hitbox.hitTargets.add(target.playerId || target);
-        
-        // Rest of your collision handling
-        const damage = attacker.attackDamage || 10;
+
+        // Get specific damage from the hitbox
+        const damage = hitbox.damage || attacker.attackDamage; // Fall back to owner's attackDamage if not set
         console.log(`Hitbox collision: ${attacker.characterType} hits target, dealing ${damage} damage`);
         
         // Register hit with combat manager if attacker is local player
@@ -436,7 +392,7 @@ export class Game extends Phaser.Scene {
             }
             
             // Use the correct damage value from owner character
-            const damage = shockwave.owner ? shockwave.owner.attackDamage : 10;
+            const damage = shockwave.damage || (shockwave.owner ? shockwave.owner.attack2Damage : 10);
           
             console.log(`Shockwave hit: ${shockwave.owner.characterType} dealing ${damage} damage to target at (${target.x}, ${target.y})`);
           
@@ -468,7 +424,7 @@ export class Game extends Phaser.Scene {
             }
 
             // Get damage from arrow owner
-            const damage = arrow.owner ? arrow.owner.attackDamage : 10;
+            const damage = arrow.damage || (arrow.owner ? arrow.owner.attackDamage : 10);
 
             console.log(`Arrow hit: ${arrow.owner.characterType} dealing ${damage} damage to target at (${target.x}, ${target.y})`);
 
@@ -540,10 +496,11 @@ export class Game extends Phaser.Scene {
         }
 
         // Debug: Log dummy grounded state
+        /*
         if (this.dummyTarget.active) {
             console.log(`Dummy grounded: ${this.dummyTarget.body.blocked.down}`);
         }
-
+        */
         // Send player position updates to server if connected
         if (this.networkManager && this.networkManager.connected) {
             const currentState = this.player1.stateMachine.currentState;
@@ -583,36 +540,34 @@ export class Game extends Phaser.Scene {
                 }
             );
         }
-
-        // Update health text
-        this.player1HealthText.setText(`Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`);
+        // Update player health displays 
+        if (this.healthDisplayManager) {
+            this.healthDisplayManager.update();
+        }
+        
+        // Update dummy target health bar
         if (this.dummyTarget && this.dummyTarget.active) {
-            this.dummyHealthText.setText(`Dummy Target Health: ${this.dummyTarget.health}`);
+            // Position the health text above the dummy target
+            this.dummyHealthBar.setPosition(
+                this.dummyTarget.x, 
+                this.dummyTarget.y - 40
+            );
+            
+            // Update health text
+            this.dummyHealthBar.setText(`${this.dummyTarget.health} HP`);
+            
+            // Update color based on health percentage
+            const dummyHealthPercent = (this.dummyTarget.health / 100) * 100;
+            if (dummyHealthPercent > 60) {
+                this.dummyHealthBar.setColor('#00ff00'); // green
+            } else if (dummyHealthPercent > 30) {
+                this.dummyHealthBar.setColor('#ffa500'); // orange
+            } else {
+                this.dummyHealthBar.setColor('#ff0000'); // red
+            }
         } else {
-            this.dummyHealthText.setText('Dummy Target: Destroyed');
+            // Hide health text if target is destroyed
+            this.dummyHealthBar.setText('');
         }
-
-        //
-        //
-        //this.healthBar.setPosition(this.player1.x, this.player.y);
-        ;
-        //bar_x=1, bay_y=1;
-        
-        const bar_x = this.player1.x - 25;
-        const bar_y = this.player1.y - 40;
-        this.healthBar.setPosition(bar_x, bar_y);
-        this.healthBar.setText(`${this.player1.health} HP`);
-        this.healthBar.update();
-        
-        const hp = this.player1.health;
-
-        if (hp > 60) {
-            this.healthBar.setColor('#00ff00'); // groen
-        } else if (hp > 30) {
-            this.healthBar.setColor('#ffa500'); // orange
-        } else {
-            this.healthBar.setColor('#ff0000'); // roed
-        }
-        //
     }
 }
