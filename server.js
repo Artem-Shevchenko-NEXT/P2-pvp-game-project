@@ -168,7 +168,7 @@ io.on('connection', (socket) => {
     const player = players.get(socket.id);
     if (player) {
       // Broadcast destruction to all clients in room
-      io.to(player.roomId).emit('arrow_destroyed', {
+      socket.to(player.roomId).emit('arrow_destroyed', {
         playerId: socket.id,
         id: data.id
       });
