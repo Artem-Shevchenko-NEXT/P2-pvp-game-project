@@ -609,6 +609,71 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             console.log(`${this.characterType} fireball destroyed at x=${this.fireball.x}, y=${this.fireball.y}`);
             this.fireball.destroy();
             this.fireball = null;
+            
+        }
+    }
+
+    // Herowave: Create herowave sprite for hero's ATTACK2
+    createHerowave() {       
+            if (!this.herowave) {
+                const offsetX = this.flipX ? -10 : 10; // Position 10px in front of player
+                this.herowave = this.scene.physics.add.sprite(
+                this.x + offsetX,
+                this.y + 8, // Align with player's center
+                'tank_attack',
+                'secondAttackShockwave0000'
+                );
+                this.herowave.setTint(0xff0000);
+                this.herowave.setDepth(5); // Ensure visibility
+                //tweens
+                if (this.flipX === true) {
+                this.herowave.flipX = true;
+            }
+            
+            this.herowave.owner = this; // Reference player for collision handling
+            this.herowave.setVelocityX(this.flipX ? -200 : 200); // Move 500px/s in facing direction
+            this.herowave.body.setAllowGravity(false);
+
+            // Herowave: Add to scene's shockwave group(important due to maing physics group in game)
+            this.scene.shockwaves.add(this.herowave);
+            // Herowave: Ensure gravity after group addition
+            this.herowave.body.setAllowGravity(false);
+            this.scene.shockwaves.setVelocityX(this.flipX ? -200 : 200);
+            
+            // Herowave: Log position and physics properties over time
+            this.scene.time.addEvent({
+                delay: 10,
+                callback: () => {
+                    if (this.herowave) {
+                        console.log(`Herowave position: x=${this.herowave.x}, y=${this.herowave.y}, velocityX=${this.herowave.body.velocity.x}, allowGravity=${this.herowave.body.allowGravity}`);
+                    }
+                },
+                repeat: 30 // Log for 300ms
+            });
+            if (this === this.scene.gameSync?.localPlayer) {
+                this.scene.combatManager.registerShockwave();
+            }
+            // Herowave: Destroy after 300ms if no collision
+            this.scene.time.delayedCall(300, () => {
+                if (this.shockwave) {
+                    this.destroyHerowave();
+                }
+            });
+            console.log(`${this.characterType} Herowave created at x=${this.herowave.x}, y=${this.herowave.y}`);
+        }
+    }
+
+    // Herowave: Destroy herowave sprite
+    destroyHerowave() {
+        if (this.herowave) {
+            // If this is local player, notify network
+            if (this === this.scene.gameSync?.localPlayer) {
+              this.scene.networkManager.sendHerowaveDestroyed({ id: this.scene.networkManager.playerId });
+            }
+            
+            console.log(`${this.characterType} Herowave destroyed at x=${this.herowave.x}, y=${this.herowave.y}`);
+            this.herowave.destroy();
+            this.herowave = null;
         }
     }
 
