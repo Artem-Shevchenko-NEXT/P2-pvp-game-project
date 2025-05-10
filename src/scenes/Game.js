@@ -305,6 +305,9 @@ export class Game extends Phaser.Scene {
                 this.gameSync.setLocalPlayer(this.player1);
 
                 this.combatManager = new CombatManager(this, this.gameSync, this.networkManager);
+
+                // Create health display manager
+                this.healthDisplayManager = new HealthDisplayManager(this, this.gameSync, this.networkManager);
                 // Join the game after successful connection
                 this.networkManager.joinGame({
                     x: this.player1.x,
@@ -564,19 +567,22 @@ export class Game extends Phaser.Scene {
         }
 
         // Update health text
-        this.player1HealthText.setText(`Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`);
+        //this.player1HealthText.setText(`Player 1 (${this.player1.characterType}) Health: ${this.player1.health}`);
         if (this.dummyTarget && this.dummyTarget.active) {
             this.dummyHealthText.setText(`Dummy Target Health: ${this.dummyTarget.health}`);
         } else {
             this.dummyHealthText.setText('Dummy Target: Destroyed');
         }
+        // Update player health displays 
+        if (this.healthDisplayManager) {
+            this.healthDisplayManager.update();
+        }
 
         //
         //
         //this.healthBar.setPosition(this.player1.x, this.player.y);
-        ;
         //bar_x=1, bay_y=1;
-        
+        /*
         const bar_x = this.player1.x - 25;
         const bar_y = this.player1.y - 40;
         this.healthBar.setPosition(bar_x, bar_y);
@@ -592,5 +598,6 @@ export class Game extends Phaser.Scene {
         } else {
             this.healthBar.setColor('#ff0000'); // roed
         }
+        */
     }
 }

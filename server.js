@@ -52,6 +52,10 @@ io.on('connection', (socket) => {
     // Notify other players in the same room that a new player has joined
     socket.to(roomId).emit('player_joined', player);
     
+    socket.to(roomId).emit('player_health_update', {
+      id: socket.id,
+      health: player.health
+    });
     // Handle player movement/states updates
     socket.on('player_update', (data) => {
       const player = players.get(socket.id);
