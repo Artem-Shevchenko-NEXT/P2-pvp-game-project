@@ -88,9 +88,14 @@ export default class HealthDisplayManager {
         const corner = this.corners[cornerIndex];
         this.usedCorners.set(playerId, cornerIndex);
         
-        // Create player label with character type
+        // Create player label with simplified format
         const isLocalPlayer = playerId === this.network.playerId;
-        const playerLabel = isLocalPlayer ? 'You' : `Player ${playerId.substring(0, 4)}`;
+        let initialText;
+        if (isLocalPlayer) {
+            initialText = `You ${player.characterType}: ${player.health || 100}/${player.maxHealth || 100} HP`;
+        } else {
+            initialText = `${player.characterType}: ${player.health || 100}/${player.maxHealth || 100} HP`;
+        }
         
         // Create text object
         const text = this.scene.add.text(
@@ -139,10 +144,13 @@ export default class HealthDisplayManager {
         const maxHealth = player.maxHealth || 100;
         const healthPercent = (health / maxHealth) * 100;
         
-        // Update text
+        // Update text with simplified format
         const isLocalPlayer = playerId === this.network.playerId;
-        const playerLabel = isLocalPlayer ? 'You' : `Player ${playerId.substring(0, 4)}`;
-        display.setText(`${playerLabel} (${player.characterType}): ${health}/${maxHealth} HP`);
+        if (isLocalPlayer) {
+            display.setText(`You ${player.characterType}: ${health}/${maxHealth} HP`);
+        } else {
+            display.setText(`${player.characterType}: ${health}/${maxHealth} HP`);
+        }
         
         // Update color based on health percentage (same for all players)
         if (healthPercent > 60) {
