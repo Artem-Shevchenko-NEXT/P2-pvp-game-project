@@ -592,9 +592,5 @@ export class Game extends Phaser.Scene {
         } else {
             this.healthBar.setColor('#ff0000'); // roed
         }
-        //
-        if (this.characterType === 'archer' && this.stateMachine.currentState === 'ATTACK2') {
-            console.log(`ATTACK2 state, arrow exists: ${!!this.arrow}`);
-        }
     }
 }
