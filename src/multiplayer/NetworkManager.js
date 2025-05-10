@@ -144,7 +144,7 @@ export default class NetworkManager {
       x: playerData.x,
       y: playerData.y,
       characterType: characterType,
-      health: health
+      health: playerData.health || 100
     });
   }
 
