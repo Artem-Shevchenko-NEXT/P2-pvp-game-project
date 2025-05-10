@@ -22,7 +22,7 @@ export class HeroCharacter extends Character {
                 turn: 'hero_turn',
                 jump: 'hero_jump',
                 attack: 'hero_attack',
-                attack2: 'hero_atack2',
+                attack2: 'hero_attack2',
                 hurt: 'hero_hurt'
             }
         });
@@ -69,6 +69,12 @@ export class HeroCharacter extends Character {
             key: this.animationKeys.attack,
             frames: this.anims.generateFrameNames('hero_attack', { prefix: 'attackRight', end: 4, zeroPad: 4 }),
             frameRate: 12, // 
+            repeat: 0
+        });
+        this.anims.create({
+            key: this.animationKeys.attack2,
+            frames: this.anims.generateFrameNames('hero_attack2', { prefix: 'HeroWave', end: 7, zeroPad: 4 }),
+            frameRate: 15, // 
             repeat: 0
         });
         this.anims.create({
