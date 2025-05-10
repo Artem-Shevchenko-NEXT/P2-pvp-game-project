@@ -294,9 +294,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     this.once(`animationcomplete-${this.animationKeys.attack2}`, () => {
                         if (this.characterType === 'tank') {
                             this.destroyShockwave();
-                        } else if (this.characterType === 'archer') {
-                            this.destroyArrow();
-                        }  else if (this.characterType === 'hero') {
+                        }else if (this.characterType === 'hero') {
                             this.destroyArrow();
                         }  else if (this.characterType === 'ninja') {
                             this.destroyArrow();
@@ -319,9 +317,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 exit: () => {
                     if (this.characterType === 'tank') {
                         this.destroyShockwave();
-                    } else if (this.characterType === 'archer') {
-                        this.destroyArrow();
-                    } else if (this.characterType === 'hero') {
+                    }else if (this.characterType === 'hero') {
                         this.destroyArrow();
                     } else if (this.characterType === 'ninja') {
                         this.destroyArrow();
@@ -543,7 +539,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 this.scene.combatManager.registerArrow();
             }         
             // Arrow: Destroy after 300ms if no collision
-            this.scene.time.delayedCall(6000, () => {
+            this.scene.time.delayedCall(1200, () => {
                 if (this.arrow) {
                     this.destroyArrow();
                 }
