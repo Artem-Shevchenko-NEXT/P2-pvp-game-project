@@ -5,8 +5,8 @@ export default class HealthDisplayManager {
         this.network = networkManager;
         this.healthDisplays = new Map(); // Maps playerId -> text object
         this.corners = [
-            { x: 20, y: 5, origin: { x: 0, y: 0 } },           // Top left
-            { x: this.scene.scale.width - 20, y: 5, origin: { x: 1, y: 0 } },            // Top right
+            { x: 20, y: 0, origin: { x: 0, y: 0 } },           // Top left
+            { x: this.scene.scale.width - 20, y: 0, origin: { x: 1, y: 0 } },            // Top right
             { x: 20, y: this.scene.scale.height - 5, origin: { x: 0, y: 1 } },           // Bottom left
             { x: this.scene.scale.width - 20, y: this.scene.scale.height - 5, origin: { x: 1, y: 1 } }  // Bottom right
         ];
@@ -99,7 +99,7 @@ export default class HealthDisplayManager {
             `${playerLabel} (${player.characterType}): ${player.health || 100} HP`, 
             {
                 fontFamily: 'Arial',
-                fontSize: 24,
+                fontSize: 22,
                 color: '#ffffff',
                 stroke: '#000000',
                 strokeThickness: 4
